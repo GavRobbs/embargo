@@ -22,15 +22,10 @@ public class GameMap : MonoBehaviour
     GameObject buildings_holder;
     GameObject tiles_holder;
 
-    int[] building_position =
-        { 1, 1, 1, 0, 1, 1, 1, 1,
-          0, 0, 0, 0, 0, 0, 0, 0,
-          1, 1, 1, 0, 1, 1, 1, 1,
-          0, 0, 0, 0, 0, 0, 0, 0,
-          1, 1, 1, 1, 1, 0, 1, 0,
-          1, 0, 0, 0, 0, 0, 1, 0,
-          1, 0, 1, 1, 0, 1, 1, 0,
-          1, 0, 0, 0, 0, 0, 0, 0 };
+    [SerializeField]
+    TextAsset rawMapData;
+
+    int[] building_position;
 
     List<Pathpoint> map_as_pp = new List<Pathpoint>();
 
@@ -55,6 +50,17 @@ public class GameMap : MonoBehaviour
         if(tiles_holder != null)
         {
             GameObject.DestroyImmediate(tiles_holder);
+        }
+
+        string map_string_raw = rawMapData.text;
+        string cleaned_map_string = map_string_raw.Replace("\r\n", "").Replace("\n", "").Replace("\r", "");
+
+        building_position = new int[tiles_width * tiles_height];
+        for(int i = 0; i < tiles_width * tiles_height; ++i)
+        {
+            //This was a very painful bug until I looked it up
+            //Converting directly to an int, gives me the ASCII code, not the actual number
+            building_position[i] = cleaned_map_string[i] - '0';
         }
 
         buildings_holder = new GameObject("Buildings");
