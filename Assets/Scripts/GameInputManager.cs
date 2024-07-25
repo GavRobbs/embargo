@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 
-public class GameInputManager : MonoBehaviour
+public class GameInputManager : MonoBehaviour, IMessageHandler
 {
     float cam_rot_dir = 0.0f;
     bool isCameraRotating = false;
@@ -37,6 +37,7 @@ public class GameInputManager : MonoBehaviour
 
     void Start()
     {
+        MessageDispatcher.GetInstance().AddHandler(this);
     }
 
 
@@ -174,4 +175,7 @@ public class GameInputManager : MonoBehaviour
 
     }
 
+    public void HandleMessage(GameMessage message)
+    {
+    }
 }
