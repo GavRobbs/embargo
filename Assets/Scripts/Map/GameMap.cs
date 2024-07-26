@@ -27,15 +27,26 @@ public class GameMap : MonoBehaviour
 
     int[] building_position;
 
+    [SerializeField]
     List<Pathpoint> map_as_pp = new List<Pathpoint>();
 
+    [SerializeField]
     List<Building> buildings = new List<Building>();
 
     Pathfinder pathfinder;
 
+    [SerializeField]
+    List<Vector3> target_grid_positions = new List<Vector3>();
+
+    /* The use of SerializeField for the map_as_pp, buildings and target_grid_position fields is tricky. I'm not using them here because I want to expose them to the editor.
+     I'm using them here because I want the data to persist or be serialized between edit and play mode. The Regenerate function is called by my GameMapEditor tool,
+    so it populates everything in edit mode, but for some reason, even though I mark it as dirty, it doesn't persist the data unless its a SerializeField. This is also
+    related to why I had to initialize the pathfinder in the start method, its not a monobehaviour and does not seem to hold on to its initization unless I do it at runtime.*/
+
     void Start()
     {
-        Regenerate();        
+        /* This takes a bit of lateral thinking, but the idea is that the regenerate method is called in the editor, so those other fields are already populated.*/
+        pathfinder = new Pathfinder(map_as_pp, tiles_width, tiles_height);
     }
 
     public void Regenerate()
@@ -44,13 +55,24 @@ public class GameMap : MonoBehaviour
         //I use DestroyImmediate because its the only thing that works in the editor
         if(buildings_holder != null)
         {
+            for(int i = 0; i < buildings_holder.transform.childCount; ++i)
+            {
+                GameObject.DestroyImmediate(buildings_holder.transform.GetChild(i).gameObject);
+            }
             GameObject.DestroyImmediate(buildings_holder);
         }
 
         if(tiles_holder != null)
         {
+            for (int i = 0; i < tiles_holder.transform.childCount; ++i)
+            {
+                GameObject.DestroyImmediate(tiles_holder.transform.GetChild(i).gameObject);
+            }
+
             GameObject.DestroyImmediate(tiles_holder);
         }
+
+        target_grid_positions = new List<Vector3>();
 
         string map_string_raw = rawMapData.text;
         string cleaned_map_string = map_string_raw.Replace("\r\n", "").Replace("\n", "").Replace("\r", "");
@@ -76,6 +98,13 @@ public class GameMap : MonoBehaviour
 
     public List<Vector3> GetPath(Vector3 startPoint, Vector3 endPoint)
     {
+        if(pathfinder == null)
+        {
+            Debug.LogError("No pathfinder found");
+            Debug.Break();
+            return null;
+        }
+
         return pathfinder.FindPath(startPoint, endPoint);
     }
 
@@ -138,6 +167,15 @@ public class GameMap : MonoBehaviour
             pp.IsPassable = true;
             pp.transform.SetParent(tiles_holder.transform, true);
         }
+        else if (tile_type == 2)
+        {
+            GameObject rto = GameObject.Instantiate(roadPrefab, target_position, Quaternion.identity);
+            pp = rto.GetComponent<Pathpoint>();
+            pp.IsPassable = true;
+            pp.transform.SetParent(tiles_holder.transform, true);
+            Debug.Log("Adding to target grid positions");
+            target_grid_positions.Add(target_position);
+        }
 
         pp.IndexedPosition = array_positions;
         return pp;
@@ -147,7 +185,7 @@ public class GameMap : MonoBehaviour
     {
         //This function is the workhorse and iterates through the building position array
         //to generate the map
-        //TODO: Edit it to read from a text file so I can change the map on the fly
+        Debug.Log("Creating tiles");
 
         Vector3 t_dim = GetTileDimensions(buildSpotPrefab.GetComponentInChildren<MeshFilter>().sharedMesh);
         Vector3 ft_topleft = GetFirstTileTopLeftCorner(tiles_width, tiles_height, t_dim);
@@ -156,9 +194,11 @@ public class GameMap : MonoBehaviour
         for (int j = 0; j < tiles_height; j++)
         {
             for (int i = 0; i < tiles_width; i++)
-            {
+            {           
                 int array_index = (tiles_width * j) + i;
+
                 Vector3 current_center_position = ft_topleft + new Vector3(t_dim.x * (float)i, 0.0f, -t_dim.z * (float)j) + halfstep_vector;
+
                 map_as_pp.Add(SpawnTileAtSpot(building_position[array_index], current_center_position, new Vector2Int(i, j)));
             }
         }
@@ -231,9 +271,9 @@ public class GameMap : MonoBehaviour
         return adjacents;
     }
 
-    // Update is called once per frame
-    void Update()
+    public Vector3 GetRandomTargetPosition()
     {
-
+        return target_grid_positions[Random.Range(0, target_grid_positions.Count)];
     }
+
 }

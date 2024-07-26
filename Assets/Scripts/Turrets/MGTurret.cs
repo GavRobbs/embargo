@@ -99,7 +99,7 @@ public class MGTurret : OffensiveTurret
         if (current_fire_time <= 0.0f)
         {
             currentState = TurretState.RESTING;
-            StopFiring();
+            StopFiring(true);
             current_delay_time = ReloadTime;
 
         }
@@ -211,14 +211,14 @@ public class MGTurret : OffensiveTurret
         b2.GetComponent<MGBullet>().Damage = DamagePerShot / 2.0f;
     }
 
-    void Start()
+    override protected void Start()
     {
         cannon1_ps.Stop();
         cannon2_ps.Stop();
         base.Start();
     }
 
-    void Update()
+    override protected void Update()
     {
         base.Update();
     }

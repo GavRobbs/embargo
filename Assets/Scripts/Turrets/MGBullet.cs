@@ -22,9 +22,4 @@ public class MGBullet : MonoBehaviour
         GameObject.Destroy(this.gameObject, 3);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }
