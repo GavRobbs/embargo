@@ -103,7 +103,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
     float current_cooldown_bonus = 1.0f;
 
     // Start is called before the first frame update
-    protected void Start()
+    protected virtual void Start()
     {
         enemyDetector.SetDetectionRadius(Influence);
     }
@@ -208,7 +208,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
     //handles the idle behaviour
     protected abstract void ChillBehaviour();
 
-    protected void Update()
+    protected virtual void Update()
     {
         switch (currentState)
         {

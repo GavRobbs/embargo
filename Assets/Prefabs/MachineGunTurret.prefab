@@ -148,7 +148,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.05
+      scalar: 0.02
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -201,7 +201,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 7
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -317,7 +317,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.15
+      scalar: 0.1
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -4954,14 +4954,14 @@ MonoBehaviour:
   animator: {fileID: 4410305227815522674}
   base_delay_time: 1.5
   base_attack_range: 2.5
-  base_attack_damage: 5
+  base_attack_damage: 3
   turretMesh: {fileID: 8642719222160114962}
   enemyDetector: {fileID: 3176143293297361291}
   currentState: 3
   cannon1_ps: {fileID: 4441741444031596524}
   cannon2_ps: {fileID: 5260050862423322523}
   laser: {fileID: 5128083729902514587}
-  fireTime: 3.5
+  fireTime: 2.7
   bullet_delay_seconds: 0.35
   bulletPrefab: {fileID: 7271852646974739307, guid: 65bc7ea56bc33e6438d8842b2263a939,
     type: 3}
@@ -5010,7 +5010,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 03b82bccab5d4bc44a6d01f46874cecb, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.629
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -5106,6 +5106,7 @@ GameObject:
   - component: {fileID: 6833892043680935603}
   - component: {fileID: 6031794991936188161}
   - component: {fileID: 3750392470147592144}
+  - component: {fileID: 9198413644174013771}
   m_Layer: 9
   m_Name: Laser
   m_TagString: Untagged
@@ -5188,6 +5189,25 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!95 &9198413644174013771
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5128083729902514587}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6c36beb1484d24f4c9f7f4991b48e353, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &6693857652778822694
 GameObject:
   m_ObjectHideFlags: 0
@@ -5430,7 +5450,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.05
+      scalar: 0.02
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -5483,7 +5503,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 7
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -5599,7 +5619,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.15
+      scalar: 0.1
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -10169,7 +10189,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: afe5ea84873498a42b2e125d5ed6cc88, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.432
   m_Pitch: 1
   Loop: 0
   Mute: 0

@@ -17,6 +17,8 @@ public class GameMapEditor : Editor
         if(GUILayout.Button("Regenerate Map"))
         {
             map.Regenerate();
+            EditorUtility.SetDirty(map);
+            UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(map.gameObject.scene);
         }
     }
 }
