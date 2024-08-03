@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,10 +9,25 @@ public class UIController : MonoBehaviour
 
     private void Start()
     {
-        panels = new List<GameObject>(GameObject.FindGameObjectsWithTag("Panel"));
-        var defaultPanel = GameObject.FindGameObjectWithTag("DefaultPanel");
-        panels.Add(defaultPanel);
-        SwitchToPanel(defaultPanel);
+        GameObject defaultPanel = null;
+        panels = new List<GameObject>();
+        var canvasObj = GameObject.FindObjectOfType<Canvas>();
+        foreach (Transform child in canvasObj.transform)
+        {
+            if (child.gameObject.CompareTag("Panel"))
+            {
+                panels.Add(child.gameObject);
+            }
+            else if (child.gameObject.CompareTag("DefaultPanel"))
+            {
+                panels.Add(child.gameObject);
+                defaultPanel = child.gameObject;
+            }
+        }
+        if (defaultPanel)
+        {
+            SwitchToPanel(defaultPanel);
+        }
     }
 
     private void DisableAllPanels()
