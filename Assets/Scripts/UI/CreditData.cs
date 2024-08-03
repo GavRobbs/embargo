@@ -3,7 +3,7 @@
     private string author_;
     private string creditedItem_;
 
-    public CreditData(string author, string creditedItem)
+    public CreditData(string creditedItem, string author)
     {
         author_ = author;
         creditedItem_ = creditedItem;

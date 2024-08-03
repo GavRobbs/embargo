@@ -13,6 +13,12 @@ public class Credits : MonoBehaviour
     [SerializeField]
     GameObject creditPrefab;
 
+    [SerializeField]
+    int creditInterval;
+
+    [SerializeField]
+    int restartInterval;
+
     private List<CreditData> credits;
     private List<GameObject> creditObjects;
 
@@ -40,7 +46,10 @@ public class Credits : MonoBehaviour
         // Destroy all credits
         foreach (var credit in creditObjects)
         {
-            Destroy(credit);
+            if (credit)
+            {
+                Destroy(credit);
+            }
         }
         creditObjects.Clear();
         nextIndex = 0;
@@ -59,15 +68,25 @@ public class Credits : MonoBehaviour
 
         if (isActiveAndEnabled)
         {
-            GameObject newCredit = Instantiate(creditPrefab, transform);
-            newCredit.GetComponent<TextMeshProUGUI>().text = credits[nextIndex++].formattedString;
-            creditObjects.Add(newCredit);
             if (nextIndex == credits.Count)
             {
-                nextIndex = 0;
-                yield return new WaitForSecondsRealtime(2);
+                // Out of credits to show, check if we can restart
+                if (creditObjects.Count == 0)
+                {
+                    // All credits destroyed, wait a bit before coming back here to add new ones
+                    nextIndex = 0;
+                    yield return new WaitForSecondsRealtime(restartInterval - creditInterval);
+                }
             }
-            yield return new WaitForSecondsRealtime(1);
+            else
+            {
+                // Still credits to show, create a new one
+                GameObject newCredit = Instantiate(creditPrefab, transform);
+                newCredit.GetComponent<TextMeshProUGUI>().text = credits[nextIndex++].formattedString;
+                creditObjects.Add(newCredit);
+            }
+            // Wait then handle more credits
+            yield return new WaitForSecondsRealtime(creditInterval);
             StartCoroutine("HandleCredits");
         }
     }
