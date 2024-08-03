@@ -1,14 +1,29 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
+    [SerializeField]
+    AudioClip moveSound;
+
+    [SerializeField]
+    AudioClip clickSound;
+
+    [SerializeField]
+    AudioClip playSound;
+
+    private AudioSource audioSrc;
+
     private List<GameObject> panels;
 
     private void Start()
     {
+        audioSrc = GetComponent<AudioSource>();
+
         GameObject defaultPanel = null;
         panels = new List<GameObject>();
         var canvasObj = GameObject.FindObjectOfType<Canvas>();
@@ -42,6 +57,7 @@ public class UIController : MonoBehaviour
     {
         DisableAllPanels();
         panel.SetActive(true);
+        GameObject.Find("SceneManager").GetComponent<PlayerInput>().SwitchCurrentActionMap("UI");
         foreach (var child in panel.GetComponentsInChildren<Button>(false))
         {
             if (child.CompareTag("DefaultButton"))
@@ -53,7 +69,19 @@ public class UIController : MonoBehaviour
 
     public void OnPlay()
     {
-        Debug.Log("start game");
         DisableAllPanels();
+        audioSrc.PlayOneShot(playSound);
+        GameObject.Find("SceneManager").GetComponent<PlayerInput>().SwitchCurrentActionMap("InGame");
+        Debug.Log("start game");
+    }
+
+    public void OnClick()
+    {
+        audioSrc.PlayOneShot(clickSound);
+    }
+
+    public void OnMove()
+    {
+        audioSrc.PlayOneShot(moveSound);
     }
 }
