@@ -20,6 +20,8 @@ public class UIController : MonoBehaviour
 
     private List<GameObject> panels;
 
+    private bool selectingButton = false;
+
     private void Start()
     {
         audioSrc = GetComponent<AudioSource>();
@@ -62,7 +64,15 @@ public class UIController : MonoBehaviour
         {
             if (child.CompareTag("DefaultButton"))
             {
-                child.Select();
+                selectingButton = true;
+                try
+                {
+                    child.Select();
+                }
+                finally
+                {
+                    selectingButton = false;
+                }
             }
         }
     }
@@ -80,8 +90,11 @@ public class UIController : MonoBehaviour
         audioSrc.PlayOneShot(clickSound);
     }
 
-    public void OnMove()
+    public void OnSelect()
     {
-        audioSrc.PlayOneShot(moveSound);
+        if (!selectingButton)
+        {
+            audioSrc.PlayOneShot(moveSound);
+        }
     }
 }
