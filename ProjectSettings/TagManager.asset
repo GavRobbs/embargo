@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - DefaultButton
+  - Panel
+  - DefaultPanel
   layers:
   - Default
   - TransparentFX

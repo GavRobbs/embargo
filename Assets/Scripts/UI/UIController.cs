@@ -4,39 +4,25 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    [SerializeField]
-    GameObject creditsPanel;
-
-    [SerializeField]
-    GameObject mainMenuPanel;
-
-    [SerializeField]
-    GameObject victoryPanel;
-
-    [SerializeField]
-    GameObject gameOverPanel;
-
-    private List<GameObject> panels = new List<GameObject>();
+    private List<GameObject> panels;
 
     private void Start()
     {
-        panels.Add(creditsPanel);
-        panels.Add(mainMenuPanel);
-        panels.Add(victoryPanel);
-        panels.Add(gameOverPanel);
-
-        SwitchToPanel(mainMenuPanel);
+        panels = new List<GameObject>(GameObject.FindGameObjectsWithTag("Panel"));
+        var defaultPanel = GameObject.FindGameObjectWithTag("DefaultPanel");
+        panels.Add(defaultPanel);
+        SwitchToPanel(defaultPanel);
     }
 
     private void DisableAllPanels()
     {
-        foreach (GameObject panel in panels)
+        foreach (var panel in panels)
         {
             panel.SetActive(false);
         }
     }
 
-    private void SwitchToPanel(GameObject panel)
+    public void SwitchToPanel(GameObject panel)
     {
         DisableAllPanels();
         panel.SetActive(true);
@@ -53,14 +39,5 @@ public class UIController : MonoBehaviour
     {
         Debug.Log("start game");
         DisableAllPanels();
-    }
-
-    public void OnCredits()
-    {
-        SwitchToPanel(creditsPanel);
-    }
-    public void OnMainMenu()
-    {
-        SwitchToPanel(mainMenuPanel);
     }
 }
