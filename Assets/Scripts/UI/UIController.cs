@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
@@ -10,12 +10,20 @@ public class UIController : MonoBehaviour
     [SerializeField]
     GameObject mainMenuPanel;
 
+    [SerializeField]
+    GameObject victoryPanel;
+
+    [SerializeField]
+    GameObject gameOverPanel;
+
     private List<GameObject> panels = new List<GameObject>();
 
     private void Start()
     {
         panels.Add(creditsPanel);
         panels.Add(mainMenuPanel);
+        panels.Add(victoryPanel);
+        panels.Add(gameOverPanel);
 
         SwitchToPanel(mainMenuPanel);
     }
@@ -32,6 +40,13 @@ public class UIController : MonoBehaviour
     {
         DisableAllPanels();
         panel.SetActive(true);
+        foreach (var child in panel.GetComponentsInChildren<Button>(false))
+        {
+            if (child.CompareTag("DefaultButton"))
+            {
+                child.Select();
+            }
+        }
     }
 
     public void OnPlay()
