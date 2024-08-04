@@ -47,6 +47,7 @@ public class GameMap : MonoBehaviour
     {
         /* This takes a bit of lateral thinking, but the idea is that the regenerate method is called in the editor, so those other fields are already populated.*/
         pathfinder = new Pathfinder(map_as_pp, tiles_width, tiles_height);
+        Debug.Log("Pathfinder created");
     }
 
     public void Regenerate()

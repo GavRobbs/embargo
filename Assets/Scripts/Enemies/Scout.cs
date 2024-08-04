@@ -48,7 +48,10 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
         }
         else
         {
-            current_task.OnTaskUpdate(Time.deltaTime);
+            if(current_task != null)
+            {
+                current_task.OnTaskUpdate(Time.deltaTime);
+            }
         }
         
     }
