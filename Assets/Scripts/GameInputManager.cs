@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class GameInputManager : MonoBehaviour, IMessageHandler
 {
@@ -173,6 +174,11 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
             rotation_angle = 0.0f;
         }
 
+    }
+
+    public void OnPause(InputAction.CallbackContext callbackContext)
+    {
+        SceneManager.LoadScene(0);
     }
 
     public void HandleMessage(GameMessage message)

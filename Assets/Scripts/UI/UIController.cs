@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
@@ -19,6 +18,8 @@ public class UIController : MonoBehaviour
     private AudioSource audioSrc;
 
     private List<GameObject> panels;
+    private GameObject activePanel;
+    private GameObject defaultPanel;
 
     private bool selectingButton = false;
 
@@ -26,7 +27,6 @@ public class UIController : MonoBehaviour
     {
         audioSrc = GetComponent<AudioSource>();
 
-        GameObject defaultPanel = null;
         panels = new List<GameObject>();
         var canvasObj = GameObject.FindObjectOfType<Canvas>();
         foreach (Transform child in canvasObj.transform)
@@ -53,13 +53,16 @@ public class UIController : MonoBehaviour
         {
             panel.SetActive(false);
         }
+        activePanel = null;
     }
 
     public void SwitchToPanel(GameObject panel)
     {
         DisableAllPanels();
+
         panel.SetActive(true);
-        GameObject.Find("SceneManager").GetComponent<PlayerInput>().SwitchCurrentActionMap("UI");
+        activePanel = panel;
+        
         foreach (var child in panel.GetComponentsInChildren<Button>(false))
         {
             if (child.CompareTag("DefaultButton"))
@@ -79,10 +82,21 @@ public class UIController : MonoBehaviour
 
     public void OnPlay()
     {
-        DisableAllPanels();
+        foreach (var child in activePanel.GetComponentsInChildren<Button>(false))
+        {
+            child.interactable = false;
+        }
+        StartCoroutine("StartGame");
+    }
+
+    IEnumerator StartGame()
+    {
+        // Play suspenseful sound and wait for it to complete
         audioSrc.PlayOneShot(playSound);
-        GameObject.Find("SceneManager").GetComponent<PlayerInput>().SwitchCurrentActionMap("InGame");
-        Debug.Log("start game");
+        yield return new WaitForSecondsRealtime(playSound.length);
+
+        // Load and switch to the main game scene
+        yield return SceneManager.LoadSceneAsync(1, LoadSceneMode.Single);
     }
 
     public void OnClick()
