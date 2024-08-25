@@ -4,9 +4,10 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - DefaultButton
   - Panel
+  - DefaultButton
   - DefaultPanel
+  - MenuController
   layers:
   - Default
   - TransparentFX
