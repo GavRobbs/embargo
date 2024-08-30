@@ -78,12 +78,15 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
         if (doRaycast)
         {
             doRaycast = false;
+            //This is a bit misleading, this actually checks to make sure we're not clicking on a UI element
             if (EventSystem.current.IsPointerOverGameObject())
             {
-                //don't handle this if the pointer is over a game object
+                Debug.Log("Pointer over UI element");
+                //don't handle this if the pointer is not over a game object
                 return;
             }
 
+            Debug.Log("Pointer over game screen");
             Vector2 mouse_pos = Mouse.current.position.ReadValue();
             Ray ray = Camera.main.ScreenPointToRay(mouse_pos);
             RaycastHit hit;
@@ -103,6 +106,7 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
     {
         if (callbackContext.started)
         {
+            Debug.Log("Clicked!");
             doRaycast = true;
         }
         else if (callbackContext.canceled)

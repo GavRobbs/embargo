@@ -10273,6 +10273,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!65 &275050395369778345
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8642719222160114962}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.3377585, y: 1.6465555, z: 2.3515503}
+  m_Center: {x: 0.0068957466, y: 0.8081946, z: -0.027582476}
 --- !u!95 &4410305227815522674
 Animator:
   serializedVersion: 3

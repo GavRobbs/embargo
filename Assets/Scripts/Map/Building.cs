@@ -43,6 +43,128 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
 
     float fadeSpeed = 0.0f;
 
+    public interface IBuildingTask
+    {
+        void StartTask();
+        void UpdateTask(float dt);
+        void CancelTask();
+
+        bool IsDone { get; }
+        bool IsCancelled { get; }
+    }
+
+    IBuildingTask current_task;
+
+    public class BuildTurretTask : IBuildingTask
+    {
+        bool _done = false;
+        bool _cancelled = false;
+        public bool IsDone => _done;
+
+        public bool IsCancelled => _cancelled;
+
+        Building target_building;
+        GameObject turretPrefab;
+        float build_time;
+        float fadeSpeed;
+
+        System.Action<float> updateCallback;
+        System.Action doneCallback;
+        System.Action cancelCallback;
+
+        public BuildTurretTask(Building b, GameObject prefab, float build_duration, System.Action<float> updateC, System.Action doneC, System.Action cancelC)
+        {
+            target_building = b;
+            turretPrefab = prefab;
+            build_time = build_duration;
+            updateCallback = updateC;
+            doneCallback = doneC;
+            cancelCallback = cancelC;
+        }
+
+        public void CancelTask()
+        {
+            if (IsDone || IsCancelled)
+            {
+                return;
+            }
+
+            target_building.buildingTeleportSound.Stop();
+            _cancelled = true;
+            cancelCallback();
+        }
+
+        public void StartTask()
+        {
+            target_building.buildingTeleportSound.Play();
+            target_building.building_turret = true;
+            target_building.teleportEffect = GameObject.Instantiate(target_building.teleportEffectPrefab, target_building.turretLocationHolder.transform);
+            target_building.attached_turret = GameObject.Instantiate(turretPrefab, target_building.turretLocationHolder.transform);
+
+            SkinnedMeshRenderer[] mrs = target_building.attached_turret.GetComponentsInChildren<SkinnedMeshRenderer>();
+            fadeSpeed = 0.5f / build_time;
+            foreach (var renderer in mrs)
+            {
+                Material[] materials = renderer.materials;
+
+                for (int i = 0; i < materials.Length; ++i)
+                {
+                    var col = materials[i].color;
+                    col.a = 0.1f;
+                    materials[i].color = col;
+                }
+            }
+        }
+
+        public void UpdateTask(float dt)
+        {
+            if (IsDone)
+            {
+                return;
+            }
+
+            updateCallback(dt);
+
+            SkinnedMeshRenderer[] mrs = target_building.attached_turret.GetComponentsInChildren<SkinnedMeshRenderer>();
+
+            bool fade_done = true;
+            foreach (var renderer in mrs)
+            {
+                Material[] materials = renderer.materials;
+
+                for (int i = 0; i < materials.Length; ++i)
+                {
+                    var col = materials[i].color;
+                    col.a += dt * fadeSpeed;
+                    materials[i].color = col;
+
+                    if (col.a >= 1.0f)
+                    {
+                        col.a = 1.0f;
+                        fade_done = fade_done && true;
+                    }
+                    else
+                    {
+                        fade_done = fade_done && false;
+                    }
+                }
+            }
+
+            if (fade_done)
+            {
+                doneCallback();
+                target_building.buildingTeleportSound.Stop();
+                _done = true;
+                GameObject.Destroy(target_building.attached_turret);
+                GameObject.Destroy(target_building.teleportEffect);
+                target_building.building_turret = false;
+                target_building.hasTurret = true;
+                target_building.attached_turret = GameObject.Instantiate(turretPrefab, target_building.turretLocationHolder.transform);
+            }           
+
+        }
+    }
+
     public Pathpoint RandomAdjacent
     {
         get
@@ -61,40 +183,28 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
         meshRenderer = GetComponentInChildren<MeshRenderer>();
     }
 
+    public void SetTask(IBuildingTask task)
+    {
+        if(current_task != null)
+        {
+            return;
+        }
+
+        current_task = task;
+        current_task.StartTask();
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if (building_turret && !hasTurret)
+        if(current_task != null)
         {
-            bool doneMaking = false;
-            SkinnedMeshRenderer[] mrs = attached_turret.GetComponentsInChildren<SkinnedMeshRenderer>();
-            foreach (var renderer in mrs)
+            current_task.UpdateTask(Time.deltaTime);
+
+            if(current_task.IsCancelled || current_task.IsDone)
             {
-                Material[] materials = renderer.materials;
-
-                for (int i = 0; i < materials.Length; ++i)
-                {
-                    var col = materials[i].color;
-                    col.a += Time.deltaTime * fadeSpeed;
-                    materials[i].color = col;
-
-                    if (col.a >= 1.0f)
-                    {
-                        col.a = 1.0f;
-                        doneMaking = true;
-                    }
-                }
+                current_task = null;
             }
-
-            if (doneMaking)
-            {
-                GameObject.Destroy(attached_turret);
-                building_turret = false;
-                buildingTeleportSound.Stop();
-                GameObject.Destroy(teleportEffect);
-                AddTurret();
-            }
-
         }
     }
 
@@ -108,46 +218,6 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
         meshRenderer.material = defaultMaterial;
     }
 
-    public void BuildTurret(float duration)
-    {
-        if (hasTurret || building_turret)
-        {
-            return;
-        }
-
-        buildingTeleportSound.Play();
-        build_duration = duration;
-        building_turret = true;
-        attached_turret = GameObject.Instantiate(turretPrefab, turretLocationHolder.transform);
-        teleportEffect = GameObject.Instantiate(teleportEffectPrefab, turretLocationHolder.transform);
-
-        SkinnedMeshRenderer[] mrs = attached_turret.GetComponentsInChildren<SkinnedMeshRenderer>();
-        fadeSpeed = 0.5f / duration;
-        foreach (var renderer in mrs)
-        {
-            Material[] materials = renderer.materials;
-
-            for (int i = 0; i < materials.Length; ++i)
-            {
-                var col = materials[i].color;
-                col.a = 0.1f;
-                materials[i].color = col;
-            }
-        }
-
-    }
-
-    public void AddTurret()
-    {
-        if (hasTurret)
-        {
-            return;
-        }
-
-        hasTurret = true;
-        attached_turret = GameObject.Instantiate(turretPrefab, turretLocationHolder.transform);
-    }
-
     void PreviewTurret()
     {
         if (hasTurret || previewTurret != null || building_turret)
@@ -156,7 +226,6 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
         }
 
         previewTurret = GameObject.Instantiate(turretPrefab, turretLocationHolder.transform);
-
     }
 
     public PopupContent GetHoverData()
