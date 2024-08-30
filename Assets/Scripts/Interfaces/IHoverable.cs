@@ -1,6 +1,7 @@
-﻿public interface IHoverable
+﻿using System.Collections.Generic;
+public interface IHoverable
 {
-    PopupContent GetHoverData();
+    Dictionary<string, string> GetHoverData();
 
     void OnHoverOver();
 

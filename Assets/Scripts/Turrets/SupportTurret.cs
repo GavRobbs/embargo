@@ -13,17 +13,22 @@ public abstract class SupportTurret : MonoBehaviour, ITurret
     [SerializeField]
     protected Transform influence_center;
 
-    public PopupContent GetHoverData()
+    public Dictionary<string, string> GetHoverData()
+    {
+        return new Dictionary<string, string>()
+        {
+            {"type" , "support_turret"},
+            {"name", TurretClass },
+            {"level", Level.ToString() }
+        };
+    }
+
+    public virtual void OnHoverOff()
     {
         throw new System.NotImplementedException();
     }
 
-    public void OnHoverOff()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void OnHoverOver()
+    public virtual void OnHoverOver()
     {
         throw new System.NotImplementedException();
     }

@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DroneAndTurretManager : MonoBehaviour
+public class DroneAndTurretManager : MonoBehaviour, IMessageHandler
 {
+    public void HandleMessage(GameMessage message)
+    {
+    }
+
     void BuildTurret(Building target, GameObject tower_type_prefab, float build_time)
     {
         Building.BuildTurretTask new_turret_task = new Building.BuildTurretTask(target, tower_type_prefab, build_time, (dt) =>
         {
-            //Subtract the cost per second
-
         },
         () =>
         {
@@ -20,5 +22,10 @@ public class DroneAndTurretManager : MonoBehaviour
 
         });
         target.SetTask(new_turret_task);
+    }
+
+    void Start()
+    {
+        MessageDispatcher.GetInstance().AddHandler(this);
     }
 }

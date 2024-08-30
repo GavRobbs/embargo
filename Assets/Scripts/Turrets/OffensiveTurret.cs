@@ -165,17 +165,22 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
         return true;
     }
 
-    public PopupContent GetHoverData()
+    public Dictionary<string, string> GetHoverData()
+    {
+        return new Dictionary<string, string>()
+        {
+            {"type" , "support_turret"},
+            {"name", TurretClass },
+            {"level", Level.ToString() }
+        };
+    }
+
+    public virtual void OnHoverOver()
     {
         throw new System.NotImplementedException();
     }
 
-    public void OnHoverOver()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void OnHoverOff()
+    public virtual void OnHoverOff()
     {
         throw new System.NotImplementedException();
     }

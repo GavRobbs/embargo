@@ -26,12 +26,17 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
 
     float rotation_angle = 0.0f;
 
-    IHoverable current_hoverable = null;
-    float to_hover_time = 0.3f;
+   
 
     bool doRaycast = false;
 
     ISelectable current_selectable;
+
+    IHoverable current_hoverable = null;
+    float to_hover_time = 0.7f;
+
+    public enum HOVER_MODE : int { INFO, BUILD, HIGHLIGHT };
+    HOVER_MODE current_hover_mode = HOVER_MODE.INFO;
 
     [SerializeField]
     GameMap map_manager;
@@ -90,6 +95,7 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
             Vector2 mouse_pos = Mouse.current.position.ReadValue();
             Ray ray = Camera.main.ScreenPointToRay(mouse_pos);
             RaycastHit hit;
+
         }
 
     }
@@ -100,6 +106,57 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
         Vector2 mouse_pos = Mouse.current.position.ReadValue();
         Ray ray = Camera.main.ScreenPointToRay(mouse_pos);
         RaycastHit hit;
+
+        if(Physics.Raycast(ray, out hit, 1000.0f, LayerMask.GetMask("Building", "Turret", "Enemy")))
+        {
+            IHoverable hoverable = hit.collider.GetComponentInParent<IHoverable>();
+
+            if(current_hover_mode == HOVER_MODE.INFO)
+            {
+                if (current_hoverable == null)
+                {
+                    current_hoverable = hoverable;
+                    to_hover_time = 0.7f;
+                }
+                else if (current_hoverable == hoverable)
+                {
+                    if (to_hover_time > 0.0f)
+                    {
+                        to_hover_time -= Time.deltaTime;
+                        if (to_hover_time <= 0.0f)
+                        {
+                            //This function should open the hover window
+                            MessageDispatcher.GetInstance().Dispatch(new HoverInfoDisplayMessage(hoverable.GetHoverData(), Mouse.current.position.ReadValue()));
+                            current_hoverable.OnHoverOver();
+                        }
+                    }
+
+                }
+                else
+                {
+                    current_hoverable.OnHoverOff();
+                    //This function should close the hover window
+                    MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.HideHoverPopupMessage));
+                    current_hoverable = hoverable;
+                    to_hover_time = 0.7f;
+                }
+
+            }           
+
+        }
+        else
+        {
+            if(current_hoverable != null)
+            {
+                current_hoverable.OnHoverOff();
+                current_hoverable = null;
+                MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.HideHoverPopupMessage));
+            }
+
+
+            to_hover_time = 0.7f;
+        }
+
     }
 
     public void OnClick(InputAction.CallbackContext callbackContext)

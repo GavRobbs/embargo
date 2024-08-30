@@ -228,18 +228,23 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
         previewTurret = GameObject.Instantiate(turretPrefab, turretLocationHolder.transform);
     }
 
-    public PopupContent GetHoverData()
+    public Dictionary<string, string> GetHoverData()
     {
-        return new PopupContent("Building", 30, 30, hasTurret ? "Turret" : null, hasTurret ? 1 : 0);
+        Dictionary<string, string> result = new Dictionary<string, string>()
+        {
+            {"type", "building"},
+            {"hp", "30"}
+        };
+        return result;
     }
 
     public void OnHoverOver()
     {
-        PreviewTurret();
+        //PreviewTurret();
     }
 
     public void OnHoverOff()
     {
-        GameObject.Destroy(previewTurret);
+        //GameObject.Destroy(previewTurret);
     }
 }

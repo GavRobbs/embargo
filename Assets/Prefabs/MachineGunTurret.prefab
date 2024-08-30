@@ -4855,7 +4855,7 @@ GameObject:
   - component: {fileID: 3205498463741670625}
   - component: {fileID: 3205498463741670630}
   - component: {fileID: 3176143293297361291}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: EnemyDetector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5105,9 +5105,8 @@ GameObject:
   - component: {fileID: 7219538216369015941}
   - component: {fileID: 6833892043680935603}
   - component: {fileID: 6031794991936188161}
-  - component: {fileID: 3750392470147592144}
   - component: {fileID: 9198413644174013771}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Laser
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5175,20 +5174,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!136 &3750392470147592144
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5128083729902514587}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!95 &9198413644174013771
 Animator:
   serializedVersion: 3
@@ -10284,8 +10269,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2.3377585, y: 1.6465555, z: 2.3515503}
-  m_Center: {x: 0.0068957466, y: 0.8081946, z: -0.027582476}
+  m_Size: {x: 2.014481, y: 1.1975582, z: 2.010313}
+  m_Center: {x: 0.024855819, y: 0.5836959, z: -0.0006427084}
 --- !u!95 &4410305227815522674
 Animator:
   serializedVersion: 3

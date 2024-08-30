@@ -223,4 +223,14 @@ public class MGTurret : OffensiveTurret
         base.Update();
     }
 
+    public override void OnHoverOver()
+    {
+        Debug.Log("Hovering over MG " + gameObject.name);
+    }
+
+    public override void OnHoverOff()
+    {
+        
+    }
+
 }

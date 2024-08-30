@@ -3,5 +3,7 @@
 
 public enum MessageConstants : int
 {
-    NullMessage
+    NullMessage,
+    HoverInfoDisplayMessage,
+    HideHoverPopupMessage
 }

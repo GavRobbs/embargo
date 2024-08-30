@@ -33,7 +33,11 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
     [SerializeField]
     float hp;
 
+    float max_hp;
+
     public float HitPoints => hp;
+
+    public string Name => "Scout";
 
     bool dying = false;
 
@@ -101,6 +105,25 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
     public void Attack(ITurret turret)
     {
         throw new System.NotImplementedException();
+    }
+
+    public Dictionary<string, string> GetHoverData()
+    {
+        return new Dictionary<string, string>()
+        {
+            {"type", "enemy"},
+            {"name", Name },
+            {"hp", ((int)hp).ToString() },
+            {"max_hp", ((int)max_hp).ToString() }
+        };
+    }
+
+    public void OnHoverOver()
+    {
+    }
+
+    public void OnHoverOff()
+    {
     }
 
     class ScoutPathFollowTask : ITask
@@ -174,6 +197,11 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
             target_position.y = 0.0f;
         }
 
+    }
+
+    void Start()
+    {
+        max_hp = hp;
     }
 
 
