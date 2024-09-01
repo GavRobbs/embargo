@@ -26,6 +26,10 @@ public class CommandConsoleUI : MonoBehaviour, IMessageHandler
                     {
                         popupManager.ShowEnemyInfoPopup(him.info["name"], int.Parse(him.info["hp"]), int.Parse(him.info["max_hp"]), him.display_position);
                     }
+                    else if (him.info["type"] == "support_turret")
+                    {
+                        popupManager.ShowOffensiveTurretBuildingPopup(him.info["name"], int.Parse(him.info["level"]), int.Parse(him.info["hp"]), float.Parse(him.info["atk_bonus"]), float.Parse(him.info["range_bonus"]), float.Parse(him.info["def_bonus"]), him.display_position);
+                    }
                     break;
                 }
             default:

@@ -37,6 +37,12 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
     [SerializeField]
     protected EnemyDetector enemyDetector;
 
+    [SerializeField]
+    int hp = 1;
+    float atk_bonus = 1;
+    float range_bonus = 1;
+    float def_bonus = 1;
+
     protected List<AttackBoostBonus> attack_bonuses = new List<AttackBoostBonus>();
 
     protected ITargetable current_target = null;
@@ -171,7 +177,11 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
         {
             {"type" , "support_turret"},
             {"name", TurretClass },
-            {"level", Level.ToString() }
+            {"level", Level.ToString() },
+            {"hp", ((int)hp).ToString() },
+            {"atk_bonus", ((float)atk_bonus).ToString() },
+            {"range_bonus", ((float)range_bonus).ToString() },
+            {"def_bonus", ((float)def_bonus).ToString() }
         };
     }
 
