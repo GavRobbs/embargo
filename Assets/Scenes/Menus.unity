@@ -640,6 +640,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7173620923730460332, guid: 2274e78b5c7bfc14e8949ae60d5755bb,
+        type: 3}
+      propertyPath: m_Color.a
+      value: 0.72156864
+      objectReference: {fileID: 0}
+    - target: {fileID: 7173620923730460332, guid: 2274e78b5c7bfc14e8949ae60d5755bb,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7173620924106220153, guid: 2274e78b5c7bfc14e8949ae60d5755bb,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -679,6 +689,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_fontSize
       value: 50.55
+      objectReference: {fileID: 0}
+    - target: {fileID: 7173620924106220154, guid: 2274e78b5c7bfc14e8949ae60d5755bb,
+        type: 3}
+      propertyPath: m_fontColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7173620924106220154, guid: 2274e78b5c7bfc14e8949ae60d5755bb,
+        type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 7173620924106220155, guid: 2274e78b5c7bfc14e8949ae60d5755bb,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7173620924106220155, guid: 2274e78b5c7bfc14e8949ae60d5755bb,
+        type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2274e78b5c7bfc14e8949ae60d5755bb, type: 3}
@@ -929,6 +959,7 @@ GameObject:
   - component: {fileID: 574434958}
   - component: {fileID: 574434957}
   - component: {fileID: 574434956}
+  - component: {fileID: 574434959}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1020,6 +1051,25 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!95 &574434959
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 574434954}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 128efc3df4f9e7b4aaef56ca50d695dd, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &676504081
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2460,7 +2510,7 @@ GameObject:
   - component: {fileID: 1694989468}
   - component: {fileID: 1694989467}
   m_Layer: 5
-  m_Name: RawImage
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2535,6 +2585,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_fontSize
       value: 17.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 8450727295351874820, guid: 7bb3afd9e8b516e4b97743debf04ce9a,
+        type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 115986659
       objectReference: {fileID: 0}
     - target: {fileID: 8450727296454229272, guid: 7bb3afd9e8b516e4b97743debf04ce9a,
         type: 3}
@@ -2778,6 +2833,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_fontSize
       value: 17.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 8450727295351874820, guid: 7bb3afd9e8b516e4b97743debf04ce9a,
+        type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 115986659
       objectReference: {fileID: 0}
     - target: {fileID: 8450727296454229272, guid: 7bb3afd9e8b516e4b97743debf04ce9a,
         type: 3}
@@ -3025,8 +3085,8 @@ Camera:
   m_GameObject: {fileID: 1913263170}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
