@@ -16,6 +16,8 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
     [SerializeField]
     float moveSpeed;
 
+    float baseMoveSpeed;
+
     [SerializeField]
     ParticleSystem sparks;
 
@@ -25,6 +27,7 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
     [SerializeField]
     AudioSource explosion;
     public Vector3 Position => forwardPoint.transform.position;
+    public Spawner Spawner { get; set; }
 
     public bool IsFriendly => false;
 
@@ -41,23 +44,63 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
 
     bool dying = false;
 
-    ITask current_task;
+    ITask _currentTask;
+
+    int level = 1;
+
+    public ITask CurrentTask
+    {
+        get
+        {
+            return _currentTask;
+        }
+
+        set
+        {
+            if (value != null)
+            {
+                _currentTask?.OnTaskExit();
+                _currentTask = value;
+                _currentTask.OnTaskEnter();
+            }
+            else
+            {
+                _currentTask?.OnTaskExit();
+                _currentTask = null;
+            }
+        }
+    }
+
+    public void SetLevel(int lv)
+    {
+        level = lv;
+    }
+
+    public bool Busy => throw new System.NotImplementedException();
 
     // Update is called once per frame
     void Update()
     {
         if(hp <= 0.0f && !dying)
         {
+            //We only want the player to get the scrap if they kill it
+            int scrap = (int)((float)level * 0.7f * 30.0f);
+            MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<int>(MessageConstants.AddScrap, scrap));
             KillMe();
         }
         else
         {
-            if(current_task != null)
+            if(CurrentTask != null)
             {
-                current_task.OnTaskUpdate(Time.deltaTime);
+                CurrentTask.OnTaskUpdate(Time.deltaTime);
             }
         }
         
+    }
+
+    void OnDestroy()
+    {
+        Spawner.DecreaseEnemyCount();
     }
 
     public void Damage(float value)
@@ -69,9 +112,10 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Bullet"))
         {
+            float dmg = collision.gameObject.GetComponentInParent<MGBullet>().Damage;
             Destroy(collision.gameObject);
             //TODO: Patch so that the damage is done appropriately
-            Damage(5.0f);
+            Damage(dmg);
         }
 
     }
@@ -87,19 +131,9 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
 
     }
 
-    public void SetTask(ITask task)
-    {
-        if(current_task != null)
-        {
-            current_task.OnTaskExit();
-        }
-        current_task = task;
-        current_task.OnTaskEnter();
-    }
-
     public void FollowPath(List<Vector3> path_points, System.Action onComplete)
     {
-        SetTask(new ScoutPathFollowTask(this, path_points, pathfindingDistanceThreshold, moveSpeed, onComplete));
+        CurrentTask = new ScoutPathFollowTask(this, path_points, pathfindingDistanceThreshold, moveSpeed, onComplete);
     }
 
     public void Attack(ITurret turret)
@@ -118,7 +152,7 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
         };
     }
 
-    public void OnHoverOver()
+    public void OnHoverOver(HoverInfo info)
     {
     }
 
@@ -147,6 +181,9 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
             distance_threshold = threshold;
             move_speed = moveSpeed;
         }
+
+        public float Progress => 0.0f;
+
         public void OnTaskEnter()
         {
             //Ideally we could do some cleanup here to see if maybe we can join the path somewhere else apart from the start etc
@@ -202,7 +239,17 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
     void Start()
     {
         max_hp = hp;
+        baseMoveSpeed = moveSpeed;
+
+        moveSpeed *= 1.0f + ((float)(level - 1)) * 0.04f;
+
+        max_hp *= 1.0f + ((float)(level - 1)) * 0.15f;
+
+        hp = max_hp;
     }
 
-
+    public void ClearTask()
+    {
+        CurrentTask = null;
+    }
 }

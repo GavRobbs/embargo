@@ -9,10 +9,13 @@ public class AttackBoosterTurret : SupportTurret
     override public int Level => _level;
 
     int _level = 1;
+    public override float BuildTime => 8.0f;
+    public override float Influence => (float)_level * 1.0f;
+    override public int Cost => 350;
 
-    override public float Influence => (float)_level * 1.0f;
     public override void OnTurretSpawn()
     {
+        Online = true;
         Collider[] colliders = Physics.OverlapSphere(influence_center.position, Influence, LayerMask.GetMask("Turret"));
         foreach(var collider in colliders)
         {

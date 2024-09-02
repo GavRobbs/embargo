@@ -42,6 +42,14 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
     protected ITargetable current_target = null;
     protected bool atTarget = true;
 
+    [SerializeField]
+    bool _online = false;
+
+    public bool Online { get => _online; set => _online = value; }
+
+    virtual public int Cost => throw new System.NotImplementedException();
+
+
     public enum TurretState { SEEKING, FIRING, RESTING, CHILLING };
 
     /* Seeking is when the turret is rotating to try and get a lock on a target. 
@@ -52,12 +60,12 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
     public TurretState currentState = TurretState.CHILLING;
 
     virtual public string TurretClass { get => throw new System.NotImplementedException(); }
-    virtual public int Level { get => throw new System.NotImplementedException();  }
+    virtual public int Level { get => throw new System.NotImplementedException(); }
 
     //This is the attack range for offensive turrets after bonuses are calculated
-    public float Influence 
-    { 
-        get 
+    public float Influence
+    {
+        get
         {
             float level_bar_bonus = 2.0f * (float)Level / 100.0f;
             float boost_bar_bonus = RangeBonus;
@@ -66,8 +74,16 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
         }
     }
 
+    [SerializeField]
+    Building _building;
+
+    public Building AttachedBuilding { get => _building; set => _building = value; }
+
+    virtual public float BuildTime { get; }
+
+
     //This is how much damage a single shot does after bonuses are calculated
-    protected float DamagePerShot 
+    protected float DamagePerShot
     {
         get
         {
@@ -79,7 +95,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
     }
 
     //This is how long a turret takes to reload after bonuses are calculated
-    protected float ReloadTime 
+    protected float ReloadTime
     {
         get
         {
@@ -110,7 +126,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
 
     bool SetTarget(ITargetable t)
     {
-        if(Vector3.Distance(t.Position, turretMesh.transform.position) <= Influence)
+        if (Vector3.Distance(t.Position, turretMesh.transform.position) <= Influence)
         {
             //Setting a target that is in range automatically puts you in seek mode
             current_target = t;
@@ -123,7 +139,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
             //Notify that we failed to set a target
             return false;
         }
-        
+
     }
 
     protected bool LookAtTarget()
@@ -167,17 +183,25 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
 
     public Dictionary<string, string> GetHoverData()
     {
+        if (!Online)
+        {
+            return null;
+        }
+
         return new Dictionary<string, string>()
         {
-            {"type" , "support_turret"},
+            {"type" , "offensive_turret"},
             {"name", TurretClass },
-            {"level", Level.ToString() }
+            {"level", Level.ToString() },
+            {"bhp", _building.hp.ToString() },
+            {"atk_bonus", current_attack_bonus.ToString() },
+            {"cd_bonus", current_cooldown_bonus.ToString() },
+            {"range_bonus", current_range_bonus.ToString() }
         };
     }
 
-    public virtual void OnHoverOver()
+    public virtual void OnHoverOver(HoverInfo info)
     {
-        throw new System.NotImplementedException();
     }
 
     public virtual void OnHoverOff()
@@ -215,6 +239,11 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
 
     protected virtual void Update()
     {
+        if (!Online)
+        {
+            return;
+        }
+
         switch (currentState)
         {
             case TurretState.SEEKING:
@@ -247,7 +276,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
         if (currentState != TurretState.FIRING && current_delay_time >= 0.0f)
         {
             current_delay_time -= Time.deltaTime;
-            if(current_delay_time <= 0.0f)
+            if (current_delay_time <= 0.0f)
             {
                 _canFire = true;
             }
@@ -261,7 +290,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
 
     public void OnTurretSpawn()
     {
-        //I don't think anything special needs to happen here to be totally honest
+        Online = true;
     }
 
     public void OnTurretDestroy()
@@ -353,4 +382,5 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
             return current_cooldown_bonus;
         }
     }
+
 }

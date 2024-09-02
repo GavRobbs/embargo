@@ -25,11 +25,13 @@ public class MGTurret : OffensiveTurret
 
     [SerializeField]
     GameObject bulletPrefab;
+    public override float BuildTime => 6.0f;
 
     int _level = 1;
 
     override public string TurretClass { get => "Machinegun";  }
     override public int Level { get => _level; }
+    override public int Cost => 250;
 
     //These help to determine how long a machinegun volley lasts
     [SerializeField]
@@ -223,9 +225,8 @@ public class MGTurret : OffensiveTurret
         base.Update();
     }
 
-    public override void OnHoverOver()
+    public override void OnHoverOver(HoverInfo info)
     {
-        Debug.Log("Hovering over MG " + gameObject.name);
     }
 
     public override void OnHoverOff()

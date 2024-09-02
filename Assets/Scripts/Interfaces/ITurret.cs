@@ -3,6 +3,14 @@
     string TurretClass { get; }
     int Level { get; }
 
+    int Cost { get; }
+
+    bool Online { get; set; }
+
+    float BuildTime { get; }
+
+    Building AttachedBuilding { get; set;}
+
     //For offensive turrets, this is basically the attack range
     //For support turrets, this is the range they affect
     float Influence { get; }

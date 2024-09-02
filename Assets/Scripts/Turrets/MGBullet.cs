@@ -6,6 +6,7 @@ public class MGBullet : MonoBehaviour
 {
     private Vector3 forward_vector;
 
+    [SerializeField]
     float _damage;
 
     public float Damage { get => _damage; set => _damage = value; }

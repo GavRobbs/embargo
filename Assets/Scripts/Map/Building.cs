@@ -16,9 +16,6 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
     Material selectionMaterial;
 
     [SerializeField]
-    GameObject turretPrefab;
-
-    [SerializeField]
     GameObject turretLocationHolder;
 
     [SerializeField]
@@ -35,13 +32,15 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
 
     public List<Pathpoint> adjacent_empties;
 
-    bool building_turret = false;
+    public bool building_turret = false;
 
     GameObject attached_turret = null;
 
     float build_duration = 0.0f;
 
     float fadeSpeed = 0.0f;
+
+    public int hp = 30;
 
     public interface IBuildingTask
     {
@@ -80,6 +79,11 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
             updateCallback = updateC;
             doneCallback = doneC;
             cancelCallback = cancelC;
+
+            if (b.previewTurret)
+            {
+                GameObject.Destroy(b.previewTurret);
+            }
         }
 
         public void CancelTask()
@@ -102,7 +106,7 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
             target_building.attached_turret = GameObject.Instantiate(turretPrefab, target_building.turretLocationHolder.transform);
 
             SkinnedMeshRenderer[] mrs = target_building.attached_turret.GetComponentsInChildren<SkinnedMeshRenderer>();
-            fadeSpeed = 0.5f / build_time;
+            fadeSpeed = 0.9f / build_time;
             foreach (var renderer in mrs)
             {
                 Material[] materials = renderer.materials;
@@ -160,6 +164,9 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
                 target_building.building_turret = false;
                 target_building.hasTurret = true;
                 target_building.attached_turret = GameObject.Instantiate(turretPrefab, target_building.turretLocationHolder.transform);
+                ITurret new_turret = target_building.attached_turret.GetComponent<ITurret>();
+                new_turret.AttachedBuilding = target_building;
+                new_turret.OnTurretSpawn();
             }           
 
         }
@@ -218,14 +225,14 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
         meshRenderer.material = defaultMaterial;
     }
 
-    void PreviewTurret()
+    void PreviewTurret(GameObject prefab_to_see)
     {
         if (hasTurret || previewTurret != null || building_turret)
         {
             return;
         }
 
-        previewTurret = GameObject.Instantiate(turretPrefab, turretLocationHolder.transform);
+        previewTurret = GameObject.Instantiate(prefab_to_see, turretLocationHolder.transform);
     }
 
     public Dictionary<string, string> GetHoverData()
@@ -233,18 +240,29 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
         Dictionary<string, string> result = new Dictionary<string, string>()
         {
             {"type", "building"},
-            {"hp", "30"}
+            {"hp", hp.ToString()}
         };
         return result;
     }
 
-    public void OnHoverOver()
+    public void OnHoverOver(HoverInfo info)
     {
-        //PreviewTurret();
+
+        if(info == null)
+        {
+            Debug.Log("NO INFO");
+            return;
+        }
+
+
+        if (info.mode == GameInputManager.HOVER_MODE.BUILD)
+        {
+            PreviewTurret((info as BuildHoverInfo).turretPrefab);
+        }
     }
 
     public void OnHoverOff()
     {
-        //GameObject.Destroy(previewTurret);
+        GameObject.Destroy(previewTurret);
     }
 }

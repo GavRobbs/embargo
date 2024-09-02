@@ -38,11 +38,17 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
     public enum HOVER_MODE : int { INFO, BUILD, HIGHLIGHT };
     HOVER_MODE current_hover_mode = HOVER_MODE.INFO;
 
-    [SerializeField]
+    //The click mode can either be to place a building or to do nothing
+    public enum CLICK_MODE : int {  NONE, PLACE };
+    CLICK_MODE current_click_mode = CLICK_MODE.NONE;
+
     GameMap map_manager;
+
+    GameObject current_turret_pfb;
 
     void Start()
     {
+        map_manager = FindObjectOfType<GameMap>();
         MessageDispatcher.GetInstance().AddHandler(this);
     }
 
@@ -86,15 +92,42 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
             //This is a bit misleading, this actually checks to make sure we're not clicking on a UI element
             if (EventSystem.current.IsPointerOverGameObject())
             {
-                Debug.Log("Pointer over UI element");
                 //don't handle this if the pointer is not over a game object
                 return;
             }
 
-            Debug.Log("Pointer over game screen");
-            Vector2 mouse_pos = Mouse.current.position.ReadValue();
-            Ray ray = Camera.main.ScreenPointToRay(mouse_pos);
-            RaycastHit hit;
+            if (current_click_mode == CLICK_MODE.NONE)
+            {
+                return;
+            }
+            else
+            {
+                Vector2 mouse_pos = Mouse.current.position.ReadValue();
+                Ray ray = Camera.main.ScreenPointToRay(mouse_pos);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit, 1000.0f, LayerMask.GetMask("Building")))
+                {
+                    Building b = hit.collider.GetComponentInParent<Building>();
+                    if(b == null)
+                    {
+                        //TODO: Throw an error about not being a valid building
+                        MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageBuildMode));
+                        return;
+                    }
+
+                    if (b.hasTurret || b.building_turret)
+                    {
+                        //TODO: Throw an error about the building already having a turret
+                        MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageBuildMode));
+                        return;
+                    }
+
+                    MessageDispatcher.GetInstance().Dispatch(new DroneBuildMessage(b));
+                    MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageBuildMode));
+
+                }
+            }
 
         }
 
@@ -107,7 +140,7 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
         Ray ray = Camera.main.ScreenPointToRay(mouse_pos);
         RaycastHit hit;
 
-        if(Physics.Raycast(ray, out hit, 1000.0f, LayerMask.GetMask("Building", "Turret", "Enemy")))
+        if(Physics.Raycast(ray, out hit, 1000.0f, LayerMask.GetMask("Building", "Turret", "Enemy", "Drone")))
         {
             IHoverable hoverable = hit.collider.GetComponentInParent<IHoverable>();
 
@@ -127,7 +160,7 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
                         {
                             //This function should open the hover window
                             MessageDispatcher.GetInstance().Dispatch(new HoverInfoDisplayMessage(hoverable.GetHoverData(), Mouse.current.position.ReadValue()));
-                            current_hoverable.OnHoverOver();
+                            current_hoverable.OnHoverOver(null);
                         }
                     }
 
@@ -141,7 +174,21 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
                     to_hover_time = 0.7f;
                 }
 
-            }           
+            }
+            else if(current_hover_mode == HOVER_MODE.BUILD)
+            {
+                if(hoverable == null || hit.collider.gameObject.layer != LayerMask.NameToLayer("Building"))
+                {
+                    return;
+                }
+                
+                if(hoverable != current_hoverable)
+                {
+                    current_hoverable?.OnHoverOff();
+                    current_hoverable = hoverable;
+                    current_hoverable.OnHoverOver(new BuildHoverInfo(current_turret_pfb));
+                }
+            }
 
         }
         else
@@ -163,7 +210,6 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
     {
         if (callbackContext.started)
         {
-            Debug.Log("Clicked!");
             doRaycast = true;
         }
         else if (callbackContext.canceled)
@@ -244,5 +290,22 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
 
     public void HandleMessage(GameMessage message)
     {
+        switch (message.MessageType)
+        {
+            case MessageConstants.EngageBuildMode:
+                {
+                    current_hover_mode = HOVER_MODE.BUILD;
+                    current_click_mode = CLICK_MODE.PLACE;
+                    current_turret_pfb = (message as EngageBuildModeMessage).turret_prefab;
+                    break;
+                }
+            case MessageConstants.DisengageBuildMode:
+                {
+                    current_hover_mode = HOVER_MODE.INFO;
+                    current_click_mode = CLICK_MODE.NONE;
+                    current_turret_pfb = null;
+                    break;
+                }
+        }
     }
 }

@@ -7,4 +7,6 @@ public interface ITask
     void OnTaskEnter();
     void OnTaskUpdate(float dt);
     void OnTaskExit();
+
+    float Progress { get; }
 }

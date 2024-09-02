@@ -137,6 +137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb6d6d0169c2fbc4a88756725510f9ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _building: {fileID: 0}
   influence_center: {fileID: 8215386419157272177}
 --- !u!95 &8215386418104463902
 Animator:
@@ -157,6 +158,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!65 &4597169052178532501
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9134289306064670578}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3.9637787, y: 6.366732, z: 4.159445}
+  m_Center: {x: -0.02914826, y: 3.2044096, z: -0.068684414}
 --- !u!1001 &8215386418104463907
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -238,6 +252,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: attackbooster
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 295ea826e6d936c4182feaa94c2945a8,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 295ea826e6d936c4182feaa94c2945a8, type: 3}

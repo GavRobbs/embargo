@@ -4,5 +4,7 @@ using UnityEngine;
 
 public interface ITaskable
 {
-    void SetTask(ITask task);
+    ITask CurrentTask { get; set; }
+    bool Busy { get; }
+    void ClearTask();
 }
