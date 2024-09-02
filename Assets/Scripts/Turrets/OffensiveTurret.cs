@@ -37,6 +37,11 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
     [SerializeField]
     protected EnemyDetector enemyDetector;
 
+    [SerializeField]
+    float atk_bonus = 1;
+    float range_bonus = 1;
+    float def_bonus = 1;
+
     protected List<AttackBoostBonus> attack_bonuses = new List<AttackBoostBonus>();
 
     protected ITargetable current_target = null;
