@@ -163,6 +163,10 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
                             current_hoverable.OnHoverOver(null);
                         }
                     }
+                    else
+                    {
+                        MessageDispatcher.GetInstance().Dispatch(new HoverInfoDisplayMessage(hoverable.GetHoverData(), Mouse.current.position.ReadValue()));
+                    }
 
                 }
                 else

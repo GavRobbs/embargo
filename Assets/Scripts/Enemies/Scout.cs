@@ -241,9 +241,9 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
         max_hp = hp;
         baseMoveSpeed = moveSpeed;
 
-        moveSpeed *= 1.0f + ((float)(level - 1)) * 0.04f;
+        moveSpeed *= 1.0f + ((float)(level - 1)) * 0.06f;
 
-        max_hp *= 1.0f + ((float)(level - 1)) * 0.15f;
+        max_hp *= 1.0f + ((float)(level - 1)) * 0.18f;
 
         hp = max_hp;
     }

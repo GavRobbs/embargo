@@ -7,6 +7,8 @@ public class WaveManager : MonoBehaviour, IMessageHandler
     List<Spawner> spawners;
     bool waveStarted = false;
 
+    bool bossSpawned = false;
+
     //Current wave time in seconds
     float current_wave_time = 60.0f;
 
@@ -38,6 +40,15 @@ public class WaveManager : MonoBehaviour, IMessageHandler
         return total;
     }
 
+    void SpawnBoss()
+    {
+        foreach (var spawner in spawners)
+        {
+            spawner.SpawnBoss();
+        }
+        bossSpawned = true;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -56,8 +67,15 @@ public class WaveManager : MonoBehaviour, IMessageHandler
 
                 if (GetActiveEnemyCount() == 0)
                 {
+                    if (bossSpawned)
+                    {
+                        MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.EndWaveMessage));
+                    }
+                    else
+                    {
+                        SpawnBoss();
+                    }
                     //We can proceed to the next wave
-                    MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.EndWaveMessage));
                 }
             }
         }
@@ -72,18 +90,24 @@ public class WaveManager : MonoBehaviour, IMessageHandler
                 {
                     current_wave_time = 60.0f;
                     waveStarted = true;
+                    int special_spawner_index = Random.Range(0, spawners.Count);
                     foreach(var spawner in spawners)
                     {
+                        spawner.BossSpawnerForThisWave = false;
                         spawner.StartSpawning();
                     }
+
+                    spawners[special_spawner_index].BossSpawnerForThisWave = true;
                     break;
                 }
             case MessageConstants.EndWaveMessage:
                 {
+                    bossSpawned = false;
                     waveStarted = false;
                     foreach (var spawner in spawners)
                     {
                         spawner.IncreaseLevel();
+                        spawner.BossSpawnerForThisWave = false;
                     }
                     break;
                 }

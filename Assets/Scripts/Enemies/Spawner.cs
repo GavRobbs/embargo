@@ -13,6 +13,9 @@ public class Spawner : MonoBehaviour
     [SerializeField]
     GameObject scoutPrefab;
 
+    [SerializeField]
+    GameObject mechPrefab;
+
     float modifiedMinSpawnInterval;
     float modifiedMaxSpawnInterval;
 
@@ -24,7 +27,7 @@ public class Spawner : MonoBehaviour
     public int EnemyCount { get => enemy_count; }
 
     bool currently_active = false;
-
+    public bool BossSpawnerForThisWave { get; set; }
     int level = 1;
 
     void Start()
@@ -70,6 +73,15 @@ public class Spawner : MonoBehaviour
         
     }
 
+    public void SpawnBoss()
+    {
+        if (BossSpawnerForThisWave)
+        {
+            SpawnMech();
+            enemy_count += 1;
+        }
+    }
+
     public void DecreaseEnemyCount()
     {
         enemy_count -= 1;
@@ -87,5 +99,20 @@ public class Spawner : MonoBehaviour
             path,
             () => { new_scout.KillMe(); }
         );
+    }
+
+    private void SpawnMech()
+    {
+        Mech new_mech = GameObject.Instantiate(mechPrefab, transform.position, Quaternion.identity).GetComponent<Mech>();
+        new_mech.Spawner = this;
+        new_mech.SetLevel(level);
+        Vector3 target = map.GetRandomTargetPosition();
+        List<Vector3> path = map.GetPath(transform.position, target);
+
+        new_mech.FollowPath(
+            path,
+            () => { new_mech.KillMe(); }
+        );
+
     }
 }

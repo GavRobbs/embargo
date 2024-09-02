@@ -2307,7 +2307,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 782182908}
   buildingTeleportSound: {fileID: 1885558468}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -2774,7 +2773,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 2100429705}
   buildingTeleportSound: {fileID: 502782837}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -2974,7 +2972,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 674841446}
   buildingTeleportSound: {fileID: 865898109}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -3220,7 +3217,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 1444913472}
   buildingTeleportSound: {fileID: 1415200795}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -3913,7 +3909,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 357855827}
   buildingTeleportSound: {fileID: 470172124}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -4130,7 +4125,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 1306082418}
   buildingTeleportSound: {fileID: 1178336850}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -4647,7 +4641,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 1736740727}
   buildingTeleportSound: {fileID: 526642091}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -5856,9 +5849,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 789133c26852e8240a8823691e649860, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minimumSpawnInterval: 3.3
-  maximumSpawnInterval: 3.8
+  minimumSpawnInterval: 4.9
+  maximumSpawnInterval: 6.8
   scoutPrefab: {fileID: 5502752395223545550, guid: 7c5134d30fb25e94a95b18f913231694,
+    type: 3}
+  mechPrefab: {fileID: 2515943765840467666, guid: b77c9c9b06ee5e747884049d71fb9ce6,
     type: 3}
 --- !u!1 &544765440
 GameObject:
@@ -6125,7 +6120,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 1754599}
   buildingTeleportSound: {fileID: 218680489}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -6940,7 +6934,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 1824409324}
   buildingTeleportSound: {fileID: 1109900660}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -7755,7 +7748,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 17008040}
   buildingTeleportSound: {fileID: 1406969862}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -7817,7 +7809,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 1307233549}
   buildingTeleportSound: {fileID: 1885467066}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -8253,9 +8244,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 789133c26852e8240a8823691e649860, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minimumSpawnInterval: 3.3
-  maximumSpawnInterval: 4.5
+  minimumSpawnInterval: 5.1
+  maximumSpawnInterval: 6.7
   scoutPrefab: {fileID: 5502752395223545550, guid: 7c5134d30fb25e94a95b18f913231694,
+    type: 3}
+  mechPrefab: {fileID: 2515943765840467666, guid: b77c9c9b06ee5e747884049d71fb9ce6,
     type: 3}
 --- !u!1 &912496980
 GameObject:
@@ -8286,9 +8279,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 789133c26852e8240a8823691e649860, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minimumSpawnInterval: 2.8
-  maximumSpawnInterval: 4.1
+  minimumSpawnInterval: 5.5
+  maximumSpawnInterval: 7.3
   scoutPrefab: {fileID: 5502752395223545550, guid: 7c5134d30fb25e94a95b18f913231694,
+    type: 3}
+  mechPrefab: {fileID: 2515943765840467666, guid: b77c9c9b06ee5e747884049d71fb9ce6,
     type: 3}
 --- !u!4 &912496982
 Transform:
@@ -9072,7 +9067,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 1770155728}
   buildingTeleportSound: {fileID: 1258081410}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -10703,7 +10697,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 963633164}
   buildingTeleportSound: {fileID: 872239796}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -10763,7 +10756,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 544765440}
   buildingTeleportSound: {fileID: 1442885020}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -11167,7 +11159,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 1501116241}
   buildingTeleportSound: {fileID: 1216765508}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -11228,7 +11219,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 930793027}
   buildingTeleportSound: {fileID: 1319034525}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -11767,7 +11757,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 1711560619}
   buildingTeleportSound: {fileID: 344861420}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -11956,7 +11945,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 639490548}
   buildingTeleportSound: {fileID: 1950365549}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -13568,7 +13556,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 1182775822}
   buildingTeleportSound: {fileID: 1668290627}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -14111,7 +14098,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 1951976444}
   buildingTeleportSound: {fileID: 463678857}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -15115,7 +15101,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 1725836634}
   buildingTeleportSound: {fileID: 1337260958}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -15205,7 +15190,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 2044296425}
   buildingTeleportSound: {fileID: 154199980}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -15527,7 +15511,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 964196855}
   buildingTeleportSound: {fileID: 242780670}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -16361,7 +16344,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 1587202648}
   buildingTeleportSound: {fileID: 1018429859}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -17341,7 +17323,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 1599651788}
   buildingTeleportSound: {fileID: 1628921907}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -18069,7 +18050,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 748427507}
   buildingTeleportSound: {fileID: 887062652}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -18161,7 +18141,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 1265599352}
   buildingTeleportSound: {fileID: 1718824605}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
@@ -18997,7 +18976,6 @@ MonoBehaviour:
   hasTurret: 0
   defaultMaterial: {fileID: 0}
   selectionMaterial: {fileID: 0}
-  turretPrefab: {fileID: 0}
   turretLocationHolder: {fileID: 340258241}
   buildingTeleportSound: {fileID: 1549369669}
   teleportEffectPrefab: {fileID: 1012586055727669258, guid: d9f49bf403560a84698388efade81d1d,
