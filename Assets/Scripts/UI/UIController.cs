@@ -21,6 +21,8 @@ public class UIController : MonoBehaviour
     private GameObject activePanel;
     private GameObject defaultPanel;
 
+    private Animator canvasAnimator;
+
     private bool selectingButton = false;
 
     private void Start()
@@ -29,6 +31,8 @@ public class UIController : MonoBehaviour
 
         panels = new List<GameObject>();
         var canvasObj = GameObject.FindObjectOfType<Canvas>();
+        canvasAnimator = canvasObj.GetComponent<Animator>();
+
         foreach (Transform child in canvasObj.transform)
         {
             if (child.gameObject.CompareTag("Panel"))
@@ -93,6 +97,12 @@ public class UIController : MonoBehaviour
     {
         // Play suspenseful sound and wait for it to complete
         audioSrc.PlayOneShot(playSound);
+
+        // Start fade out animation, in time with sound effect
+        canvasAnimator.SetFloat("Speed", 1f / playSound.length);
+        canvasAnimator.SetTrigger("Fade");
+
+        // Wait for sound and animation to complete
         yield return new WaitForSecondsRealtime(playSound.length);
 
         // Load and switch to the main game scene
