@@ -121,4 +121,10 @@ public class UIController : MonoBehaviour
             audioSrc.PlayOneShot(moveSound);
         }
     }
+
+    public void StartNewGame()
+    {
+        SceneManager.LoadScene(1);
+    }
+
 }
