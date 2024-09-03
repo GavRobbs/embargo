@@ -20,6 +20,9 @@ public class CommandConsoleUI : MonoBehaviour, IMessageHandler
     [SerializeField]
     TextMeshProUGUI scrap_counter;
 
+    [SerializeField]
+    GameObject fader;
+
     bool updateScrapCounter = true;
 
     int scrap = 1500;
@@ -122,6 +125,11 @@ public class CommandConsoleUI : MonoBehaviour, IMessageHandler
                 {
                     scrap -= (message as SingleValueMessage<int>).value;
                     updateScrapCounter = true;
+                    break;
+                }
+            case MessageConstants.GameOverMessage:
+                {
+                    fader.SetActive(true);
                     break;
                 }
             default:

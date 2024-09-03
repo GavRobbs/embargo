@@ -29,9 +29,10 @@ public class MGTurret : OffensiveTurret
 
     int _level = 1;
 
+    
+
     override public string TurretClass { get => "Machinegun";  }
     override public int Level { get => _level; }
-    override public int Cost => 250;
 
     //These help to determine how long a machinegun volley lasts
     [SerializeField]

@@ -29,6 +29,8 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
     public Vector3 Position => forwardPoint.transform.position;
     public Spawner Spawner { get; set; }
 
+    public int CapitolDamage => 1;
+
     public bool IsFriendly => false;
 
     public bool IsKilled => (HitPoints <= 0.0f) || dying == true;
@@ -47,6 +49,8 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
     ITask _currentTask;
 
     int level = 1;
+
+    bool isStopped = false;
 
     public ITask CurrentTask
     {
@@ -81,6 +85,11 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
     // Update is called once per frame
     void Update()
     {
+        if (isStopped)
+        {
+            return;
+        }
+
         if(hp <= 0.0f && !dying)
         {
             //We only want the player to get the scrap if they kill it
@@ -215,8 +224,6 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
                         //We're done moving
                         isMoving = false;
                         completionCallback();
-                        //TODO: When I reimplement the particle effects
-                        //ps.Stop();
                     }
                     else
                     {
@@ -251,5 +258,10 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
     public void ClearTask()
     {
         CurrentTask = null;
+    }
+
+    public void Stop()
+    {
+        isStopped = true;
     }
 }

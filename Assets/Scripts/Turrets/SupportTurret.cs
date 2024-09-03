@@ -4,16 +4,19 @@ using UnityEngine;
 
 public abstract class SupportTurret : MonoBehaviour, ITurret
 {
+    [SerializeField]
+    Building _building;
+
+    [SerializeField]
+    int _cost;
+
     virtual public string TurretClass => throw new System.NotImplementedException();
 
     virtual public int Level => throw new System.NotImplementedException();
 
-    virtual public int Cost => throw new System.NotImplementedException();
+    public int Cost => _cost;
 
     virtual public float Influence => throw new System.NotImplementedException();
-
-    [SerializeField]
-    Building _building;
 
     public Building AttachedBuilding { get => _building; set => _building = value; }
     virtual public float BuildTime { get; }
@@ -24,6 +27,8 @@ public abstract class SupportTurret : MonoBehaviour, ITurret
 
     [SerializeField]
     protected Transform influence_center;
+
+    bool isStopped = false;
 
     public Dictionary<string, string> GetHoverData()
     {
@@ -61,6 +66,11 @@ public abstract class SupportTurret : MonoBehaviour, ITurret
     protected virtual void Start()
     {
         Online = false;
+    }
+
+    public void Stop()
+    {
+        isStopped = true;
     }
 
 }

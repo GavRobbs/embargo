@@ -9871,7 +9871,7 @@ MonoBehaviour:
   sparks: {fileID: 5102127552955715847}
   flash: {fileID: 5040074824302780950}
   explosion: {fileID: 6204610201757136286}
-  hp: 35
+  hp: 25
 --- !u!65 &3725707835658191763
 BoxCollider:
   m_ObjectHideFlags: 0

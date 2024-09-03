@@ -14,5 +14,6 @@ public enum MessageConstants : int
     EndWaveMessage,
     TriggerFirstWaveMessage,
     AddScrap,
-    RemoveScrap
+    RemoveScrap,
+    GameOverMessage
 }

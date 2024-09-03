@@ -1,4 +1,4 @@
-﻿public interface ITurret : IHoverable
+﻿public interface ITurret : IHoverable, IStoppable
 {
     string TurretClass { get; }
     int Level { get; }

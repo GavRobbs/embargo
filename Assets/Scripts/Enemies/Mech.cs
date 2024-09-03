@@ -33,6 +33,8 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
 
     public bool IsKilled => (HitPoints <= 0.0f) || dying == true;
 
+    public int CapitolDamage => 3;
+
     [SerializeField]
     float hp;
 
@@ -47,6 +49,8 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
     ITask _currentTask;
 
     int level = 1;
+
+    bool isStopped = false;
 
     public ITask CurrentTask
     {
@@ -81,6 +85,11 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
     // Update is called once per frame
     void Update()
     {
+        if (isStopped)
+        {
+            return;
+        }
+
         if (hp <= 0.0f && !dying)
         {
             //We only want the player to get the scrap if they kill it
@@ -114,7 +123,6 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
         {
             float dmg = collision.gameObject.GetComponentInParent<MGBullet>().Damage;
             Destroy(collision.gameObject);
-            //TODO: Patch so that the damage is done appropriately
             Damage(dmg);
         }
 
@@ -231,8 +239,6 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
                         //We're done moving
                         isMoving = false;
                         completionCallback();
-                        //TODO: When I reimplement the particle effects
-                        //ps.Stop();
                     }
                     else
                     {
@@ -259,7 +265,7 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
 
         moveSpeed *= 1.0f + ((float)(level - 1)) * 0.06f;
 
-        max_hp *= 1.0f + ((float)(level - 1)) * 0.28f;
+        max_hp *= 1.0f + ((float)(level - 1)) * 0.45f;
 
         hp = max_hp;
     }
@@ -267,5 +273,10 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
     public void ClearTask()
     {
         CurrentTask = null;
+    }
+
+    public void Stop()
+    {
+        isStopped = true;
     }
 }

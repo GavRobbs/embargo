@@ -24,6 +24,12 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
     [SerializeField]
     float camera_pan_speed;
 
+    [SerializeField]
+    AudioSource gameMusic;
+
+    [SerializeField]
+    AudioSource gameOverMusic;
+
     float rotation_angle = 0.0f;
 
    
@@ -292,6 +298,15 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
         SceneManager.LoadScene(0);
     }
 
+    IEnumerator GameOver()
+    {
+        yield return new WaitForSeconds(1.0f);
+        gameMusic.Stop();
+        gameOverMusic.Play();
+        yield return new WaitWhile(() => gameOverMusic.isPlaying);
+        //TODO: Switch scene to the Game Over one
+    }
+
     public void HandleMessage(GameMessage message)
     {
         switch (message.MessageType)
@@ -308,6 +323,11 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
                     current_hover_mode = HOVER_MODE.INFO;
                     current_click_mode = CLICK_MODE.NONE;
                     current_turret_pfb = null;
+                    break;
+                }
+            case MessageConstants.GameOverMessage:
+                {
+                    StartCoroutine(GameOver());
                     break;
                 }
         }

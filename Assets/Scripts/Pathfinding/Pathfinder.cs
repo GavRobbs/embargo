@@ -25,7 +25,6 @@ public class Pathfinder
 
         int start_index = PositionToPathPointIndex(startPoint);
         int end_index = PositionToPathPointIndex(endPoint);
-
         if (!map[start_index].IsPassable || !map[end_index].IsPassable)
         {
             return null;
@@ -92,6 +91,7 @@ public class Pathfinder
         }
 
         final_path.Reverse();
+
         return final_path;
     }
 

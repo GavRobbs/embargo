@@ -50,9 +50,14 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
     [SerializeField]
     bool _online = false;
 
+    [SerializeField]
+    int _cost;
+
     public bool Online { get => _online; set => _online = value; }
 
-    virtual public int Cost => throw new System.NotImplementedException();
+    public int Cost => _cost;
+
+    bool isStopped = false;
 
 
     public enum TurretState { SEEKING, FIRING, RESTING, CHILLING };
@@ -244,6 +249,11 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
 
     protected virtual void Update()
     {
+        if (isStopped)
+        {
+            return;
+        }
+
         if (!Online)
         {
             return;
@@ -386,6 +396,14 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
             RecalculateBonuses();
             return current_cooldown_bonus;
         }
+    }
+
+    public void Stop()
+    {
+        isStopped = true;
+        turnSound.Stop();
+        fireSound.Stop();
+        reloadSound.Stop();
     }
 
 }

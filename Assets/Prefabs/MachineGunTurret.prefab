@@ -4957,7 +4957,11 @@ MonoBehaviour:
   base_attack_damage: 3
   turretMesh: {fileID: 8642719222160114962}
   enemyDetector: {fileID: 3176143293297361291}
+  atk_bonus: 1
+  _online: 0
+  _cost: 200
   currentState: 3
+  _building: {fileID: 0}
   cannon1_ps: {fileID: 4441741444031596524}
   cannon2_ps: {fileID: 5260050862423322523}
   laser: {fileID: 5128083729902514587}

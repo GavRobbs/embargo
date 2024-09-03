@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Drone : MonoBehaviour, IHoverable, ITaskable
+public class Drone : MonoBehaviour, IHoverable, ITaskable, IStoppable
 {
     [SerializeField]
     float moveSpeed;
@@ -23,6 +23,8 @@ public class Drone : MonoBehaviour, IHoverable, ITaskable
     System.Action onPathComplete;
 
     ITask _currentTask;
+
+    bool isStopped = false;
 
     public ITask CurrentTask
     {
@@ -108,6 +110,11 @@ public class Drone : MonoBehaviour, IHoverable, ITaskable
     // Update is called once per frame
     void Update()
     {
+        if (isStopped)
+        {
+            return;
+        }
+
         if (CurrentTask != null)
         {
             CurrentTask.OnTaskUpdate(Time.deltaTime);
@@ -160,7 +167,8 @@ public class Drone : MonoBehaviour, IHoverable, ITaskable
         drone_pos.y = 0.0f;
         target.y = 0.0f;
 
-        return mapManager.GetPath(drone_pos, target);
+        var path = mapManager.GetPath(drone_pos, target);
+        return path;
     }
 
     public void ClearTask()
@@ -174,6 +182,11 @@ public class Drone : MonoBehaviour, IHoverable, ITaskable
 
     public void OnHoverOff()
     {
+    }
+
+    public void Stop()
+    {
+        isStopped = true;
     }
 
 }

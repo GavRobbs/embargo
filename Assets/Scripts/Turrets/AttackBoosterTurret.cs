@@ -11,8 +11,6 @@ public class AttackBoosterTurret : SupportTurret
     int _level = 1;
     public override float BuildTime => 8.0f;
     public override float Influence => (float)_level * 1.0f;
-    override public int Cost => 350;
-
     public override void OnTurretSpawn()
     {
         Online = true;

@@ -9,6 +9,8 @@ public class WaveManager : MonoBehaviour, IMessageHandler
 
     bool bossSpawned = false;
 
+    bool gameStopped = false;
+
     //Current wave time in seconds
     float current_wave_time = 60.0f;
 
@@ -52,6 +54,11 @@ public class WaveManager : MonoBehaviour, IMessageHandler
     // Update is called once per frame
     void Update()
     {
+        if (gameStopped)
+        {
+            return;
+        }
+
         /* A wave lasts a certain amount of time, but sometimes we finish the wave, but still have enemies alive.
          * This prolongs the wave, it won't end until all the enemies are destroyed. The logic here handles this case. */
         if (waveStarted)
@@ -109,6 +116,24 @@ public class WaveManager : MonoBehaviour, IMessageHandler
                         spawner.IncreaseLevel();
                         spawner.BossSpawnerForThisWave = false;
                     }
+                    break;
+                }
+            case MessageConstants.GameOverMessage:
+                {
+                    foreach (var spawner in spawners)
+                    {
+                        spawner.StopSpawning();
+                    }
+
+                    foreach (var mb in FindObjectsOfType<MonoBehaviour>())
+                    {
+                        foreach(var stoppable in mb.GetComponentsInChildren<IStoppable>())
+                        {
+                            stoppable.Stop();
+                        }
+                    }
+
+                    gameStopped = true;
                     break;
                 }
             default:
