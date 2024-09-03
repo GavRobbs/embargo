@@ -305,6 +305,7 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
         gameOverMusic.Play();
         yield return new WaitWhile(() => gameOverMusic.isPlaying);
         //TODO: Switch scene to the Game Over one
+        SceneManager.LoadSceneAsync(2, LoadSceneMode.Single);
     }
 
     public void HandleMessage(GameMessage message)
