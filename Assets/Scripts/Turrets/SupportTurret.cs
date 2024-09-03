@@ -23,7 +23,13 @@ public abstract class SupportTurret : MonoBehaviour, ITurret
 
     [SerializeField]
     bool _online = false;
-    public bool Online { get => _online; set => _online = value; }
+    public bool Online { get => _online; 
+        
+        set
+        {
+            _online = value;
+        }
+    }
 
     [SerializeField]
     protected Transform influence_center;
@@ -63,9 +69,13 @@ public abstract class SupportTurret : MonoBehaviour, ITurret
         Online = true;
     }
 
+    virtual public void BestowBonus(ITurret turret)
+    {
+
+    }
+
     protected virtual void Start()
     {
-        Online = false;
     }
 
     public void Stop()

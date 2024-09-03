@@ -30,10 +30,12 @@ public class Capitol : MonoBehaviour
         hp -= 1;
         Image[] images = GetComponentsInChildren<Image>();
 
-        if (images != null)
-        {
-            Destroy(images[images.Length - 1]);
-        }
+        //Since I'm using the horizontal layout group
+        //I use a kind of clever trick to make the bars invisible so they still maintain alignment
+
+        var c = images[hp].color;
+        c.a = 0.0f;
+        images[hp].color = c;
     }
 
     void OnTriggerEnter(Collider other)

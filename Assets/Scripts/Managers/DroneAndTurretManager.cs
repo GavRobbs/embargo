@@ -7,6 +7,8 @@ public class DroneAndTurretManager : MonoBehaviour, IMessageHandler
     [SerializeField]
     List<Drone> drones;
 
+    List<SupportTurret> supportTurrets = new List<SupportTurret>();
+
     GameObject current_turret_prefab;
 
     void Start()
@@ -59,6 +61,32 @@ public class DroneAndTurretManager : MonoBehaviour, IMessageHandler
                 {
                     current_turret_prefab = null;
                     break;
+                }
+            case MessageConstants.RegisterSupportTurretMessage:
+                {
+                    SingleValueMessage<SupportTurret> st = message as SingleValueMessage<SupportTurret>;
+                    supportTurrets.Add(st.value);
+                    break;
+                }
+            case MessageConstants.UnregisterSupportTurretMessage:
+                {
+                    SingleValueMessage<SupportTurret> st = message as SingleValueMessage<SupportTurret>;
+                    supportTurrets.Remove(st.value);
+                    break;
+                }
+            case MessageConstants.RegisterOffensiveTurretMessage:
+                {
+                    SingleValueMessage<OffensiveTurret> otm = message as SingleValueMessage<OffensiveTurret>;
+                    OffensiveTurret ot = otm.value;
+                    foreach (var st in supportTurrets)
+                    {
+                        if(Vector3.Distance(st.transform.position, ot.transform.position) <= st.Influence)
+                        {
+                            st.BestowBonus(ot);
+                        }
+                    }
+                    break;
+
                 }
             default:
                 {

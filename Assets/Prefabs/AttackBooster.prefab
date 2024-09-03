@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8215386418709126166}
   - component: {fileID: 8215386418709126165}
   - component: {fileID: 8215386418709126164}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -103,7 +103,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8215386419157272177}
   - component: {fileID: 8215386419157272178}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: AttackBooster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -138,7 +138,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _building: {fileID: 0}
+  _cost: 0
+  _online: 0
   influence_center: {fileID: 8215386419157272177}
+--- !u!65 &4597169052178532501
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9134289306064670578}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3.9637787, y: 6.366732, z: 4.159445}
+  m_Center: {x: -0.02914826, y: 3.2044096, z: -0.068684414}
 --- !u!95 &8215386418104463902
 Animator:
   serializedVersion: 3
@@ -158,19 +173,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!65 &4597169052178532501
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9134289306064670578}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 3.9637787, y: 6.366732, z: 4.159445}
-  m_Center: {x: -0.02914826, y: 3.2044096, z: -0.068684414}
 --- !u!1001 &8215386418104463907
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -248,12 +250,42 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3133498875991405556, guid: 295ea826e6d936c4182feaa94c2945a8,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -2821761757288588400, guid: 295ea826e6d936c4182feaa94c2945a8,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 910443201254941300, guid: 295ea826e6d936c4182feaa94c2945a8,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 295ea826e6d936c4182feaa94c2945a8,
         type: 3}
       propertyPath: m_Name
       value: attackbooster
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 295ea826e6d936c4182feaa94c2945a8,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1790183945725220954, guid: 295ea826e6d936c4182feaa94c2945a8,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6905609870639353253, guid: 295ea826e6d936c4182feaa94c2945a8,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7036213049465896255, guid: 295ea826e6d936c4182feaa94c2945a8,
         type: 3}
       propertyPath: m_Layer
       value: 9

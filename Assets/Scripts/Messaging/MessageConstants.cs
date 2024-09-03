@@ -15,5 +15,8 @@ public enum MessageConstants : int
     TriggerFirstWaveMessage,
     AddScrap,
     RemoveScrap,
-    GameOverMessage
+    GameOverMessage,
+    RegisterSupportTurretMessage,
+    UnregisterSupportTurretMessage,
+    RegisterOffensiveTurretMessage
 }

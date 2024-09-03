@@ -99,7 +99,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
         {
             float level_atk_bonus = (float)Level / 100.0f;
             float boost_atk_bonus = AttackBonus;
-            float total = Mathf.Clamp(level_atk_bonus + boost_atk_bonus, 0.0f, 0.25f);
+            float total = Mathf.Clamp(level_atk_bonus + boost_atk_bonus, 0.0f, 1.0f);
             return base_attack_damage * (1.0f + total);
         }
     }
@@ -111,7 +111,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
         {
             float level_cd_bonus = 1.5f * (float)Level / 100.0f;
             float boost_cd_bonus = CooldownBonus;
-            float total = Mathf.Clamp(level_cd_bonus + boost_cd_bonus, 0.0f, 0.15f);
+            float total = Mathf.Clamp(level_cd_bonus + boost_cd_bonus, 0.0f, 0.35f);
             return base_delay_time * (1.0f - total);
         }
     }
@@ -254,6 +254,11 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
             return;
         }
 
+        if (_mustRecalculateBonus)
+        {
+            RecalculateBonuses();
+        }
+
         if (!Online)
         {
             return;
@@ -306,6 +311,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
     public void OnTurretSpawn()
     {
         Online = true;
+        MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<OffensiveTurret>(MessageConstants.RegisterOffensiveTurretMessage, this));
     }
 
     public void OnTurretDestroy()
@@ -315,7 +321,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
 
     public void AddAttackBonus(AttackBoostBonus b)
     {
-        if (!attack_bonuses.Contains(b))
+        if (attack_bonuses.Contains(b))
         {
             return;
         }
@@ -360,6 +366,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
             }
             //50% is the maximum range bonus a turret can have
             //25% is the maximum attack bonus a turret can have
+            //15% is the maximum cooldown bonus a turret can have
             current_range_bonus = Mathf.Clamp(total1, 0.0f, 0.5f);
             current_attack_bonus = Mathf.Clamp(total2, 0.0f, 0.25f);
             current_cooldown_bonus = Mathf.Clamp(total3, 0.0f, 0.15f);

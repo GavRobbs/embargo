@@ -51,7 +51,7 @@ public class AttackBoostBonus : MonoBehaviour
     {
         get
         {
-            return _producer.Level * 0.03f;
+            return _producer.Level * 0.015f;
         }
     }
 
@@ -74,5 +74,13 @@ public class AttackBoostBonus : MonoBehaviour
     void OnDestroy()
     {
         Beneficiary.RemoveAttackBonus(this);        
+    }
+
+    void Update()
+    {
+        if(Producer == null)
+        {
+            Beneficiary.RemoveAttackBonus(this);
+        }
     }
 }

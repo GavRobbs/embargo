@@ -250,7 +250,6 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
 
         if(info == null)
         {
-            Debug.Log("NO INFO");
             return;
         }
 
