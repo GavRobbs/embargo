@@ -117,6 +117,11 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
         hp -= value;
     }
 
+    public void CancelTask()
+    {
+
+    }
+
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Bullet"))
@@ -201,6 +206,16 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
 
         public void OnTaskExit()
         {
+        }
+
+        public void Cancel()
+        {
+
+        }
+
+        public void OnTaskCancel()
+        {
+
         }
 
         public void OnTaskUpdate(float dt)

@@ -23,6 +23,9 @@ public class CommandConsoleUI : MonoBehaviour, IMessageHandler
     [SerializeField]
     GameObject fader;
 
+    [SerializeField]
+    AlertMessage alertMessage;
+
     bool updateScrapCounter = true;
 
     int scrap = 1500;
@@ -132,6 +135,13 @@ public class CommandConsoleUI : MonoBehaviour, IMessageHandler
                     fader.SetActive(true);
                     break;
                 }
+            case MessageConstants.DisplayAlertMessage:
+                {
+                    string message_text = (message as SingleValueMessage<string>).value;
+                    alertMessage.gameObject.SetActive(true);
+                    alertMessage.Display(message_text);
+                    break;
+                }
             default:
                 break;
         }
@@ -199,6 +209,7 @@ public class CommandConsoleUI : MonoBehaviour, IMessageHandler
         else
         {
             //TODO: TELL THE PLAYER THEY'RE BROKE
+            MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "You require more scrap!"));
         }
 
     }

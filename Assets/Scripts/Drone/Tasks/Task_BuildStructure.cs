@@ -38,6 +38,8 @@ public class Task_BuildStructure : ITask
     GameObject turret_prefab;
     int cost;
 
+    bool cancelled = false;
+
     public Task_BuildStructure(Building target_building, Drone instruction_drone, GameObject tpfb, float ttb)
     {
         status = TaskState.GO_TO_TARGET;
@@ -61,13 +63,38 @@ public class Task_BuildStructure : ITask
         drone.FollowPath(path_to_target, () => { at_target = true; });
     }
 
+    public void Cancel()
+    {
+        OnTaskCancel();
+    }
+
+    public void OnTaskCancel()
+    {
+        if(status == TaskState.DONE)
+        {
+            return;
+        }
+
+        cancelled = true;
+        building.CancelCurrentTask();
+        drone.StopMoving();
+        drone.ClearTask();
+
+    }
+
     public void OnTaskUpdate(float dt)
     {
+        if (cancelled)
+        {
+            return;
+        }
+
         if (status == TaskState.GO_TO_TARGET)
         {
             if (!Object.FindObjectOfType<CommandConsoleUI>().CheckMoney(cost))
             {
-                //TODO: Remind you that you're broke
+                //Remind you that you're broke
+                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "You require more scrap!"));
                 status = TaskState.DONE;
             }
             else

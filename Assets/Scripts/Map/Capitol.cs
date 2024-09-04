@@ -28,6 +28,11 @@ public class Capitol : MonoBehaviour
     public void DecreaseHP()
     {
         hp -= 1;
+        if(hp < 0)
+        {
+            return;
+        }
+
         Image[] images = GetComponentsInChildren<Image>();
 
         //Since I'm using the horizontal layout group

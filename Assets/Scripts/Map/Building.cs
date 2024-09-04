@@ -94,6 +94,20 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
             }
 
             target_building.buildingTeleportSound.Stop();
+
+            if(target_building.teleportEffect != null)
+            {
+                GameObject.Destroy(target_building.teleportEffect);
+            }
+
+            if(target_building.attached_turret != null)
+            {
+                GameObject.Destroy(target_building.attached_turret);
+            }
+
+            target_building.building_turret = false;
+            target_building.hasTurret = false;
+
             _cancelled = true;
             cancelCallback();
         }
@@ -198,7 +212,13 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
         }
 
         current_task = task;
-        current_task.StartTask();
+        current_task?.StartTask();
+    }
+
+    public void CancelCurrentTask()
+    {
+        current_task?.CancelTask();
+        current_task = null;
     }
 
     // Update is called once per frame

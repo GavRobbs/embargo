@@ -107,6 +107,11 @@ public class Drone : MonoBehaviour, IHoverable, ITaskable, IStoppable
 
     }
 
+    public void CancelTask()
+    {
+        CurrentTask?.Cancel();
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -170,6 +175,11 @@ public class Drone : MonoBehaviour, IHoverable, ITaskable, IStoppable
         var path = mapManager.GetPath(drone_pos, target);
         return path;
     }
+
+    public void StopMoving()
+    {
+        isMoving = false;
+    }    
 
     public void ClearTask()
     {

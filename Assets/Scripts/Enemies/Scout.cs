@@ -107,6 +107,11 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
         
     }
 
+    public void CancelTask()
+    {
+
+    }
+
     void OnDestroy()
     {
         Spawner.DecreaseEnemyCount();
@@ -123,7 +128,6 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
         {
             float dmg = collision.gameObject.GetComponentInParent<MGBullet>().Damage;
             Destroy(collision.gameObject);
-            //TODO: Patch so that the damage is done appropriately
             Damage(dmg);
         }
 
@@ -202,6 +206,16 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
 
         public void OnTaskExit()
         {
+        }
+
+        public void Cancel()
+        {
+
+        }
+
+        public void OnTaskCancel()
+        {
+
         }
 
         public void OnTaskUpdate(float dt)

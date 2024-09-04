@@ -117,14 +117,16 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
                     Building b = hit.collider.GetComponentInParent<Building>();
                     if(b == null)
                     {
-                        //TODO: Throw an error about not being a valid building
+                        //Throw an error about not being a valid building
+                        MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "Not a valid building!"));
                         MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageBuildMode));
                         return;
                     }
 
                     if (b.hasTurret || b.building_turret)
                     {
-                        //TODO: Throw an error about the building already having a turret
+                        //Throw an error about the building already having a turret
+                        MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "Building already has a turret!"));
                         MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageBuildMode));
                         return;
                     }
@@ -304,7 +306,6 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
         gameMusic.Stop();
         gameOverMusic.Play();
         yield return new WaitWhile(() => gameOverMusic.isPlaying);
-        //TODO: Switch scene to the Game Over one
         SceneManager.LoadSceneAsync(2, LoadSceneMode.Single);
     }
 

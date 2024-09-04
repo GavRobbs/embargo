@@ -45,10 +45,9 @@ public class DroneAndTurretManager : MonoBehaviour, IMessageHandler
                     }
                     else
                     {
-                        //This should pop up on screen somewhere
-                        Debug.Log("NO FREE DRONES!");
+                        MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "No available drones!"));
                     }
-                    
+
                     break;
                 }
             case MessageConstants.EngageBuildMode:
@@ -87,6 +86,12 @@ public class DroneAndTurretManager : MonoBehaviour, IMessageHandler
                     }
                     break;
 
+                }
+            case MessageConstants.CreateDroneMessage:
+                {
+                    SingleValueMessage<Drone> new_drone = message as SingleValueMessage<Drone>;
+                    drones.Add(new_drone.value);
+                    break;
                 }
             default:
                 {

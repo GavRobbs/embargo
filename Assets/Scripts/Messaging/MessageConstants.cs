@@ -18,5 +18,7 @@ public enum MessageConstants : int
     GameOverMessage,
     RegisterSupportTurretMessage,
     UnregisterSupportTurretMessage,
-    RegisterOffensiveTurretMessage
+    RegisterOffensiveTurretMessage,
+    CreateDroneMessage,
+    DisplayAlertMessage
 }
