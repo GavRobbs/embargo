@@ -76,6 +76,7 @@ public class DroneButton : MonoBehaviour
                 attached_drone = drone_go.GetComponent<Drone>();
                 buttonImage.sprite = fullSlotSprite;
                 progressOverlayImage.gameObject.SetActive(true);
+                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<int>(MessageConstants.RemoveScrap, _cost));
                 MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<Drone>(MessageConstants.CreateDroneMessage, attached_drone));
             }
             
