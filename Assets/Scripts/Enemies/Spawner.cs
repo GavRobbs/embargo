@@ -72,7 +72,7 @@ public class Spawner : MonoBehaviour
             nextSpawnInterval = Random.Range(modifiedMinSpawnInterval, modifiedMaxSpawnInterval);
 
             int val = Random.Range(0, 100);
-            if(val % 9 == 0)
+            if(val % 6 == 0)
             {
                 SpawnBattletank();
             }

@@ -2871,7 +2871,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 162393345}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.4, y: 0, z: 5.11}
+  m_LocalPosition: {x: 2, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 831470297}
@@ -2889,8 +2889,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 789133c26852e8240a8823691e649860, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minimumSpawnInterval: 4.9
-  maximumSpawnInterval: 6.8
+  minimumSpawnInterval: 5.5
+  maximumSpawnInterval: 6.2
   scoutPrefab: {fileID: 5502752395223545550, guid: 7c5134d30fb25e94a95b18f913231694,
     type: 3}
   mechPrefab: {fileID: 2515943765840467666, guid: b77c9c9b06ee5e747884049d71fb9ce6,
@@ -9546,7 +9546,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 538174188}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.61, y: 0, z: 5.05}
+  m_LocalPosition: {x: -1, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 831470297}
@@ -9564,8 +9564,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 789133c26852e8240a8823691e649860, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minimumSpawnInterval: 4.9
-  maximumSpawnInterval: 6.8
+  minimumSpawnInterval: 5.5
+  maximumSpawnInterval: 7.1
   scoutPrefab: {fileID: 5502752395223545550, guid: 7c5134d30fb25e94a95b18f913231694,
     type: 3}
   mechPrefab: {fileID: 2515943765840467666, guid: b77c9c9b06ee5e747884049d71fb9ce6,
@@ -15202,7 +15202,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 893435811}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.51, y: 0, z: -5.1}
+  m_LocalPosition: {x: 2.5, y: 0, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 831470297}
@@ -15220,8 +15220,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 789133c26852e8240a8823691e649860, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minimumSpawnInterval: 5.1
-  maximumSpawnInterval: 6.7
+  minimumSpawnInterval: 6
+  maximumSpawnInterval: 8
   scoutPrefab: {fileID: 5502752395223545550, guid: 7c5134d30fb25e94a95b18f913231694,
     type: 3}
   mechPrefab: {fileID: 2515943765840467666, guid: b77c9c9b06ee5e747884049d71fb9ce6,
@@ -17467,7 +17467,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1010753072}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.54, y: 0, z: 4.92}
+  m_LocalPosition: {x: -4, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 831470297}
@@ -17485,8 +17485,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 789133c26852e8240a8823691e649860, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minimumSpawnInterval: 4.9
-  maximumSpawnInterval: 6.8
+  minimumSpawnInterval: 5.3
+  maximumSpawnInterval: 7.5
   scoutPrefab: {fileID: 5502752395223545550, guid: 7c5134d30fb25e94a95b18f913231694,
     type: 3}
   mechPrefab: {fileID: 2515943765840467666, guid: b77c9c9b06ee5e747884049d71fb9ce6,

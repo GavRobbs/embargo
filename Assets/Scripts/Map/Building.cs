@@ -40,7 +40,7 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
 
     float fadeSpeed = 0.0f;
 
-    public int hp = 30;
+    public int hp = 12;
 
     public interface IBuildingTask
     {
