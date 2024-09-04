@@ -235,6 +235,15 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
         }
     }
 
+    public void Damage(float damage)
+    {
+        hp -= (int)damage;
+        if(hp < 0)
+        {
+            GameObject.Destroy(this.gameObject);
+        }
+    }
+
     public void Select()
     {
         meshRenderer.material = selectionMaterial;

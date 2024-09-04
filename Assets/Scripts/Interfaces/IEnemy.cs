@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IEnemy : ITargetable, IPathFollower, IHoverable, IStoppable
 {
-    void Attack(ITurret turret);
+    void Attack(Building building);
     string Name { get; }
     Spawner Spawner { get; set; }
 

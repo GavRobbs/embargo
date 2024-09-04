@@ -138,7 +138,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _building: {fileID: 0}
-  _cost: 0
+  _cost: 350
   _online: 0
   influence_center: {fileID: 8215386419157272177}
 --- !u!65 &4597169052178532501

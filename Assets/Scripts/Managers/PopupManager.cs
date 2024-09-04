@@ -24,6 +24,11 @@ public class PopupManager : MonoBehaviour
     {
         foreach (var p in popupOptions)
         {
+            if(p == null)
+            {
+                continue;
+            }
+
             p.gameObject.SetActive(false);
         }
     }

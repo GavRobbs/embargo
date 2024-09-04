@@ -23,8 +23,8 @@ TagManager:
   - Bullet
   - Drone
   - Capitol
-  - 
-  - 
+  - TargetDetector
+  - EnemyBullet
   - 
   - 
   - 

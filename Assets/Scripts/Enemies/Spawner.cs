@@ -16,6 +16,9 @@ public class Spawner : MonoBehaviour
     [SerializeField]
     GameObject mechPrefab;
 
+    [SerializeField]
+    GameObject battleTankPrefab;
+
     float modifiedMinSpawnInterval;
     float modifiedMaxSpawnInterval;
 
@@ -67,7 +70,16 @@ public class Spawner : MonoBehaviour
         if(nextSpawnInterval < 0.0f)
         {
             nextSpawnInterval = Random.Range(modifiedMinSpawnInterval, modifiedMaxSpawnInterval);
-            SpawnScout();
+
+            int val = Random.Range(0, 100);
+            if(val % 9 == 0)
+            {
+                SpawnBattletank();
+            }
+            else
+            {
+                SpawnScout();
+            }
             enemy_count += 1;
         }
         
@@ -98,6 +110,20 @@ public class Spawner : MonoBehaviour
         new_scout.FollowPath(
             path,
             () => { new_scout.KillMe(); }
+        );
+    }
+
+    private void SpawnBattletank()
+    {
+        BattleTank new_bt = GameObject.Instantiate(battleTankPrefab, transform.position, Quaternion.identity).GetComponent<BattleTank>();
+        new_bt.Spawner = this;
+        new_bt.SetLevel(level);
+        Vector3 target = map.GetRandomTargetPosition();
+        List<Vector3> path = map.GetPath(transform.position, target);
+
+        new_bt.FollowPath(
+            path,
+            () => { new_bt.KillMe(); }
         );
     }
 

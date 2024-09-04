@@ -2,19 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Mech : MonoBehaviour, IEnemy, ITaskable
+public class BattleTank : MonoBehaviour, IEnemy, ITaskable
 {
     [SerializeField]
     GameObject forwardPoint;
 
     [SerializeField]
-    GameObject mechBody;
+    GameObject BattleTankBody;
 
     [SerializeField]
     float pathfindingDistanceThreshold;
 
     [SerializeField]
     float moveSpeed;
+
+    [SerializeField]
+    float turretRotationSpeed;
 
     float baseMoveSpeed;
 
@@ -26,14 +29,26 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
 
     [SerializeField]
     AudioSource explosion;
+
+    [SerializeField]
+    TargetDetector target_detector;
+
+    [SerializeField]
+    GameObject turretMesh;
+
+    [SerializeField]
+    GameObject shotPrefab;
+
+    [SerializeField]
+    GameObject bulletSpawnPoint;
     public Vector3 Position => forwardPoint.transform.position;
     public Spawner Spawner { get; set; }
+
+    public int CapitolDamage => 1;
 
     public bool IsFriendly => false;
 
     public bool IsKilled => (HitPoints <= 0.0f) || dying == true;
-
-    public int CapitolDamage => 3;
 
     [SerializeField]
     float hp;
@@ -42,7 +57,7 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
 
     public float HitPoints => hp;
 
-    public string Name => "Bossmech";
+    public string Name => "BattleTank";
 
     bool dying = false;
 
@@ -51,6 +66,15 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
     int level = 1;
 
     bool isStopped = false;
+
+    [SerializeField]
+    float attack_interval_min = 2.0f;
+
+    [SerializeField]
+    float attack_interval_max = 4.0f;
+
+    Building current_target;
+
 
     public ITask CurrentTask
     {
@@ -93,7 +117,7 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
         if (hp <= 0.0f && !dying)
         {
             //We only want the player to get the scrap if they kill it
-            int scrap = (int)((float)level * 0.7f * 500.0f);
+            int scrap = (int)((float)level * 0.7f * 60.0f);
             MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<int>(MessageConstants.AddScrap, scrap));
             KillMe();
         }
@@ -107,6 +131,11 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
 
     }
 
+    public void CancelTask()
+    {
+
+    }
+
     void OnDestroy()
     {
         Spawner.DecreaseEnemyCount();
@@ -115,11 +144,6 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
     public void Damage(float value)
     {
         hp -= value;
-    }
-
-    public void CancelTask()
-    {
-
     }
 
     void OnCollisionEnter(Collision collision)
@@ -136,7 +160,7 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
     public void KillMe()
     {
         dying = true;
-        mechBody.SetActive(false);
+        BattleTankBody.SetActive(false);
         sparks.Play();
         flash.Play();
         GameObject.Destroy(this.gameObject, 2.0f);
@@ -146,12 +170,12 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
 
     public void FollowPath(List<Vector3> path_points, System.Action onComplete)
     {
-        CurrentTask = new MechPathFollowTask(this, path_points, pathfindingDistanceThreshold, moveSpeed, onComplete);
+        CurrentTask = new BattleTankPathFollowTask(this, path_points, pathfindingDistanceThreshold, moveSpeed, onComplete);
     }
 
     public void Attack(Building building)
     {
-        throw new System.NotImplementedException();
+        //throw new System.NotImplementedException();
     }
 
     public Dictionary<string, string> GetHoverData()
@@ -173,10 +197,15 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
     {
     }
 
-    class MechPathFollowTask : ITask
+    void Fire()
+    {
+        GameObject.Instantiate(shotPrefab, bulletSpawnPoint.transform.position, bulletSpawnPoint.transform.rotation);
+    }
+
+    class BattleTankPathFollowTask : ITask
     {
         List<Vector3> path;
-        Mech owner;
+        BattleTank owner;
 
         Vector3 target_position;
         bool isMoving;
@@ -186,13 +215,19 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
 
         float distance_threshold;
         float move_speed;
-        public MechPathFollowTask(Mech recipient, List<Vector3> follow_path, float threshold, float moveSpeed, System.Action onComplete)
+        float next_attack_timer = 0.0f;
+        bool isTracking = false;
+
+        public BattleTankPathFollowTask(BattleTank recipient, List<Vector3> follow_path, float threshold, float moveSpeed, System.Action onComplete)
         {
             path = follow_path;
             owner = recipient;
             completionCallback = onComplete;
             distance_threshold = threshold;
             move_speed = moveSpeed;
+
+            next_attack_timer = Random.Range(recipient.attack_interval_min, recipient.attack_interval_max);
+
         }
 
         public float Progress => 0.0f;
@@ -218,6 +253,38 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
 
         }
 
+        private void LookAtTargetAndFire()
+        {
+            if (owner.current_target == null)
+            {
+                isTracking = false;
+                next_attack_timer = Random.Range(owner.attack_interval_min, owner.attack_interval_max);
+                return;
+            }
+
+            Quaternion current_rotation = owner.turretMesh.transform.rotation;
+            Vector3 direction = Vector3.Normalize(owner.turretMesh.transform.position - owner.current_target.transform.position);
+            float angle = (Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg);
+
+            Quaternion target_rotation = Quaternion.Euler(0.0f, angle, 0.0f);
+
+            float angular_diff = Quaternion.Angle(current_rotation, target_rotation);
+
+            if (angular_diff > 1)
+            {
+                Quaternion interpolated = Quaternion.Slerp(current_rotation, target_rotation, owner.turretRotationSpeed * Time.deltaTime);
+                owner.turretMesh.transform.rotation = interpolated;
+            }
+            else
+            {
+                owner.turretMesh.transform.rotation = target_rotation;
+                owner.Fire();
+                next_attack_timer = Random.Range(owner.attack_interval_min, owner.attack_interval_max);
+                isTracking = false;
+            }
+
+        }
+
         public void OnTaskUpdate(float dt)
         {
             if (owner.IsKilled)
@@ -229,22 +296,54 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
             {
                 Vector3 moveDir = (target_position - owner.transform.position).normalized;
 
-                //Use this to orient our mech
-                if(moveDir.x < -0.5f)
+                if (moveDir.x < -0.5f)
                 {
-                    owner.mechBody.transform.rotation = Quaternion.AngleAxis(-90.0f, Vector3.up);
+                    owner.BattleTankBody.transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.up);
 
-                } else if(moveDir.x > 0.5f)
-                {
-                    owner.mechBody.transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.up);
-                } else if(moveDir.z > 0.5f)
-                {
-                    owner.mechBody.transform.rotation = Quaternion.AngleAxis(0.0f, Vector3.up);
-                } else if(moveDir.z < -0.5f)
-                {
-                    owner.mechBody.transform.rotation = Quaternion.AngleAxis(180.0f, Vector3.up);
                 }
+                else if (moveDir.x > 0.5f)
+                {
+                    owner.BattleTankBody.transform.rotation = Quaternion.AngleAxis(-90.0f, Vector3.up);
+                }
+                else if (moveDir.z > 0.5f)
+                {
+                    owner.BattleTankBody.transform.rotation = Quaternion.AngleAxis(180.0f, Vector3.up);
+                }
+                else if (moveDir.z < -0.5f)
+                {
+                    owner.BattleTankBody.transform.rotation = Quaternion.AngleAxis(0, Vector3.up);
+                }
+
                 owner.transform.position = owner.transform.position + (moveDir * move_speed * Time.deltaTime);
+
+                if (isTracking)
+                {
+                    //Rotate the turret appropriately
+                    //and fire if we reach
+                    LookAtTargetAndFire();
+                }
+                else
+                {
+                    next_attack_timer -= Time.deltaTime;
+                    if (next_attack_timer <= 0.0)
+                    {
+                        next_attack_timer = Random.Range(owner.attack_interval_min, owner.attack_interval_max);
+                        isTracking = true;
+                        owner.current_target = owner.target_detector.GetRandomTarget();
+
+                        if(owner.current_target == null)
+                        {
+                            isTracking = false;
+
+                            //Make the next interval shorter so its more inclined to attack again
+                            next_attack_timer /= 2.0f;
+                        }
+
+                    }
+
+                }
+
+                
 
                 if (Vector3.Distance(owner.transform.position, target_position) <= distance_threshold)
                 {
@@ -280,9 +379,10 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
 
         moveSpeed *= 1.0f + ((float)(level - 1)) * 0.06f;
 
-        max_hp *= 1.0f + ((float)(level - 1)) * 0.45f;
+        max_hp *= 1.0f + ((float)(level - 1)) * 0.18f;
 
         hp = max_hp;
+
     }
 
     public void ClearTask()

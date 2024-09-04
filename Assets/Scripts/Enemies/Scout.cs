@@ -149,7 +149,7 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
         CurrentTask = new ScoutPathFollowTask(this, path_points, pathfindingDistanceThreshold, moveSpeed, onComplete);
     }
 
-    public void Attack(ITurret turret)
+    public void Attack(Building building)
     {
         throw new System.NotImplementedException();
     }
