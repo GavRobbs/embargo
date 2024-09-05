@@ -156,9 +156,14 @@ public class GameMap : MonoBehaviour
             buildings.Add(b);
             b.transform.SetParent(buildings_holder.transform, true);
 
-            //Gives the building a random rotation to generate a little visual interest
-            MeshRenderer meshRenderer = b.GetComponentInChildren<MeshRenderer>();
-            meshRenderer.transform.rotation = Quaternion.Euler(new Vector3(-89.98f, (float)Random.Range(1, 3) * 90.0f, 0.0f));
+            //Rotate the building at a random angle to get some visual interest
+            float rot_angle = (float)Random.Range(1, 3) * 90.0f;
+
+            MeshRenderer meshRenderer = b.regularMesh.GetComponentInChildren<MeshRenderer>();
+            meshRenderer.transform.rotation = Quaternion.Euler(new Vector3(-89.98f, rot_angle, 0.0f));
+
+            MeshRenderer mr2 = b.shatteredMesh.GetComponentInChildren<MeshRenderer>();
+            mr2.transform.rotation = Quaternion.Euler(new Vector3(0.0f, rot_angle, 0.0f));
 
         }
         else if (tile_type == 0)

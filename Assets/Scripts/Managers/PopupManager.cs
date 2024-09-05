@@ -36,7 +36,7 @@ public class PopupManager : MonoBehaviour
     public void ShowBuildingPopup(int hp, Vector2 pos)
     {
         HideAllPopups();
-        popupOptions[0].transform.Find("BuildingHP").GetComponent<TextMeshProUGUI>().text = $"HP: {hp}/30";
+        popupOptions[0].transform.Find("BuildingHP").GetComponent<TextMeshProUGUI>().text = $"HP: {hp}/12";
         popupOptions[0].transform.position = pos;
         popupOptions[0].gameObject.SetActive(true);
     }
@@ -46,7 +46,7 @@ public class PopupManager : MonoBehaviour
         HideAllPopups();
         popupOptions[1].transform.Find("Turretname").GetComponent<TextMeshProUGUI>().text = turret_name;
         popupOptions[1].transform.Find("TurretLv").GetComponent<TextMeshProUGUI>().text = $"Lv. {turret_lv}";
-        popupOptions[1].transform.Find("BuildingHP").GetComponent<TextMeshProUGUI>().text = $"HP: {bhp}/30";
+        popupOptions[1].transform.Find("BuildingHP").GetComponent<TextMeshProUGUI>().text = $"HP: {bhp}/12";
         popupOptions[1].transform.Find("BonusList").GetComponent<TextMeshProUGUI>().text = $"+{System.Math.Round(atk_bonus * 100.0, 1)}% attack damage\n+{System.Math.Round(range_bonus * 100.0, 1)}% attack range\n-{System.Math.Round(cd_bonus * 100.0, 1)}% cooldown\n";
         popupOptions[1].transform.position = pos;
         popupOptions[1].gameObject.SetActive(true);
@@ -66,7 +66,7 @@ public class PopupManager : MonoBehaviour
         HideAllPopups();
         popupOptions[3].transform.Find("Turretname").GetComponent<TextMeshProUGUI>().text = turret_name;
         popupOptions[3].transform.Find("TurretLv").GetComponent<TextMeshProUGUI>().text = $"Lv. {turret_lv}";
-        popupOptions[3].transform.Find("BuildingHP").GetComponent<TextMeshProUGUI>().text = $"HP: {bhp}/30";
+        popupOptions[3].transform.Find("BuildingHP").GetComponent<TextMeshProUGUI>().text = $"HP: {bhp}/12";
         popupOptions[3].transform.position = pos;
         popupOptions[3].gameObject.SetActive(true);
     }

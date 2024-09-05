@@ -16,6 +16,9 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
     Material selectionMaterial;
 
     [SerializeField]
+    GameObject explosionPrefab;
+
+    [SerializeField]
     GameObject turretLocationHolder;
 
     [SerializeField]
@@ -23,6 +26,18 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
 
     [SerializeField]
     GameObject teleportEffectPrefab;
+
+    [SerializeField]
+    public GameObject shatteredMesh;
+
+    [SerializeField]
+    AudioSource collapseSound;
+
+    [SerializeField]
+    public GameObject regularMesh;
+
+    [SerializeField]
+    AudioSource explosionSound;
 
     GameObject teleportEffect;
 
@@ -41,6 +56,8 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
     float fadeSpeed = 0.0f;
 
     public int hp = 12;
+
+    public bool isDestroyed = false;
 
     public interface IBuildingTask
     {
@@ -224,7 +241,19 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
     // Update is called once per frame
     void Update()
     {
-        if(current_task != null)
+        if (isDestroyed)
+        {
+            return;
+        }
+
+        if (hp <= 0)
+        {
+            CancelCurrentTask();
+            DestroyBuilding();
+            return;
+        }
+
+        if (current_task != null)
         {
             current_task.UpdateTask(Time.deltaTime);
 
@@ -237,11 +266,27 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
 
     public void Damage(float damage)
     {
-        hp -= (int)damage;
-        if(hp < 0)
+        if (isDestroyed)
         {
-            GameObject.Destroy(this.gameObject);
+            return;
         }
+
+        hp -= (int)damage;
+    }
+
+    void DestroyBuilding()
+    {
+        if(attached_turret != null)
+        {
+            GameObject.Destroy(attached_turret);
+            GameObject.Instantiate(explosionPrefab, turretLocationHolder.transform);
+            explosionSound.Play();
+        }
+        collapseSound.Play();
+        GameObject.Destroy(this.gameObject, 4.0f);
+        shatteredMesh.SetActive(true);
+        regularMesh.SetActive(false);
+        isDestroyed = true;
     }
 
     public void Select()
@@ -256,7 +301,7 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
 
     void PreviewTurret(GameObject prefab_to_see)
     {
-        if (hasTurret || previewTurret != null || building_turret)
+        if (hasTurret || previewTurret != null || building_turret || isDestroyed)
         {
             return;
         }
@@ -266,6 +311,11 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
 
     public Dictionary<string, string> GetHoverData()
     {
+        if (isDestroyed)
+        {
+            return null;
+        }
+
         Dictionary<string, string> result = new Dictionary<string, string>()
         {
             {"type", "building"},
@@ -276,6 +326,10 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
 
     public void OnHoverOver(HoverInfo info)
     {
+        if (isDestroyed)
+        {
+            return;
+        }
 
         if(info == null)
         {
@@ -291,6 +345,14 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
 
     public void OnHoverOff()
     {
-        GameObject.Destroy(previewTurret);
+        if (isDestroyed)
+        {
+            return;
+        }
+
+        if(previewTurret != null)
+        {
+            GameObject.Destroy(previewTurret);
+        }
     }
 }
