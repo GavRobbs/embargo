@@ -90,7 +90,7 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
             return;
         }
 
-        if(hp <= 0.0f && !dying)
+        if(hp < 1.0f && !dying)
         {
             //We only want the player to get the scrap if they kill it
             int scrap = (int)((float)level * 0.7f * 30.0f);
@@ -126,7 +126,7 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Bullet"))
         {
-            float dmg = collision.gameObject.GetComponentInParent<MGBullet>().Damage;
+            float dmg = collision.gameObject.GetComponentInParent<IBullet>().Damage;
             Destroy(collision.gameObject);
             Damage(dmg);
         }

@@ -2931,7 +2931,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 19.85
+  m_fontSize: 19.15
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3391,6 +3391,7 @@ GameObject:
   - component: {fileID: 4916761307570780601}
   - component: {fileID: 4916761307570780550}
   - component: {fileID: 4916761307570780551}
+  - component: {fileID: 1024950684186854287}
   m_Layer: 5
   m_Name: BuildPlasmaCannon
   m_TagString: Untagged
@@ -3497,7 +3498,33 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4916761307570780550}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1024950684186854287}
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1024950684186854287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4916761307570780549}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c99c7c5b17a2fb74580db454e46a3fc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attached_turret_prefab: {fileID: 7030156672931580335, guid: 2aef9ad46f8aae24f9e0ef93c0cd2a2c,
+    type: 3}
+  owner: {fileID: 4916761307255293425}
 --- !u!1 &4916761307597666299
 GameObject:
   m_ObjectHideFlags: 0
@@ -5934,15 +5961,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a19f594ef5d7b16429805d30bd033352, type: 3}
---- !u!1 &1286583906133575769 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6996954588802774080, guid: a19f594ef5d7b16429805d30bd033352,
-    type: 3}
-  m_PrefabInstance: {fileID: 8124757741529168921}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &505546926753117587 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8630269480944765322, guid: a19f594ef5d7b16429805d30bd033352,
+    type: 3}
+  m_PrefabInstance: {fileID: 8124757741529168921}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1286583906133575769 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6996954588802774080, guid: a19f594ef5d7b16429805d30bd033352,
     type: 3}
   m_PrefabInstance: {fileID: 8124757741529168921}
   m_PrefabAsset: {fileID: 0}

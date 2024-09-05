@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MGBullet : MonoBehaviour, IBullet
+public class PlasmaBolt : MonoBehaviour, IBullet
 {
     private Vector3 forward_vector;
 
@@ -10,7 +10,8 @@ public class MGBullet : MonoBehaviour, IBullet
     float _damage;
 
     public float Damage { get => _damage; set => _damage = value; }
-    public bool ArmourBonus { get => false; }
+
+    public bool ArmourBonus { get => true; }
 
     [SerializeField]
     Rigidbody mRigidbody;

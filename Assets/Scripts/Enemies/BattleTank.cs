@@ -114,7 +114,7 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
             return;
         }
 
-        if (hp <= 0.0f && !dying)
+        if (hp < 1.0f && !dying)
         {
             //We only want the player to get the scrap if they kill it
             int scrap = (int)((float)level * 0.7f * 60.0f);
@@ -150,9 +150,11 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Bullet"))
         {
-            float dmg = collision.gameObject.GetComponentInParent<MGBullet>().Damage;
+            IBullet b = collision.gameObject.GetComponentInParent<IBullet>();
+            float dmg = b.Damage;
+            float mul = b.ArmourBonus ? 1.0f : 1.5f;
             Destroy(collision.gameObject);
-            Damage(dmg);
+            Damage(dmg * mul);
         }
 
     }

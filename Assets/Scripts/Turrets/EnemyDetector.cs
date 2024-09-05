@@ -40,6 +40,10 @@ public class EnemyDetector : MonoBehaviour
 
     public void SetDetectionRadius(float radius)
     {
-        GetComponent<SphereCollider>().radius = radius;
+        var sc = GetComponent<SphereCollider>();
+        if(sc != null)
+        {
+            sc.radius = radius;
+        }
     }
 }

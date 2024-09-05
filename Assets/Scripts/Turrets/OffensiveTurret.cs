@@ -410,7 +410,11 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
         isStopped = true;
         turnSound.Stop();
         fireSound.Stop();
-        reloadSound.Stop();
+
+        if(reloadSound != null)
+        {
+            reloadSound.Stop();
+        }
     }
 
 }
