@@ -394,6 +394,7 @@ GameObject:
   - component: {fileID: 1174179222704442170}
   - component: {fileID: 6262015581669460635}
   - component: {fileID: 4609193413134909602}
+  - component: {fileID: 1441558146509024423}
   m_Layer: 5
   m_Name: BuildingTextSpawnPoint
   m_TagString: Untagged
@@ -480,6 +481,18 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &1441558146509024423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1825557938501896482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0035c640cc471484abfcc396281bb236, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!95 &3770204566706433058
 Animator:
   serializedVersion: 3

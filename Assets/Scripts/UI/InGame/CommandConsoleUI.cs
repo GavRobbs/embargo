@@ -208,7 +208,7 @@ public class CommandConsoleUI : MonoBehaviour, IMessageHandler
         }
         else
         {
-            //TODO: TELL THE PLAYER THEY'RE BROKE
+            //TELL THE PLAYER THEY'RE BROKE
             MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "You require more scrap!"));
         }
 

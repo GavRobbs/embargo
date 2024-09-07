@@ -330,6 +330,26 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
         }
     }
 
+    public void OnRightClick(InputAction.CallbackContext callbackContext)
+    {
+        //Right click cancels a selected action
+        if (callbackContext.started)
+        {
+            if(current_hoverable != null)
+            {
+                current_hoverable.OnHoverOff();
+                current_hoverable = null;
+            }
+
+            current_hover_mode = HOVER_MODE.INFO;
+            current_click_mode = CLICK_MODE.NONE;
+            to_hover_time = 0.7f;
+            current_turret_pfb = null;
+
+            MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageEverything));
+        }
+    }
+
     public void OnRotate(InputAction.CallbackContext callbackContext)
     {
         if (callbackContext.started || callbackContext.performed)
