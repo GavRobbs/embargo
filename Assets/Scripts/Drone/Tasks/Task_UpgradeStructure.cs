@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Task_BuildStructure : ITask
+public class Task_UpgradeStructure : ITask
 {
     private Drone drone;
     public float Progress
@@ -20,7 +20,7 @@ public class Task_BuildStructure : ITask
         }
     }
 
-    public string Description => "Build a turret";
+    public string Description => "Upgrade a turret";
 
     float duration;
     float initial_duration;
@@ -30,7 +30,7 @@ public class Task_BuildStructure : ITask
 
     List<Vector3> path_to_target;
 
-    enum TaskState { GO_TO_TARGET, BUILD_TURRET, DONE };
+    enum TaskState { GO_TO_TARGET, UPGRADE_TURRET, DONE };
     TaskState status = TaskState.GO_TO_TARGET;
 
     bool at_target = false;
@@ -40,7 +40,7 @@ public class Task_BuildStructure : ITask
 
     bool cancelled = false;
 
-    public Task_BuildStructure(Building target_building, Drone instruction_drone, GameObject tpfb, float ttb)
+    public Task_UpgradeStructure(Building target_building, Drone instruction_drone, float ttu, int upgrade_cost)
     {
         status = TaskState.GO_TO_TARGET;
         building = target_building;
@@ -49,12 +49,11 @@ public class Task_BuildStructure : ITask
         var r_adj_pp = building.RandomAdjacent;
         path_to_target = drone.FindPathToTarget(r_adj_pp.Position);
 
-        cost = tpfb.GetComponent<ITurret>().Cost;
+        cost = upgrade_cost;
 
-        duration = ttb;
-        initial_duration = ttb;
+        duration = ttu;
+        initial_duration = ttu;
 
-        turret_prefab = tpfb;
     }
 
     public void OnTaskEnter()
@@ -70,7 +69,7 @@ public class Task_BuildStructure : ITask
 
     public void OnTaskCancel()
     {
-        if(status == TaskState.DONE)
+        if (status == TaskState.DONE)
         {
             return;
         }
@@ -101,10 +100,10 @@ public class Task_BuildStructure : ITask
             {
                 if (at_target)
                 {
-                    status = TaskState.BUILD_TURRET;
+                    status = TaskState.UPGRADE_TURRET;
                     MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<int>(MessageConstants.RemoveScrap, cost));
                     building.SetTask(
-                            new Building.BuildTurretTask(building, turret_prefab, duration,
+                            new Building.UpgradeTurretTask(building, cost, duration,
                             (float delta) => { },
                             () => { building_done = true; },
                             () => { }
@@ -113,12 +112,12 @@ public class Task_BuildStructure : ITask
                 }
 
             }
-            
+
         }
-        else if (status == TaskState.BUILD_TURRET)
+        else if (status == TaskState.UPGRADE_TURRET)
         {
             duration -= Time.deltaTime;
-            if(building_done == true)
+            if (building_done == true)
             {
                 status = TaskState.DONE;
             }

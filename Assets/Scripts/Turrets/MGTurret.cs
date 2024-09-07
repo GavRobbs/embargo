@@ -25,14 +25,9 @@ public class MGTurret : OffensiveTurret
 
     [SerializeField]
     GameObject bulletPrefab;
-    public override float BuildTime => 6.0f;
-
-    int _level = 1;
-
-    
+    public override float BuildTime => 6.0f;   
 
     override public string TurretClass { get => "Machinegun";  }
-    override public int Level { get => _level; }
 
     //These help to determine how long a machinegun volley lasts
     [SerializeField]
@@ -228,11 +223,33 @@ public class MGTurret : OffensiveTurret
 
     public override void OnHoverOver(HoverInfo info)
     {
+        if(info == null)
+        {
+            return;
+        }
+
+        if (info.mode == GameInputManager.HOVER_MODE.UPGRADE && Online)
+        {
+            AttachedBuilding?.ActivateArrow();
+            return;
+
+        }
+
+        if (info.mode == GameInputManager.HOVER_MODE.SCRAP && Online)
+        {
+            AttachedBuilding?.ActivateScrapIcon();
+        }
+
     }
 
     public override void OnHoverOff()
     {
-        
+        if(AttachedBuilding != null)
+        {
+            AttachedBuilding.DeactivateArrow();
+            AttachedBuilding.DeactivateScrapIcon();
+
+        }
     }
 
 }

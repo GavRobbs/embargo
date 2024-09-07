@@ -50,6 +50,60 @@ public class DroneAndTurretManager : MonoBehaviour, IMessageHandler
 
                     break;
                 }
+            case MessageConstants.UpgradeTurret:
+                {
+                    Building ab = (message as SingleValueMessage<Building>).value;
+                    if(ab == null)
+                    {
+                        MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "Invalid turret selection!"));
+                        return;
+                    }
+
+                    Drone current_drone = GetFreeDrone();
+
+                    if (current_drone != null)
+                    {
+                        ITurret t = ab.OccupyingTurret;
+                        if(t.Level == 5)
+                        {
+                            MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "Turret is at max level!"));
+                            return;
+                        }
+                        float upgrade_time = ((float)t.Level + 1) * t.BuildTime;
+                        int upgrade_cost = (t.Level + 1) * t.Cost;
+                        var task = new Task_UpgradeStructure(ab, current_drone, upgrade_time, upgrade_cost);
+                        current_drone.CurrentTask = task;
+                    }
+                    else
+                    {
+                        MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "No available drones!"));
+                    }
+                    break;
+                }
+            case MessageConstants.ScrapTurret:
+                {
+                    Building ab = (message as SingleValueMessage<Building>).value;
+                    if (ab == null)
+                    {
+                        MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "Invalid turret selection!"));
+                        return;
+                    }
+
+                    Drone current_drone = GetFreeDrone();
+
+                    if (current_drone != null)
+                    {
+                        ITurret t = ab.OccupyingTurret;
+                        var task = new Task_ScrapStructure(ab, current_drone, 8.0f);
+                        current_drone.CurrentTask = task;
+                    }
+                    else
+                    {
+                        MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "No available drones!"));
+                    }
+                    break;
+
+                }
             case MessageConstants.EngageBuildMode:
                 {
                     EngageBuildModeMessage msg = message as EngageBuildModeMessage;

@@ -122,9 +122,9 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public void StartNewGame()
+    public void MainMenu()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(0);
     }
 
 }

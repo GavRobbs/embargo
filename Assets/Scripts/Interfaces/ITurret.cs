@@ -1,7 +1,7 @@
 ﻿public interface ITurret : IHoverable, IStoppable
 {
     string TurretClass { get; }
-    int Level { get; }
+    int Level { get; set; }
 
     int Cost { get; }
 

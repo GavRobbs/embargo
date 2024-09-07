@@ -11,10 +11,7 @@ public class PlasmaCannon : OffensiveTurret
     GameObject bulletPrefab;
     public override float BuildTime => 8.0f;
 
-    int _level = 1;
-
     override public string TurretClass { get => "Plasma Cannon"; }
-    override public int Level { get => _level; }
 
     protected override void ChillBehaviour()
     {
@@ -160,11 +157,32 @@ public class PlasmaCannon : OffensiveTurret
 
     public override void OnHoverOver(HoverInfo info)
     {
+        if (info == null)
+        {
+            return;
+        }
+
+        if (info.mode == GameInputManager.HOVER_MODE.UPGRADE && Online)
+        {
+            AttachedBuilding?.ActivateArrow();
+            return;
+
+        }
+
+        if (info.mode == GameInputManager.HOVER_MODE.SCRAP && Online)
+        {
+            AttachedBuilding?.ActivateScrapIcon();
+        }
     }
 
     public override void OnHoverOff()
     {
-
+        if(AttachedBuilding != null)
+        {
+            AttachedBuilding.DeactivateArrow();
+            AttachedBuilding.ActivateArrow();
+        }
+       
     }
 
 }

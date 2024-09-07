@@ -6,11 +6,8 @@ public class AttackBoosterTurret : SupportTurret
 {
     override public string TurretClass => "Attack Booster";
 
-    override public int Level => _level;
-
-    int _level = 1;
     public override float BuildTime => 8.0f;
-    public override float Influence => 1.2f + (float)_level * 0.3f;
+    public override float Influence => 1.2f + (float)Level * 0.3f;
     public override void OnTurretSpawn()
     {
 

@@ -12,7 +12,7 @@ public abstract class SupportTurret : MonoBehaviour, ITurret
 
     virtual public string TurretClass => throw new System.NotImplementedException();
 
-    virtual public int Level => throw new System.NotImplementedException();
+    public int Level { get; set; }
 
     public int Cost => _cost;
 
@@ -30,6 +30,7 @@ public abstract class SupportTurret : MonoBehaviour, ITurret
             _online = value;
         }
     }
+
 
     [SerializeField]
     protected Transform influence_center;
@@ -52,12 +53,35 @@ public abstract class SupportTurret : MonoBehaviour, ITurret
         };
     }
 
-    public virtual void OnHoverOff()
+    public void OnHoverOver(HoverInfo info)
     {
+        if (info == null)
+        {
+            return;
+        }
+
+        if (info.mode == GameInputManager.HOVER_MODE.UPGRADE && Online)
+        {
+            AttachedBuilding?.ActivateArrow();
+            return;
+
+        }
+
+        if (info.mode == GameInputManager.HOVER_MODE.SCRAP && Online)
+        {
+            AttachedBuilding?.ActivateScrapIcon();
+        }
+
+
     }
 
-    public virtual void OnHoverOver(HoverInfo info)
+    public void OnHoverOff()
     {
+        if(AttachedBuilding != null)
+        {
+            AttachedBuilding.DeactivateArrow();
+            AttachedBuilding.DeactivateScrapIcon();
+        }
     }
 
     virtual public void OnTurretDestroy()
@@ -76,6 +100,7 @@ public abstract class SupportTurret : MonoBehaviour, ITurret
 
     protected virtual void Start()
     {
+        Level = 1;
     }
 
     public void Stop()

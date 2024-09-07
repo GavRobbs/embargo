@@ -41,11 +41,11 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
     IHoverable current_hoverable = null;
     float to_hover_time = 0.7f;
 
-    public enum HOVER_MODE : int { INFO, BUILD, HIGHLIGHT };
+    public enum HOVER_MODE : int { INFO, BUILD, HIGHLIGHT, UPGRADE, SCRAP };
     HOVER_MODE current_hover_mode = HOVER_MODE.INFO;
 
     //The click mode can either be to place a building or to do nothing
-    public enum CLICK_MODE : int {  NONE, PLACE };
+    public enum CLICK_MODE : int {  NONE, PLACE, SELECT };
     CLICK_MODE current_click_mode = CLICK_MODE.NONE;
 
     GameMap map_manager;
@@ -106,7 +106,7 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
             {
                 return;
             }
-            else
+            else if(current_click_mode == CLICK_MODE.PLACE)
             {
                 Vector2 mouse_pos = Mouse.current.position.ReadValue();
                 Ray ray = Camera.main.ScreenPointToRay(mouse_pos);
@@ -135,6 +135,82 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
                     MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageBuildMode));
 
                 }
+            } 
+            else if(current_click_mode == CLICK_MODE.SELECT)
+            {
+                Vector2 mouse_pos = Mouse.current.position.ReadValue();
+                Ray ray = Camera.main.ScreenPointToRay(mouse_pos);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit, 1000.0f, LayerMask.GetMask("Building", "Turret")))
+                {
+                    Building b = hit.collider.GetComponentInParent<Building>();
+                    if (b != null)
+                    {
+                        if (b.hasTurret)
+                        {
+                            if (current_hover_mode == HOVER_MODE.UPGRADE && (!b.upgrading_turret || !b.scrapping_turret) )
+                            {
+                                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<Building>(MessageConstants.UpgradeTurret, b));
+                                MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageUpgradeMode));
+                            } else if (current_hover_mode == HOVER_MODE.SCRAP && (!b.upgrading_turret || !b.scrapping_turret))
+                            {
+                                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<Building>(MessageConstants.ScrapTurret, b));
+                                MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageScrapMode));
+                            }
+
+                        }
+                        else
+                        {
+                            if (current_hover_mode == HOVER_MODE.UPGRADE)
+                            {
+                                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "No valid target to upgrade!"));
+                                MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageUpgradeMode));
+                            }
+                            else if (current_hover_mode == HOVER_MODE.SCRAP)
+                            {
+                                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "No valid target to scrap!"));
+                                MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageScrapMode));
+                            }
+                        }
+                        return;
+                    }
+                    else
+                    {
+                        ITurret t = hit.collider.GetComponentInParent<ITurret>();
+
+                        if (current_hover_mode == HOVER_MODE.UPGRADE)
+                        {
+                            if(t != null && (!t.AttachedBuilding.upgrading_turret || !t.AttachedBuilding.scrapping_turret))
+                            {
+                                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<Building>(MessageConstants.UpgradeTurret, t.AttachedBuilding));
+
+                            }
+                            else
+                            {
+                                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "No valid target to upgrade!"));
+                            }
+                            MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageUpgradeMode));
+                        }
+                        else if(current_hover_mode == HOVER_MODE.SCRAP)
+                        {
+                            if(t != null && (!t.AttachedBuilding.upgrading_turret || !t.AttachedBuilding.scrapping_turret))
+                            {
+                                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<Building>(MessageConstants.ScrapTurret, t.AttachedBuilding));
+                            }
+                            else
+                            {
+                                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "No valid target to scrap!"));
+                            }
+                            MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageScrapMode));
+
+                        }
+                        
+                    }
+
+
+                }
+
             }
 
         }
@@ -200,6 +276,30 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
                     current_hoverable = hoverable;
                     current_hoverable.OnHoverOver(new BuildHoverInfo(current_turret_pfb));
                 }
+            }
+            else if(current_hover_mode == HOVER_MODE.UPGRADE)
+            {
+                if (hoverable == null || (hit.collider.gameObject.layer != LayerMask.NameToLayer("Building") &&  hit.collider.gameObject.layer != LayerMask.NameToLayer("Turret")))
+                {
+                    return;
+                }
+
+                current_hoverable?.OnHoverOff();
+                current_hoverable = hoverable;
+                current_hoverable.OnHoverOver(new HoverInfo(HOVER_MODE.UPGRADE, 0));
+
+            }
+            else if (current_hover_mode == HOVER_MODE.SCRAP)
+            {
+                if (hoverable == null || (hit.collider.gameObject.layer != LayerMask.NameToLayer("Building") && hit.collider.gameObject.layer != LayerMask.NameToLayer("Turret")))
+                {
+                    return;
+                }
+
+                current_hoverable?.OnHoverOff();
+                current_hoverable = hoverable;
+                current_hoverable.OnHoverOver(new HoverInfo(HOVER_MODE.SCRAP, 0));
+
             }
 
         }
@@ -330,6 +430,34 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
             case MessageConstants.GameOverMessage:
                 {
                     StartCoroutine(GameOver());
+                    break;
+                }
+            case MessageConstants.EngageUpgradeMode:
+                {
+                    current_hover_mode = HOVER_MODE.UPGRADE;
+                    current_click_mode = CLICK_MODE.SELECT;
+                    current_turret_pfb = null;
+                    break;
+                }
+            case MessageConstants.DisengageUpgradeMode:
+                {
+                    current_hover_mode = HOVER_MODE.INFO;
+                    current_click_mode = CLICK_MODE.NONE;
+                    current_turret_pfb = null;
+                    break;
+                }
+            case MessageConstants.EngageScrapMode:
+                {
+                    current_hover_mode = HOVER_MODE.SCRAP;
+                    current_click_mode = CLICK_MODE.SELECT;
+                    current_turret_pfb = null;
+                    break;
+                }
+            case MessageConstants.DisengageScrapMode:
+                {
+                    current_hover_mode = HOVER_MODE.INFO;
+                    current_click_mode = CLICK_MODE.NONE;
+                    current_turret_pfb = null;
                     break;
                 }
         }

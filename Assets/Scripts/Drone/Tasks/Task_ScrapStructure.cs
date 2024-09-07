@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Task_BuildStructure : ITask
+public class Task_ScrapStructure : ITask
 {
     private Drone drone;
     public float Progress
@@ -20,7 +20,7 @@ public class Task_BuildStructure : ITask
         }
     }
 
-    public string Description => "Build a turret";
+    public string Description => "Scrap a turret";
 
     float duration;
     float initial_duration;
@@ -30,17 +30,16 @@ public class Task_BuildStructure : ITask
 
     List<Vector3> path_to_target;
 
-    enum TaskState { GO_TO_TARGET, BUILD_TURRET, DONE };
+    enum TaskState { GO_TO_TARGET, SCRAP_TURRET, DONE };
     TaskState status = TaskState.GO_TO_TARGET;
 
     bool at_target = false;
 
     GameObject turret_prefab;
-    int cost;
 
     bool cancelled = false;
 
-    public Task_BuildStructure(Building target_building, Drone instruction_drone, GameObject tpfb, float ttb)
+    public Task_ScrapStructure(Building target_building, Drone instruction_drone, float tts)
     {
         status = TaskState.GO_TO_TARGET;
         building = target_building;
@@ -49,12 +48,10 @@ public class Task_BuildStructure : ITask
         var r_adj_pp = building.RandomAdjacent;
         path_to_target = drone.FindPathToTarget(r_adj_pp.Position);
 
-        cost = tpfb.GetComponent<ITurret>().Cost;
 
-        duration = ttb;
-        initial_duration = ttb;
+        duration = tts;
+        initial_duration = tts;
 
-        turret_prefab = tpfb;
     }
 
     public void OnTaskEnter()
@@ -70,7 +67,7 @@ public class Task_BuildStructure : ITask
 
     public void OnTaskCancel()
     {
-        if(status == TaskState.DONE)
+        if (status == TaskState.DONE)
         {
             return;
         }
@@ -91,34 +88,22 @@ public class Task_BuildStructure : ITask
 
         if (status == TaskState.GO_TO_TARGET)
         {
-            if (!Object.FindObjectOfType<CommandConsoleUI>().CheckMoney(cost))
+            if (at_target)
             {
-                //Remind you that you're broke
-                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "You require more scrap!"));
-                status = TaskState.DONE;
+                status = TaskState.SCRAP_TURRET;
+                building.SetTask(
+                        new Building.ScrapTurretTask(building, duration,
+                        (float delta) => { },
+                        () => { building_done = true; },
+                        () => { }
+                        )
+                    );
             }
-            else
-            {
-                if (at_target)
-                {
-                    status = TaskState.BUILD_TURRET;
-                    MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<int>(MessageConstants.RemoveScrap, cost));
-                    building.SetTask(
-                            new Building.BuildTurretTask(building, turret_prefab, duration,
-                            (float delta) => { },
-                            () => { building_done = true; },
-                            () => { }
-                            )
-                        );
-                }
-
-            }
-            
         }
-        else if (status == TaskState.BUILD_TURRET)
+        else if (status == TaskState.SCRAP_TURRET)
         {
             duration -= Time.deltaTime;
-            if(building_done == true)
+            if (building_done == true)
             {
                 status = TaskState.DONE;
             }

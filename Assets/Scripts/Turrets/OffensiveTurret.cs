@@ -36,12 +36,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
 
     [SerializeField]
     protected EnemyDetector enemyDetector;
-
-    [SerializeField]
-    float atk_bonus = 1;
-    float range_bonus = 1;
-    float def_bonus = 1;
-
+   
     protected List<AttackBoostBonus> attack_bonuses = new List<AttackBoostBonus>();
 
     protected ITargetable current_target = null;
@@ -70,7 +65,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
     public TurretState currentState = TurretState.CHILLING;
 
     virtual public string TurretClass { get => throw new System.NotImplementedException(); }
-    virtual public int Level { get => throw new System.NotImplementedException(); }
+    public int Level { get; set; }
 
     //This is the attack range for offensive turrets after bonuses are calculated
     public float Influence
@@ -132,6 +127,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
     protected virtual void Start()
     {
         enemyDetector.SetDetectionRadius(Influence);
+        Level = 1;
     }
 
     bool SetTarget(ITargetable t)

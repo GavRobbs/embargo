@@ -25,7 +25,13 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
     AudioSource buildingTeleportSound;
 
     [SerializeField]
+    AudioSource buildingScrapSound;
+
+    [SerializeField]
     GameObject teleportEffectPrefab;
+
+    [SerializeField]
+    GameObject scrapEffectPrefab;
 
     [SerializeField]
     public GameObject shatteredMesh;
@@ -35,6 +41,12 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
 
     [SerializeField]
     public GameObject regularMesh;
+
+    [SerializeField]
+    GameObject upgradeArrow;
+
+    [SerializeField]
+    GameObject scrapIcon;
 
     [SerializeField]
     AudioSource explosionSound;
@@ -48,16 +60,22 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
     public List<Pathpoint> adjacent_empties;
 
     public bool building_turret = false;
+    public bool upgrading_turret = false;
+    public bool scrapping_turret = false;
 
     GameObject attached_turret = null;
-
-    float build_duration = 0.0f;
-
-    float fadeSpeed = 0.0f;
 
     public int hp = 12;
 
     public bool isDestroyed = false;
+
+    public ITurret OccupyingTurret
+    {
+        get
+        {
+            return attached_turret.GetComponent<ITurret>();
+        }
+    }
 
     public interface IBuildingTask
     {
@@ -203,6 +221,203 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
         }
     }
 
+    public class UpgradeTurretTask : IBuildingTask
+    {
+        bool _cancelled = false;
+        int upgradeCost;
+        float upgradeTime;
+        System.Action doneCallback;
+        System.Action cancelCallback;
+        System.Action<float> updateCallback;
+        Building target_building;
+        bool _done = false;
+        public UpgradeTurretTask(Building b, int cost, float utime, System.Action<float> updateC, System.Action doneC, System.Action cancelC)
+        {
+            upgradeCost = cost;
+            upgradeTime = utime;
+            doneCallback = doneC;
+            cancelCallback = cancelC;
+            updateCallback = updateC;
+            target_building = b;
+            
+        }
+
+        public bool IsDone => _done;
+
+        public bool IsCancelled => _cancelled;
+
+        public void CancelTask()
+        {
+            if(IsDone || IsCancelled)
+            {
+                return;
+            }
+
+            _cancelled = true;
+            target_building.buildingTeleportSound.Stop();
+            if (target_building.teleportEffect != null)
+            {
+                GameObject.Destroy(target_building.teleportEffect);
+            }
+            target_building.upgrading_turret = false;
+            cancelCallback();
+
+        }
+
+        public void StartTask()
+        {
+            target_building.buildingTeleportSound.Play();
+            target_building.upgrading_turret = true;
+            target_building.teleportEffect = GameObject.Instantiate(target_building.teleportEffectPrefab, target_building.turretLocationHolder.transform);
+        }
+
+        public void UpdateTask(float dt)
+        {
+            if (IsDone)
+            {
+                return;
+            }
+
+            updateCallback(dt);
+
+            upgradeTime -= dt;
+            if(upgradeTime <= 0.0f)
+            {
+                _done = true;
+                target_building.attached_turret.GetComponent<ITurret>().Level += 1;
+
+            }
+
+            if (_done)
+            {
+                doneCallback();
+                target_building.buildingTeleportSound.Stop();
+                _done = true;
+                target_building.upgrading_turret = false;
+                GameObject.Destroy(target_building.teleportEffect);
+            }
+        }
+    }
+
+    public class ScrapTurretTask : IBuildingTask
+    {
+        bool _cancelled = false;
+        System.Action doneCallback;
+        System.Action cancelCallback;
+        System.Action<float> updateCallback;
+        Building target_building;
+        bool _done = false;
+        float fadeSpeed = 0.0f;
+        float scrapTime = 8.0f;
+        float refund_amount = 0.0f;
+        public ScrapTurretTask(Building b, float stime, System.Action<float> updateC, System.Action doneC, System.Action cancelC)
+        {
+            doneCallback = doneC;
+            cancelCallback = cancelC;
+            updateCallback = updateC;
+            target_building = b;
+            scrapTime = stime;
+            ITurret t = b.attached_turret.GetComponent<ITurret>();
+            refund_amount = (t.Level * t.Cost) / 2.0f;
+        }
+
+        public bool IsDone => _done;
+
+        public bool IsCancelled => _cancelled;
+
+        public void CancelTask()
+        {
+            if (IsDone || IsCancelled)
+            {
+                return;
+            }
+
+            _cancelled = true;
+            target_building.buildingScrapSound.Stop();
+            if (target_building.teleportEffect != null)
+            {
+                GameObject.Destroy(target_building.teleportEffect);
+            }
+            target_building.scrapping_turret = false;
+            cancelCallback();
+
+        }
+
+        public void StartTask()
+        {
+            target_building.buildingScrapSound.Play();
+            target_building.scrapping_turret = true;
+            target_building.teleportEffect = GameObject.Instantiate(target_building.scrapEffectPrefab, target_building.turretLocationHolder.transform);
+
+
+            SkinnedMeshRenderer[] mrs = target_building.attached_turret.GetComponentsInChildren<SkinnedMeshRenderer>();
+            fadeSpeed = 1.0f / scrapTime;
+            foreach (var renderer in mrs)
+            {
+                Material[] materials = renderer.materials;
+
+                for (int i = 0; i < materials.Length; ++i)
+                {
+                    var col = materials[i].color;
+                    col.a = 1.0f;
+                    materials[i].color = col;
+                }
+            }
+        }
+
+        public void UpdateTask(float dt)
+        {
+            if (IsDone)
+            {
+                return;
+            }
+
+            updateCallback(dt);
+
+            SkinnedMeshRenderer[] mrs = target_building.attached_turret.GetComponentsInChildren<SkinnedMeshRenderer>();
+
+            bool fade_done = true;
+            foreach (var renderer in mrs)
+            {
+                Material[] materials = renderer.materials;
+
+                for (int i = 0; i < materials.Length; ++i)
+                {
+                    var col = materials[i].color;
+                    col.a -= dt * fadeSpeed;
+                    materials[i].color = col;
+
+                    if (col.a <= 0.0f)
+                    {
+                        col.a = 0.0f;
+                        fade_done = fade_done && true;
+                    }
+                    else
+                    {
+                        fade_done = fade_done && false;
+                    }
+                }
+            }
+
+            if (fade_done)
+            {
+                doneCallback();
+                GameObject.Destroy(target_building.attached_turret);
+                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<int>(MessageConstants.AddScrap, (int)refund_amount));
+                target_building.hasTurret = false;
+                target_building.building_turret = false;
+                target_building.scrapping_turret = false;
+                target_building.upgrading_turret = false;
+
+                target_building.buildingScrapSound.Stop();
+                _done = true;
+                if (target_building.teleportEffect != null)
+                {
+                    GameObject.Destroy(target_building.teleportEffect);
+                }
+            }
+        }
+    }
     public Pathpoint RandomAdjacent
     {
         get
@@ -282,6 +497,12 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
             GameObject.Instantiate(explosionPrefab, turretLocationHolder.transform);
             explosionSound.Play();
         }
+
+        if(teleportEffect != null)
+        {
+            GameObject.Destroy(teleportEffect);
+        }
+
         collapseSound.Play();
         GameObject.Destroy(this.gameObject, 4.0f);
         shatteredMesh.SetActive(true);
@@ -301,7 +522,7 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
 
     void PreviewTurret(GameObject prefab_to_see)
     {
-        if (hasTurret || previewTurret != null || building_turret || isDestroyed)
+        if (hasTurret || previewTurret != null || building_turret || isDestroyed || upgrading_turret || scrapping_turret)
         {
             return;
         }
@@ -337,9 +558,25 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
         }
 
 
-        if (info.mode == GameInputManager.HOVER_MODE.BUILD)
+        if (info.mode == GameInputManager.HOVER_MODE.BUILD && !upgrading_turret && !scrapping_turret && !building_turret && !hasTurret)
         {
             PreviewTurret((info as BuildHoverInfo).turretPrefab);
+        }
+        else if(info.mode == GameInputManager.HOVER_MODE.UPGRADE && !building_turret && !scrapping_turret && !upgrading_turret && hasTurret)
+        {
+            if(attached_turret != null)
+            {
+                ActivateArrow();
+            }
+
+        }
+        else if (info.mode == GameInputManager.HOVER_MODE.SCRAP && !building_turret && !scrapping_turret && !upgrading_turret && hasTurret)
+        {
+            if (attached_turret != null)
+            {
+                ActivateScrapIcon();
+            }
+
         }
     }
 
@@ -354,5 +591,34 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
         {
             GameObject.Destroy(previewTurret);
         }
+
+        DeactivateArrow();
+        DeactivateScrapIcon();
+    }
+
+    public void ActivateArrow()
+    {
+        if (!upgradeArrow.activeSelf)
+        {
+            upgradeArrow.SetActive(true);
+        }
+    }
+
+    public void DeactivateArrow()
+    {
+        upgradeArrow.SetActive(false);
+    }
+
+    public void ActivateScrapIcon()
+    {
+        if (!scrapIcon.activeSelf)
+        {
+            scrapIcon.SetActive(true);
+        }
+    }
+
+    public void DeactivateScrapIcon()
+    {
+        scrapIcon.SetActive(false);
     }
 }

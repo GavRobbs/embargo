@@ -20,5 +20,11 @@ public enum MessageConstants : int
     UnregisterSupportTurretMessage,
     RegisterOffensiveTurretMessage,
     CreateDroneMessage,
-    DisplayAlertMessage
+    DisplayAlertMessage,
+    EngageUpgradeMode,
+    DisengageUpgradeMode,
+    UpgradeTurret,
+    EngageScrapMode,
+    DisengageScrapMode,
+    ScrapTurret
 }
