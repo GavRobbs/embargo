@@ -58,6 +58,10 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
         MessageDispatcher.GetInstance().AddHandler(this);
     }
 
+    void OnDestroy()
+    {
+        MessageDispatcher.GetInstance().RemoveHandler(this);
+    }
 
     // Update is called once per frame
     void Update()

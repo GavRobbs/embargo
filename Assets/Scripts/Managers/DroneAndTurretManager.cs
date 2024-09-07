@@ -15,6 +15,12 @@ public class DroneAndTurretManager : MonoBehaviour, IMessageHandler
     {
         MessageDispatcher.GetInstance().AddHandler(this);
     }
+
+    void OnDestroy()
+    {
+        MessageDispatcher.GetInstance().RemoveHandler(this);
+    }
+
     Drone GetFreeDrone()
     {
         foreach (Drone drone in drones)

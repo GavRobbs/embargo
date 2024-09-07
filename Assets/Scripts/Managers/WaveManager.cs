@@ -26,6 +26,11 @@ public class WaveManager : MonoBehaviour, IMessageHandler
         StartCoroutine(BeginWaves());
     }
 
+    void OnDestroy()
+    {
+        MessageDispatcher.GetInstance().RemoveHandler(this);
+    }
+
     IEnumerator BeginWaves()
     {
         yield return new WaitForSeconds(5.0f);

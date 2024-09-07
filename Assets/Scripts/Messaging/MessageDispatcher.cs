@@ -37,4 +37,8 @@ public class MessageDispatcher
     {
         handlers.Add(handler);
     }
+    public void RemoveHandler(IMessageHandler handler)
+    {
+        handlers.Remove(handler);
+    }
 }
