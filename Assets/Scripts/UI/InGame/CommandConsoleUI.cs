@@ -164,6 +164,11 @@ public class CommandConsoleUI : MonoBehaviour, IMessageHandler
 
     }
 
+    void OnDestroy()
+    {
+        MessageDispatcher.GetInstance().RemoveHandler(this);
+    }
+
     // Update is called once per frame
     void Update()
     {
