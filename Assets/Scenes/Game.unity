@@ -132404,7 +132404,7 @@ PrefabInstance:
     - target: {fileID: 3640010261089605262, guid: bf0a70706903467449b9a15ce401e75d,
         type: 3}
       propertyPath: _cost
-      value: 4000
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 3640010261089605262, guid: bf0a70706903467449b9a15ce401e75d,
         type: 3}
@@ -132544,7 +132544,7 @@ PrefabInstance:
     - target: {fileID: 4789755505547093453, guid: bf0a70706903467449b9a15ce401e75d,
         type: 3}
       propertyPath: _cost
-      value: 8000
+      value: 4000
       objectReference: {fileID: 0}
     - target: {fileID: 4789755505547093453, guid: bf0a70706903467449b9a15ce401e75d,
         type: 3}

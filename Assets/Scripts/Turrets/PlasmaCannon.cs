@@ -180,7 +180,7 @@ public class PlasmaCannon : OffensiveTurret
         if(AttachedBuilding != null)
         {
             AttachedBuilding.DeactivateArrow();
-            AttachedBuilding.ActivateArrow();
+            AttachedBuilding.DeactivateScrapIcon();
         }
        
     }
