@@ -1,23 +1,21 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattleTank : MonoBehaviour, IEnemy, ITaskable
+public class FinalBoss : MonoBehaviour, IEnemy, ITaskable
 {
     [SerializeField]
     GameObject forwardPoint;
 
     [SerializeField]
-    GameObject BattleTankBody;
+    GameObject mechBody;
 
     [SerializeField]
     float pathfindingDistanceThreshold;
 
     [SerializeField]
     float moveSpeed;
-
-    [SerializeField]
-    float turretRotationSpeed;
 
     float baseMoveSpeed;
 
@@ -29,26 +27,14 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
 
     [SerializeField]
     AudioSource explosion;
-
-    [SerializeField]
-    TargetDetector target_detector;
-
-    [SerializeField]
-    GameObject turretMesh;
-
-    [SerializeField]
-    GameObject shotPrefab;
-
-    [SerializeField]
-    GameObject bulletSpawnPoint;
     public Vector3 Position => forwardPoint.transform.position;
     public Spawner Spawner { get; set; }
-
-    public int CapitolDamage => 1;
 
     public bool IsFriendly => false;
 
     public bool IsKilled => (HitPoints <= 0.0f) || dying == true;
+
+    public int CapitolDamage => 6;
 
     [SerializeField]
     float hp;
@@ -57,7 +43,7 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
 
     public float HitPoints => hp;
 
-    public string Name => "BattleTank";
+    public string Name => "Bossmech";
 
     bool dying = false;
 
@@ -66,15 +52,6 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
     int level = 1;
 
     bool isStopped = false;
-
-    [SerializeField]
-    float attack_interval_min = 2.0f;
-
-    [SerializeField]
-    float attack_interval_max = 4.0f;
-
-    Building current_target;
-
 
     public ITask CurrentTask
     {
@@ -117,7 +94,7 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
         if (hp < 1.0f && !dying)
         {
             //We only want the player to get the scrap if they kill it
-            int scrap = (int)((float)level * 0.7f * 60.0f);
+            int scrap = (int)((float)level * 0.7f * 500.0f);
             MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<int>(MessageConstants.AddScrap, scrap));
             KillMe();
         }
@@ -131,11 +108,6 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
 
     }
 
-    public void CancelTask()
-    {
-
-    }
-
     void OnDestroy()
     {
         Spawner.DecreaseEnemyCount();
@@ -146,13 +118,18 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
         hp -= value;
     }
 
+    public void CancelTask()
+    {
+
+    }
+
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Bullet"))
         {
             IBullet b = collision.gameObject.GetComponentInParent<IBullet>();
             float dmg = b.Damage;
-            float mul = b.ArmourBonus ? 1.0f : 1.6f;
+            float mul = b.ArmourBonus ? 1.0f : 2.5f;
             Destroy(collision.gameObject);
             Damage(dmg * mul);
         }
@@ -162,7 +139,7 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
     public void KillMe()
     {
         dying = true;
-        BattleTankBody.SetActive(false);
+        mechBody.SetActive(false);
         sparks.Play();
         flash.Play();
         GameObject.Destroy(this.gameObject, 2.0f);
@@ -170,14 +147,46 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
 
     }
 
-    public void FollowPath(List<Vector3> path_points, System.Action onComplete)
+    public void Wander()
     {
-        CurrentTask = new BattleTankPathFollowTask(this, path_points, pathfindingDistanceThreshold, moveSpeed, onComplete);
+        //The boss basically walks to the target - every 500 hp damage or so he teleports to a different path
+        List<Vector3> path1 = new List<Vector3>();
+        List<Vector3> path2 = new List<Vector3>();
+        List<Vector3> path3 = new List<Vector3>();
+        List<Vector3> path4 = new List<Vector3>();
+
+        Vector3 teleport1 = new Vector3(0.0f, 0.0f, 0.0f);
+        Vector3 teleport2 = new Vector3(0.0f, 0.0f, 0.0f);
+        Vector3 teleport3 = new Vector3(0.0f, 0.0f, 0.0f);
+
+        CurrentTask = new BossPathFollowTask(this, 1500, path1, pathfindingDistanceThreshold, moveSpeed, () =>
+        {
+            CurrentTask = new BossTeleportTask(this, teleport1, () => {
+                CurrentTask = new BossPathFollowTask(this, 1000, path2, pathfindingDistanceThreshold, moveSpeed, () =>
+                {
+                    CurrentTask = new BossTeleportTask(this, teleport2, () => {
+                        CurrentTask = new BossPathFollowTask(this, 500, path3, pathfindingDistanceThreshold, moveSpeed, () =>
+                        {
+                            CurrentTask = new BossTeleportTask(this, teleport3, () => {
+                                CurrentTask = new BossPathFollowTask(this, -1000.0f, path4, pathfindingDistanceThreshold, moveSpeed, () =>
+                                {
+                                    //You're going to die so it doesn't really matter what happens here
+                                });
+
+                            });
+                        });
+
+                    });
+                });
+
+            });
+        });
+       
     }
 
     public void Attack(Building building)
     {
-        //throw new System.NotImplementedException();
+        throw new System.NotImplementedException();
     }
 
     public Dictionary<string, string> GetHoverData()
@@ -199,15 +208,10 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
     {
     }
 
-    void Fire()
-    {
-        GameObject.Instantiate(shotPrefab, bulletSpawnPoint.transform.position, bulletSpawnPoint.transform.rotation);
-    }
-
-    class BattleTankPathFollowTask : ITask
+    class BossPathFollowTask : ITask
     {
         List<Vector3> path;
-        BattleTank owner;
+        FinalBoss owner;
 
         Vector3 target_position;
         bool isMoving;
@@ -217,19 +221,15 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
 
         float distance_threshold;
         float move_speed;
-        float next_attack_timer = 0.0f;
-        bool isTracking = false;
-
-        public BattleTankPathFollowTask(BattleTank recipient, List<Vector3> follow_path, float threshold, float moveSpeed, System.Action onComplete)
+        float hp_threshold_to_teleport;
+        public BossPathFollowTask(FinalBoss recipient, float tp_thresh, List<Vector3> fpath, float threshold, float moveSpeed, System.Action onComplete)
         {
-            path = follow_path;
             owner = recipient;
             completionCallback = onComplete;
             distance_threshold = threshold;
             move_speed = moveSpeed;
-
-            next_attack_timer = Random.Range(recipient.attack_interval_min, recipient.attack_interval_max);
-
+            path = fpath;
+            hp_threshold_to_teleport = tp_thresh;
         }
 
         public float Progress => 0.0f;
@@ -255,38 +255,6 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
 
         }
 
-        private void LookAtTargetAndFire()
-        {
-            if (owner.current_target == null)
-            {
-                isTracking = false;
-                next_attack_timer = Random.Range(owner.attack_interval_min, owner.attack_interval_max);
-                return;
-            }
-
-            Quaternion current_rotation = owner.turretMesh.transform.rotation;
-            Vector3 direction = Vector3.Normalize(owner.turretMesh.transform.position - owner.current_target.transform.position);
-            float angle = (Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg);
-
-            Quaternion target_rotation = Quaternion.Euler(0.0f, angle, 0.0f);
-
-            float angular_diff = Quaternion.Angle(current_rotation, target_rotation);
-
-            if (angular_diff > 1)
-            {
-                Quaternion interpolated = Quaternion.Slerp(current_rotation, target_rotation, owner.turretRotationSpeed * Time.deltaTime);
-                owner.turretMesh.transform.rotation = interpolated;
-            }
-            else
-            {
-                owner.turretMesh.transform.rotation = target_rotation;
-                owner.Fire();
-                next_attack_timer = Random.Range(owner.attack_interval_min, owner.attack_interval_max);
-                isTracking = false;
-            }
-
-        }
-
         public void OnTaskUpdate(float dt)
         {
             if (owner.IsKilled)
@@ -298,54 +266,25 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
             {
                 Vector3 moveDir = (target_position - owner.transform.position).normalized;
 
+                //Use this to orient our mech
                 if (moveDir.x < -0.5f)
                 {
-                    owner.BattleTankBody.transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.up);
+                    owner.mechBody.transform.rotation = Quaternion.AngleAxis(-90.0f, Vector3.up);
 
                 }
                 else if (moveDir.x > 0.5f)
                 {
-                    owner.BattleTankBody.transform.rotation = Quaternion.AngleAxis(-90.0f, Vector3.up);
+                    owner.mechBody.transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.up);
                 }
                 else if (moveDir.z > 0.5f)
                 {
-                    owner.BattleTankBody.transform.rotation = Quaternion.AngleAxis(180.0f, Vector3.up);
+                    owner.mechBody.transform.rotation = Quaternion.AngleAxis(0.0f, Vector3.up);
                 }
                 else if (moveDir.z < -0.5f)
                 {
-                    owner.BattleTankBody.transform.rotation = Quaternion.AngleAxis(0, Vector3.up);
+                    owner.mechBody.transform.rotation = Quaternion.AngleAxis(180.0f, Vector3.up);
                 }
-
                 owner.transform.position = owner.transform.position + (moveDir * move_speed * Time.deltaTime);
-
-                if (isTracking)
-                {
-                    //Rotate the turret appropriately
-                    //and fire if we reach
-                    LookAtTargetAndFire();
-                }
-                else
-                {
-                    next_attack_timer -= Time.deltaTime;
-                    if (next_attack_timer <= 0.0)
-                    {
-                        next_attack_timer = Random.Range(owner.attack_interval_min, owner.attack_interval_max);
-                        isTracking = true;
-                        owner.current_target = owner.target_detector.GetRandomTarget();
-
-                        if(owner.current_target == null)
-                        {
-                            isTracking = false;
-
-                            //Make the next interval shorter so its more inclined to attack again
-                            next_attack_timer /= 2.0f;
-                        }
-
-                    }
-
-                }
-
-                
 
                 if (Vector3.Distance(owner.transform.position, target_position) <= distance_threshold)
                 {
@@ -374,6 +313,40 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
 
     }
 
+    class BossTeleportTask : ITask
+    {
+        public float Progress => throw new System.NotImplementedException();
+
+        public BossTeleportTask(FinalBoss me, Vector3 teleportPosition, System.Action onComplete)
+        {
+
+        }
+
+        public void Cancel()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnTaskCancel()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnTaskEnter()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnTaskExit()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnTaskUpdate(float dt)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
     void Start()
     {
         max_hp = hp;
@@ -381,10 +354,9 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
 
         moveSpeed *= 1.0f + ((float)(level - 1)) * 0.06f;
 
-        max_hp *= 1.0f + ((float)(level - 1)) * 0.18f;
+        max_hp *= 1.0f + ((float)(level - 1)) * 0.45f;
 
         hp = max_hp;
-
     }
 
     public void ClearTask()
@@ -395,5 +367,10 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
     public void Stop()
     {
         isStopped = true;
+    }
+
+    public void FollowPath(List<Vector3> path_points, Action onComplete)
+    {
+        throw new NotImplementedException();
     }
 }

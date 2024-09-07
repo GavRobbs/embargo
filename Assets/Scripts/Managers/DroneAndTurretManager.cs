@@ -17,6 +17,7 @@ public class DroneAndTurretManager : MonoBehaviour, IMessageHandler
     }
     Drone GetFreeDrone()
     {
+        //Just iterate through each drone to see if one is free
         foreach (Drone drone in drones)
         {
             if (!drone.Busy)
@@ -48,6 +49,11 @@ public class DroneAndTurretManager : MonoBehaviour, IMessageHandler
                         MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "No available drones!"));
                     }
 
+                    break;
+                }
+            case MessageConstants.DisengageEverything:
+                {
+                    current_turret_prefab = null;
                     break;
                 }
             case MessageConstants.UpgradeTurret:
@@ -133,6 +139,11 @@ public class DroneAndTurretManager : MonoBehaviour, IMessageHandler
                     OffensiveTurret ot = otm.value;
                     foreach (var st in supportTurrets)
                     {
+                        if(st == null)
+                        {
+                            continue;
+                        }
+
                         if(Vector3.Distance(st.transform.position, ot.transform.position) <= st.Influence)
                         {
                             st.BestowBonus(ot);

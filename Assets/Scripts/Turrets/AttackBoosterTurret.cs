@@ -36,6 +36,40 @@ public class AttackBoosterTurret : SupportTurret
         MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<SupportTurret>(MessageConstants.UnregisterSupportTurretMessage, this));
     }
 
+    public override void OnTurretUpgrade()
+    {
+        /* When we upgrade the turret, we do a check of all the offensive turrets under the expanded influence. If it already has an attack boost bonus from us, don't do anything, otherwise, we add one.*/
+        Collider[] colliders = Physics.OverlapSphere(influence_center.position, Influence, LayerMask.GetMask("Turret"));
+        foreach (var collider in colliders)
+        {
+            var offensive_turret = collider.GetComponentInParent<OffensiveTurret>();
+            if (offensive_turret == null)
+            {
+                continue;
+            }
+
+            AttackBoostBonus[] bonuses = offensive_turret.gameObject.GetComponentsInChildren<AttackBoostBonus>();
+            bool needsBonus = true;
+
+            foreach(var bonus in bonuses)
+            {
+                if(bonus.Producer == this)
+                {
+                    needsBonus = false;
+                    break;
+                }
+            }
+
+            if (needsBonus)
+            {
+                AttackBoostBonus ab = offensive_turret.gameObject.AddComponent<AttackBoostBonus>();
+                ab.Producer = this;
+                ab.Beneficiary = offensive_turret;
+            }
+            
+        }
+    }
+
     public override void BestowBonus(ITurret turret)
     {
         if(turret is OffensiveTurret ot)

@@ -27,6 +27,9 @@ public class DroneButton : MonoBehaviour
     Transform spawnPosition;
 
     [SerializeField]
+    GameObject cost_object;
+
+    [SerializeField]
     GameObject dronePrefab;
     int Cost { get => _cost; }
     public Drone AttachedDrone { get => attached_drone; set => attached_drone = value; }
@@ -36,6 +39,7 @@ public class DroneButton : MonoBehaviour
         {
             buttonImage.sprite = fullSlotSprite;
             progressOverlayImage.gameObject.SetActive(true);
+            cost_object.SetActive(false);
         }
         else
         {
@@ -76,6 +80,7 @@ public class DroneButton : MonoBehaviour
                 attached_drone = drone_go.GetComponent<Drone>();
                 buttonImage.sprite = fullSlotSprite;
                 progressOverlayImage.gameObject.SetActive(true);
+                cost_object.SetActive(false);
                 MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<int>(MessageConstants.RemoveScrap, _cost));
                 MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<Drone>(MessageConstants.CreateDroneMessage, attached_drone));
             }

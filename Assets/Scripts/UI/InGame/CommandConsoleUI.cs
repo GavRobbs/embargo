@@ -28,7 +28,7 @@ public class CommandConsoleUI : MonoBehaviour, IMessageHandler
 
     bool updateScrapCounter = true;
 
-    int scrap = 1500;
+    int scrap = 2000;
 
     System.Action onTimerComplete;
     float timer_time;
@@ -208,7 +208,7 @@ public class CommandConsoleUI : MonoBehaviour, IMessageHandler
         }
         else
         {
-            //TODO: TELL THE PLAYER THEY'RE BROKE
+            //TELL THE PLAYER THEY'RE BROKE
             MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "You require more scrap!"));
         }
 
