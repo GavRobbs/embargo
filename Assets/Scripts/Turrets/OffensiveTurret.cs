@@ -310,6 +310,11 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
         MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<OffensiveTurret>(MessageConstants.RegisterOffensiveTurretMessage, this));
     }
 
+    virtual public void OnTurretUpgrade()
+    {
+        //Don't need anything here really
+    }
+
     public void OnTurretDestroy()
     {
         //Ditto

@@ -152,7 +152,7 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
         {
             IBullet b = collision.gameObject.GetComponentInParent<IBullet>();
             float dmg = b.Damage;
-            float mul = b.ArmourBonus ? 1.0f : 1.5f;
+            float mul = b.ArmourBonus ? 1.0f : 1.6f;
             Destroy(collision.gameObject);
             Damage(dmg * mul);
         }

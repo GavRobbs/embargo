@@ -28,7 +28,7 @@ public class CommandConsoleUI : MonoBehaviour, IMessageHandler
 
     bool updateScrapCounter = true;
 
-    int scrap = 1500;
+    int scrap = 2000;
 
     System.Action onTimerComplete;
     float timer_time;

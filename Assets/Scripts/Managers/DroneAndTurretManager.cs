@@ -133,6 +133,11 @@ public class DroneAndTurretManager : MonoBehaviour, IMessageHandler
                     OffensiveTurret ot = otm.value;
                     foreach (var st in supportTurrets)
                     {
+                        if(st == null)
+                        {
+                            continue;
+                        }
+
                         if(Vector3.Distance(st.transform.position, ot.transform.position) <= st.Influence)
                         {
                             st.BestowBonus(ot);

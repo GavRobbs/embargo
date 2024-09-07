@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using TMPro;
 public class Building : MonoBehaviour, IHoverable, ISelectable
 {
     public int building_id;
@@ -50,6 +50,15 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
 
     [SerializeField]
     AudioSource explosionSound;
+
+    [SerializeField]
+    Transform buildingTextSpawnPoint;
+
+    [SerializeField]
+    GameObject hurtTextPrefab;
+
+    [SerializeField]
+    GameObject healTextPrefab;
 
     GameObject teleportEffect;
 
@@ -291,6 +300,7 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
             if (_done)
             {
                 doneCallback();
+                target_building.attached_turret.GetComponent<ITurret>().OnTurretUpgrade();
                 target_building.buildingTeleportSound.Stop();
                 _done = true;
                 target_building.upgrading_turret = false;
@@ -487,6 +497,18 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
         }
 
         hp -= (int)damage;
+
+        TextMeshProUGUI dtext = GameObject.Instantiate(hurtTextPrefab, buildingTextSpawnPoint).GetComponent<TextMeshProUGUI>();
+        dtext.text = "-" + ((int)damage).ToString();
+        GameObject.Destroy(dtext.gameObject, 4.0f);
+    }
+
+    public void IncreaseHP()
+    {
+        hp = Mathf.Min(hp + 1, 12);
+
+        GameObject hText = GameObject.Instantiate(healTextPrefab, buildingTextSpawnPoint);
+        GameObject.Destroy(hText, 4.0f);
     }
 
     void DestroyBuilding()

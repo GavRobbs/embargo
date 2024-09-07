@@ -93,6 +93,11 @@ public abstract class SupportTurret : MonoBehaviour, ITurret
         Online = true;
     }
 
+    virtual public void OnTurretUpgrade()
+    {
+        throw new System.NotImplementedException();
+    }
+
     virtual public void BestowBonus(ITurret turret)
     {
 
@@ -108,4 +113,5 @@ public abstract class SupportTurret : MonoBehaviour, ITurret
         isStopped = true;
     }
 
+    
 }

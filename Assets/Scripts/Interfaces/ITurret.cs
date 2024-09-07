@@ -23,4 +23,7 @@
 
     //Same idea but for turret destruction
     void OnTurretDestroy();
+
+    //The need for this actually came up later, this is a recent addition
+    void OnTurretUpgrade();
 }
