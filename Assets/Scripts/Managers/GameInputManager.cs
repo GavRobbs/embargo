@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem.Processors;
+using System;
 
 public class GameInputManager : MonoBehaviour, IMessageHandler
 {
@@ -409,10 +411,31 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
         SceneManager.LoadSceneAsync(2, LoadSceneMode.Single);
     }
 
+    IEnumerator BoostMusic()
+    {
+        gameMusic.pitch = 1f;  // Pitch rises straight away
+
+        // Volume rises in steps
+        var steps = 10;
+        var volumeDiff = (1f - gameMusic.volume) / steps;
+
+        for (int i = 0; i < steps; i++)
+        {
+            gameMusic.volume += volumeDiff;
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        // Set explicitly to 1 to avoid rounding errors
+        gameMusic.volume = 1f;
+    }
+
     public void HandleMessage(GameMessage message)
     {
         switch (message.MessageType)
         {
+            case MessageConstants.StartGameMessage:
+                StartCoroutine("BoostMusic");
+                break;
             case MessageConstants.EngageBuildMode:
                 {
                     current_hover_mode = HOVER_MODE.BUILD;

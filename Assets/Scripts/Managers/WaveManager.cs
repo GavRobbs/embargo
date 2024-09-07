@@ -21,9 +21,6 @@ public class WaveManager : MonoBehaviour, IMessageHandler
         Spawner[] sps = GetComponentsInChildren<Spawner>();
         spawners = new List<Spawner>();
         spawners.AddRange(sps);
-
-        //This starts the game off
-        StartCoroutine(BeginWaves());
     }
 
     IEnumerator BeginWaves()
@@ -93,6 +90,10 @@ public class WaveManager : MonoBehaviour, IMessageHandler
     {
         switch (message.MessageType)
         {
+            case MessageConstants.StartGameMessage:
+                //This starts the game off
+                StartCoroutine(BeginWaves());
+                break;
             case MessageConstants.BeginWaveMessage:
                 {
                     current_wave_time = 60.0f;
