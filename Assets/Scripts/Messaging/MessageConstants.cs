@@ -26,6 +26,7 @@ public enum MessageConstants : int
     UpgradeTurret,
     EngageScrapMode,
     DisengageScrapMode,
+    StartGameMessage,
     ScrapTurret,
     DisengageEverything
 }

@@ -35,6 +35,7 @@ public class CommandConsoleUI : MonoBehaviour, IMessageHandler
     string timer_caption;
     bool timerActive = false;
     bool showTime = false;
+
     public void HandleMessage(GameMessage message)
     {
         switch (message.MessageType)
@@ -161,7 +162,6 @@ public class CommandConsoleUI : MonoBehaviour, IMessageHandler
     void Start()
     {
         MessageDispatcher.GetInstance().AddHandler(this);
-
     }
 
     void OnDestroy()
