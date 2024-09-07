@@ -160,6 +160,7 @@ GameObject:
   - component: {fileID: 2491917030566547067}
   - component: {fileID: 2491917030566547064}
   - component: {fileID: 2491917030566547066}
+  - component: {fileID: 8425244876568507479}
   m_Layer: 13
   m_Name: Canvas
   m_TagString: Untagged
@@ -260,6 +261,18 @@ MonoBehaviour:
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
+--- !u!114 &8425244876568507479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2491917030566547063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0035c640cc471484abfcc396281bb236, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2491917030846403687
 GameObject:
   m_ObjectHideFlags: 0
@@ -937,15 +950,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3c4f5ca49181d3841aca0644696cfce4, type: 3}
---- !u!4 &2675041606981672037 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3c4f5ca49181d3841aca0644696cfce4,
-    type: 3}
-  m_PrefabInstance: {fileID: 2491917031380958094}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3338425748178863839 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 3c4f5ca49181d3841aca0644696cfce4,
+    type: 3}
+  m_PrefabInstance: {fileID: 2491917031380958094}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2675041606981672037 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3c4f5ca49181d3841aca0644696cfce4,
     type: 3}
   m_PrefabInstance: {fileID: 2491917031380958094}
   m_PrefabAsset: {fileID: 0}

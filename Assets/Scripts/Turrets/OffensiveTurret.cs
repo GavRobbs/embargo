@@ -212,7 +212,6 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
 
     public virtual void OnHoverOff()
     {
-        throw new System.NotImplementedException();
     }
 
     protected void PlayTurnSound()
@@ -329,7 +328,11 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
         else
         {
             attack_bonuses.Add(b);
-            enemyDetector.SetDetectionRadius(Influence);
+            if (enemyDetector != null)
+            {
+                enemyDetector.SetDetectionRadius(Influence);
+            }
+
 
         }
         _mustRecalculateBonus = true;
@@ -345,7 +348,11 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
         else
         {
             attack_bonuses.Remove(b);
-            enemyDetector.SetDetectionRadius(Influence);
+
+            if(enemyDetector != null)
+            {
+                enemyDetector.SetDetectionRadius(Influence);
+            }
 
         }
         _mustRecalculateBonus = true;
