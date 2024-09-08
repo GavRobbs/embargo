@@ -124,6 +124,14 @@ public class UIController : MonoBehaviour
 
     public void MainMenu()
     {
+        StartCoroutine("LoadMainMenu");
+    }
+
+    IEnumerator LoadMainMenu()
+    {
+        // Do this in a coroutine to allow sound time to play
+        OnClick();
+        yield return new WaitForSeconds(clickSound.length);
         SceneManager.LoadScene(0);
     }
 
