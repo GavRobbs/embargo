@@ -204,7 +204,9 @@ public class MGTurret : OffensiveTurret
     {
         //Half damage because it fires two bullets at a time
         GameObject b1 = GameObject.Instantiate(bulletPrefab, cannon1_ps.transform.position, cannon1_ps.transform.rotation);
+
         b1.GetComponent<MGBullet>().Damage = DamagePerShot / 2.0f;
+
         GameObject b2 = GameObject.Instantiate(bulletPrefab, cannon2_ps.transform.position, cannon1_ps.transform.rotation);
         b2.GetComponent<MGBullet>().Damage = DamagePerShot / 2.0f;
     }

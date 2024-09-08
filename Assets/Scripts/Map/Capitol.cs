@@ -9,6 +9,8 @@ public class Capitol : MonoBehaviour
     bool dead = false;
     // Start is called before the first frame update
 
+    public int Health => hp;
+
     [SerializeField]
     GameObject explosion;
 

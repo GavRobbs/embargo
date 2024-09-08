@@ -6,7 +6,7 @@ public interface IEnemy : ITargetable, IPathFollower, IHoverable, IStoppable
 {
     void Attack(Building building);
     string Name { get; }
-    Spawner Spawner { get; set; }
+    ISpawner Spawner { get; set; }
 
     int CapitolDamage { get; }
 

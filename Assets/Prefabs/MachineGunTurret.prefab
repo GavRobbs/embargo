@@ -4954,10 +4954,9 @@ MonoBehaviour:
   animator: {fileID: 4410305227815522674}
   base_delay_time: 1.5
   base_attack_range: 2.5
-  base_attack_damage: 3
+  base_attack_damage: 3.6
   turretMesh: {fileID: 8642719222160114962}
   enemyDetector: {fileID: 3176143293297361291}
-  atk_bonus: 1
   _online: 0
   _cost: 200
   currentState: 3

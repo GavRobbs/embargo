@@ -5208,10 +5208,9 @@ MonoBehaviour:
   animator: {fileID: 3703729872266147502}
   base_delay_time: 3.5
   base_attack_range: 3
-  base_attack_damage: 8
+  base_attack_damage: 10
   turretMesh: {fileID: 2468138325447315384}
   enemyDetector: {fileID: 4855714198426285589}
-  atk_bonus: 1
   _online: 0
   _cost: 400
   currentState: 3
@@ -5230,8 +5229,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2.6391213, y: 1.080944, z: 2.6217763}
-  m_Center: {x: 0.013008714, y: 0.54232675, z: 0.013008714}
+  m_Size: {x: 2.7363896, y: 1.2927741, z: 2.751468}
+  m_Center: {x: 0.007604914, y: 0.5473705, z: -0.008606272}
 --- !u!95 &3703729872266147502
 Animator:
   serializedVersion: 3

@@ -27,7 +27,7 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
     [SerializeField]
     AudioSource explosion;
     public Vector3 Position => forwardPoint.transform.position;
-    public Spawner Spawner { get; set; }
+    public ISpawner Spawner { get; set; }
 
     public bool IsFriendly => false;
 
@@ -85,7 +85,7 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
     // Update is called once per frame
     void Update()
     {
-        if (isStopped)
+        if (isStopped || dying)
         {
             return;
         }
@@ -128,7 +128,7 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
         {
             IBullet b = collision.gameObject.GetComponentInParent<IBullet>();
             float dmg = b.Damage;
-            float mul = b.ArmourBonus ? 1.0f : 2.5f;
+            float mul = b.ArmourBonus ? 2.0f : 1.0f;
             Destroy(collision.gameObject);
             Damage(dmg * mul);
         }

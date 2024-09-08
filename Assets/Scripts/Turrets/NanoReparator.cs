@@ -79,7 +79,7 @@ public class NanoReparator : SupportTurret
 
     }
 
-    protected override void Start()
+    public override void Start()
     {
         base.Start();
     }

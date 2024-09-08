@@ -42,7 +42,7 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
     [SerializeField]
     GameObject bulletSpawnPoint;
     public Vector3 Position => forwardPoint.transform.position;
-    public Spawner Spawner { get; set; }
+    public ISpawner Spawner { get; set; }
 
     public int CapitolDamage => 1;
 
@@ -152,7 +152,7 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
         {
             IBullet b = collision.gameObject.GetComponentInParent<IBullet>();
             float dmg = b.Damage;
-            float mul = b.ArmourBonus ? 1.0f : 1.6f;
+            float mul = b.ArmourBonus ? 1.6f : 1.0f;
             Destroy(collision.gameObject);
             Damage(dmg * mul);
         }
