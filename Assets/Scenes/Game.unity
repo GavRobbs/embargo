@@ -35519,7 +35519,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 789133c26852e8240a8823691e649860, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minimumSpawnInterval: 5.5
+  minimumSpawnInterval: 5
   maximumSpawnInterval: 7.1
   scoutPrefab: {fileID: 5502752395223545550, guid: 7c5134d30fb25e94a95b18f913231694,
     type: 3}
@@ -58860,8 +58860,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 789133c26852e8240a8823691e649860, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minimumSpawnInterval: 6
-  maximumSpawnInterval: 8
+  minimumSpawnInterval: 5.5
+  maximumSpawnInterval: 7.5
   scoutPrefab: {fileID: 5502752395223545550, guid: 7c5134d30fb25e94a95b18f913231694,
     type: 3}
   mechPrefab: {fileID: 2515943765840467666, guid: b77c9c9b06ee5e747884049d71fb9ce6,
@@ -66140,7 +66140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minimumSpawnInterval: 5.3
-  maximumSpawnInterval: 7.5
+  maximumSpawnInterval: 6.9
   scoutPrefab: {fileID: 5502752395223545550, guid: 7c5134d30fb25e94a95b18f913231694,
     type: 3}
   mechPrefab: {fileID: 2515943765840467666, guid: b77c9c9b06ee5e747884049d71fb9ce6,

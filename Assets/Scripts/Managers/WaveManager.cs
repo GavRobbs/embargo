@@ -157,6 +157,7 @@ public class WaveManager : MonoBehaviour, IMessageHandler
                         spawner.BossSpawnerForThisWave = false;
                     }
                     wave += 1;
+                    MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<int>(MessageConstants.UpdateWaveCounterMessage, wave));
                     break;
                 }
             case MessageConstants.GameOverMessage:

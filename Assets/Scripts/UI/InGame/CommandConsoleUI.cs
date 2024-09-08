@@ -26,6 +26,9 @@ public class CommandConsoleUI : MonoBehaviour, IMessageHandler
     [SerializeField]
     AlertMessage alertMessage;
 
+    [SerializeField]
+    TextMeshProUGUI waveCounter;
+
     bool updateScrapCounter = true;
 
     int scrap = 2000;
@@ -161,6 +164,12 @@ public class CommandConsoleUI : MonoBehaviour, IMessageHandler
                     string message_text = (message as SingleValueMessage<string>).value;
                     alertMessage.gameObject.SetActive(true);
                     alertMessage.Display(message_text);
+                    break;
+                }
+            case MessageConstants.UpdateWaveCounterMessage:
+                {
+                    int current_wave = (message as SingleValueMessage<int>).value;
+                    waveCounter.text = $"Wave {current_wave}/6";
                     break;
                 }
             default:

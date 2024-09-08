@@ -9741,7 +9741,7 @@ MonoBehaviour:
   flash: {fileID: 7332517802862408203}
   explosion: {fileID: 1324762271152496884}
   teleportSound: {fileID: 58867785291143613}
-  hp: 2000
+  hp: 1800
 --- !u!95 &4624127568574853773
 Animator:
   serializedVersion: 3

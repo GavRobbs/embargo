@@ -280,7 +280,7 @@ public class Mech : MonoBehaviour, IEnemy, ITaskable
         max_hp = hp;
         baseMoveSpeed = moveSpeed;
 
-        moveSpeed *= 1.0f + ((float)(level - 1)) * 0.06f;
+        moveSpeed *= 1.0f + ((float)(level - 1)) * 0.08f;
 
         max_hp *= 1.0f + ((float)(level - 1)) * 0.45f;
 

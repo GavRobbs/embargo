@@ -31,5 +31,6 @@ public enum MessageConstants : int
     DisengageEverything,
     BossKilledMessage,
     NotifyBossBattleMessage,
-    WonGameMessage
+    WonGameMessage,
+    UpdateWaveCounterMessage
 }
