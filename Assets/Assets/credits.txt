@@ -1,3 +1,24 @@
-Credit: Placeholdy McPlaceholderface
-Credit 2: Placeholdy McPlaceholderface2
-Credit 3: Placeholdy McPlaceholderface
+Team| Gavin Robinson
+Arthur Gordon-Wright
+Mason Waldapfel
+Valentin Uchkunev
+Mario Falletti
+Effect| Explosion effects provided by limofeus. Available at: limofeus.itch.io/pixel-simulations
+Sound| "Building Collapse" by onteca, CC BY 3.0, available at freesound.org/people/onteca/sounds/197770
+"Machine Start-Up/Power Down" by Taylor Pro Sounds, CC BY 3.0, available at [freesound.org/people/Taylor Pro Sounds/sounds/210333](https://freesound.org/people/Taylor Pro Sounds/sounds/210333)
+"Badass Victory" by Pearce Wilson King, CC BY 3.0, available at [freesound.org/people/Pearce Wilson King/sounds/249524](https://freesound.org/people/Pearce Wilson King/sounds/249524)
+"Sci-Fi Portal" by Bzourk, CC BY 3.0, available at freesound.org/people/Bzourk/sounds/322059
+"Machine Gun" by AceOfSpadesProduc100, CC BY 3.0, available at freesound.org/people/AceOfSpadesProduc100/sounds/334279
+"Aluminum Sign Warp Slow" by Ev-Dawg, CC BY 3.0, available at freesound.org/people/Ev-Dawg/sounds/335995
+"Explosion 5" by Jobro, CC BY 3.0, available at freesound.org/people/Jobro/sounds/35462
+"Jumper Teleport" by Yoyomummy, CC BY 3.0, available at freesound.org/people/Yoyomummy/sounds/369062
+"Minimalist Sci-Fi UI Error" by Plasterbrain, CC BY 3.0, available at freesound.org/people/Plasterbrain/sounds/423166
+"Explosion" by Idkmrgarcia, CC BY 3.0, available at freesound.org/people/Idkmrgarcia/sounds/446625
+"Subway Metro Escalator Railing Rubber Mechanical Hum Nearby" by Kyles, CC BY 3.0, available at freesound.org/people/Kyles/sounds/454212
+"Gun Hammer Click" by Magnuswaker, CC BY 3.0, available at freesound.org/people/Magnuswaker/sounds/523087
+"Rorschakk 130BPM Dark Ambient Sci-Fi Suspenseful Beat Loop" by Rorschakk, CC BY 3.0, available at freesound.org/people/Rorschakk/sounds/636989
+"Power04" by Mad Monkey, CC BY 3.0, available at [freesound.org/people/Mad Monkey/sounds/66690](https://freesound.org/people/Mad Monkey/sounds/66690)
+"Dark Beat Loop" by Benderhover, CC BY 3.0, available at freesound.org/people/Benderhover/sounds/686772
+"Deadly Laser Distorted" by Magnuswaker, CC BY 3.0, available at freesound.org/people/Magnuswaker/sounds/697739
+"Victory Sting 2" by Victor Natas, CC BY 3.0, available at [freesound.org/people/Victor Natas/sounds/741973](https://freesound.org/people/Victor Natas/sounds/741973)
+"213 BPM Industrial Drum Loop 4786" by Looplicator, CC BY 3.0, available at freesound.org/people/Looplicator/sounds/753604
