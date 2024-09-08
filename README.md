@@ -1,9 +1,9 @@
-# embargo
+# Embargo
 Our submission for the final year Game Development Module for UOL Bsc. Computer Science
-## Story of Embargo: The Final Stand
+## Story of Embargo: The Final Hope
 
-The alien Skar'la invasion has left Earth in ruins, with humanity pushed to the brink of extinction. In the last surviving city of Rylos, Commander Reyes is the only thing standing between total annihilation and survival. The mission: defend City Hall—the heart of Earth's last government—against wave after wave of the alien horde.
+Urgent news has arrived: Zorg forces are on their way, and they're coming for us. They've discovered how close we are to completing the research that could turn the tide of this war. This is humanity’s only hope—if the city falls, our last chance for survival goes with it.
 
-Armed with Machine Guns for swift, general-purpose fire and Plasma Cannons to pierce through the Skar'la's heavy armour, Reyes places his defences carefully. Attack Boosters increase turret power, while Nano Reparators frantically repair the crumbling fortifications. But the aliens are relentless—each wave deadlier than the last, culminating in the approach of a massive alien warship known as the Overseer.
+Commander Reyes, now standing as the city's last line of defence, must protect the Capitol at all costs. The Zorg are relentless, sending wave after wave of destructive forces, intent on wiping us out before the research can be finished. Machine Guns are deployed for rapid-fire suppression, Plasma Cannons punch through their heavy armour, while Attack Boosters amplify firepower and Nano reparators frantically keep the defences intact.
 
-The fate of Rylos teeters on a knife's edge. The invaders are closing in, and the city's defences are stretched to the limit. Now, with the Skar'la bearing down and the Overseer looming over the battlefield, the outcome is uncertain. The final stand is yet to come. The future of humanity is in your hands—will you rally the city's defences and turn the tide, or will the alien onslaught bring Rylos to its knees? The battle for Earth's survival begins now.
+The Zorg advances, and each wave grows deadlier. The Capitol's survival is crucial—should it fall, humanity's fate will be sealed. You must stand strong, Commander. The final battle is upon us, and everything depends on your strategy. Can you repel the Zorg invasion and buy enough time for the research to be completed, or will this be the end of mankind's last hope?
