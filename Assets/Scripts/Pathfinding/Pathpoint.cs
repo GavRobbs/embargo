@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Pathpoint : MonoBehaviour
 {
@@ -51,7 +49,7 @@ public class Pathpoint : MonoBehaviour
         return indexed_position.y * array_n_elements_per_row + indexed_position.x;
     }
 
-    void Start()
+    private void Start()
     {
         zone = GetComponentInChildren<BoxCollider>();
     }

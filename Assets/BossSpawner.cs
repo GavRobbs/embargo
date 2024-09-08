@@ -1,65 +1,47 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class BossSpawner : MonoBehaviour, ISpawner
-{
-    GameMap map;
+public class BossSpawner : MonoBehaviour, ISpawner {
+    private GameMap _map;
 
-    [SerializeField]
-    GameObject finalBossPrefab;
+    [SerializeField] private GameObject finalBossPrefab;
     public bool IsSpecialSpawner => true;
 
-    public bool BossSpawnerForThisWave { get => false; set => _ = value; }
-
-    public int EnemyCount => enemy_count;
-
-    bool currently_active = false;
-
-    int enemy_count = 0;
-
-    void Start()
-    {
-        map = FindObjectOfType<GameMap>();
-
+    public bool BossSpawnerForThisWave {
+        get => false;
+        set => _ = value;
     }
 
-    public void StartSpawning()
-    {
-        currently_active = true;
+    public int EnemyCount { get; private set; }
+
+    private void Start() {
+        _map = FindObjectOfType<GameMap>();
+    }
+
+    public void StartSpawning() {
         SpawnFinalBoss();
     }
 
-    public void StopSpawning()
-    {
-        currently_active = false;
+    public void StopSpawning() {
     }
 
-    public void DecreaseEnemyCount()
-    {
-        enemy_count -= 1;
+    public void DecreaseEnemyCount() {
+        EnemyCount -= 1;
     }
 
-    public void IncreaseLevel()
-    {
-
-    }
-
-    void SpawnFinalBoss()
-    {
+    private void SpawnFinalBoss() {
         //First position 3, -5
         //Second position -4 4
         //Third position -4 -5
         //Final position 5 4
 
-        Vector3 target = map.GetRandomTargetPosition();
-        var path1 = map.GetPath(transform.position, target);
-        var path2 = map.GetPath(new Vector3(-4.0f, 0.0f, 4.0f), target);
-        var path3 = map.GetPath(new Vector3(-4.0f, 0.0f, -5.0f), target);
-        var path4 = map.GetPath(new Vector3(5.0f, 0.0f, 4.0f), target);
-        FinalBoss fb = GameObject.Instantiate(finalBossPrefab, transform.position, Quaternion.identity).GetComponent<FinalBoss>();
+        Vector3 target = _map.GetRandomTargetPosition();
+        var path1 = _map.GetPath(transform.position, target);
+        var path2 = _map.GetPath(new Vector3(-4.0f, 0.0f, 4.0f), target);
+        var path3 = _map.GetPath(new Vector3(-4.0f, 0.0f, -5.0f), target);
+        var path4 = _map.GetPath(new Vector3(5.0f, 0.0f, 4.0f), target);
+        FinalBoss fb = Instantiate(finalBossPrefab, transform.position, Quaternion.identity).GetComponent<FinalBoss>();
         fb.Wander(path1, path2, path3, path4);
         fb.Spawner = this;
-        enemy_count += 1;
+        EnemyCount += 1;
     }
 }

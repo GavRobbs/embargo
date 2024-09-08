@@ -1,39 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class Capitol : MonoBehaviour
-{
-    int hp = 6;
-    bool dead = false;
+public class Capitol : MonoBehaviour {
+    private int hp = 6;
+
+    private bool dead;
     // Start is called before the first frame update
 
     public int Health => hp;
 
-    [SerializeField]
-    GameObject explosion;
+    [SerializeField] private GameObject explosion;
 
-    [SerializeField]
-    GameObject capitolMesh;
-    void Start()
-    {
-        
-    }
+    [SerializeField] private GameObject capitolMesh;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void DecreaseHP()
-    {
+    private void DecreaseHp() {
         hp -= 1;
-        if(hp < 0)
-        {
-            return;
-        }
+        if (hp < 0) return;
 
         Image[] images = GetComponentsInChildren<Image>();
 
@@ -45,33 +27,24 @@ public class Capitol : MonoBehaviour
         images[hp].color = c;
     }
 
-    void OnTriggerEnter(Collider other)
-    {
-        if (dead)
-        {
-            return;
+    private void OnTriggerEnter(Collider other) {
+        if (dead) return;
+
+        if (other.gameObject.layer != LayerMask.NameToLayer("Enemy")) return;
+
+        IEnemy enemy = other.GetComponentInParent<IEnemy>();
+
+        for (var i = 0; i < enemy.CapitolDamage; i++) {
+            DecreaseHp();
         }
 
-        if(other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
-        {
-            IEnemy enemy = other.GetComponentInParent<IEnemy>();
+        enemy.Destroy();
 
-            for(int i = 0; i < enemy.CapitolDamage; i++)
-            {
-                DecreaseHP();
-            }
+        if (hp > 0) return;
 
-            enemy.KillMe();
-
-            if(hp <= 0)
-            {
-                explosion.SetActive(true);
-                capitolMesh.SetActive(false);
-                MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.GameOverMessage));
-                dead = true;
-            }
-
-        }
+        explosion.SetActive(true);
+        capitolMesh.SetActive(false);
+        MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.GameOverMessage));
+        dead = true;
     }
-
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlasmaBolt : MonoBehaviour, IBullet
 {
@@ -18,11 +16,11 @@ public class PlasmaBolt : MonoBehaviour, IBullet
 
     [SerializeField]
     float speed;
-    void Start()
+    private void Start()
     {
         forward_vector = transform.forward;
         mRigidbody.AddForce(forward_vector * speed, ForceMode.Impulse);
-        GameObject.Destroy(this.gameObject, 3);
+        Destroy(gameObject, 3);
     }
 
 }

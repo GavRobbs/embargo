@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class GameMessage
+﻿public class GameMessage
 {
     MessageConstants message_type;
 

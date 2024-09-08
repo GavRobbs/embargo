@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MGTurret : OffensiveTurret
 {
-    bool isFiring = false;
+    bool isFiring;
 
     [SerializeField]
     ParticleSystem cannon1_ps;
@@ -31,10 +29,10 @@ public class MGTurret : OffensiveTurret
 
     //These help to determine how long a machinegun volley lasts
     [SerializeField]
-    float last_bullet_time = 0.0f;
+    float last_bullet_time;
 
     [SerializeField]
-    float current_fire_time = 0.0f;
+    float current_fire_time;
     protected override void ChillBehaviour()
     {
         LaserOff();
@@ -203,11 +201,11 @@ public class MGTurret : OffensiveTurret
     void SpawnBullets()
     {
         //Half damage because it fires two bullets at a time
-        GameObject b1 = GameObject.Instantiate(bulletPrefab, cannon1_ps.transform.position, cannon1_ps.transform.rotation);
+        GameObject b1 = Instantiate(bulletPrefab, cannon1_ps.transform.position, cannon1_ps.transform.rotation);
 
         b1.GetComponent<MGBullet>().Damage = DamagePerShot / 2.0f;
 
-        GameObject b2 = GameObject.Instantiate(bulletPrefab, cannon2_ps.transform.position, cannon1_ps.transform.rotation);
+        GameObject b2 = Instantiate(bulletPrefab, cannon2_ps.transform.position, cannon1_ps.transform.rotation);
         b2.GetComponent<MGBullet>().Damage = DamagePerShot / 2.0f;
     }
 
@@ -230,14 +228,14 @@ public class MGTurret : OffensiveTurret
             return;
         }
 
-        if (info.mode == GameInputManager.HOVER_MODE.UPGRADE && Online)
+        if (info.mode == GameInputManager.HoverMode.UPGRADE && Online)
         {
             AttachedBuilding?.ActivateArrow();
             return;
 
         }
 
-        if (info.mode == GameInputManager.HOVER_MODE.SCRAP && Online)
+        if (info.mode == GameInputManager.HoverMode.SCRAP && Online)
         {
             AttachedBuilding?.ActivateScrapIcon();
         }

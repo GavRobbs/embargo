@@ -1,42 +1,28 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class TargetDetector : MonoBehaviour
-{
-    List<Building> buildings;
+public class TargetDetector : MonoBehaviour {
+    private List<Building> buildings;
 
-    void Start()
-    {
+    private void Start() {
         buildings = new List<Building>();
     }
 
-    void OnTriggerEnter(Collider other)
-    {
+    private void OnTriggerEnter(Collider other) {
         var building = other.GetComponentInParent<Building>();
-        if(building != null)
-        {
+        if (building) {
             buildings.Add(building);
         }
     }
 
-    void OnTriggerExit(Collider other)
-    {
+    private void OnTriggerExit(Collider other) {
         var building = other.GetComponentInParent<Building>();
-        if (building != null)
-        {
-            buildings.Remove(building); 
+        if (building) {
+            buildings.Remove(building);
         }
-
     }
 
-    public Building GetRandomTarget()
-    {
-        if(buildings.Count == 0)
-        {
-            return null;
-        }
-
-        return buildings[Random.Range(0, buildings.Count)];
+    public Building GetRandomTarget() {
+        return buildings.Count != 0 ? buildings[Random.Range(0, buildings.Count)] : null;
     }
 }

@@ -1,31 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Scout : MonoBehaviour, IEnemy, ITaskable
-{
-    [SerializeField]
-    GameObject forwardPoint;
+public class Scout : MonoBehaviour, IEnemy, ITaskable {
+    [SerializeField] GameObject forwardPoint;
 
-    [SerializeField]
-    GameObject scoutBody;
+    [SerializeField] GameObject scoutBody;
 
-    [SerializeField]
-    float pathfindingDistanceThreshold;
+    [SerializeField] float pathfindingDistanceThreshold;
 
-    [SerializeField]
-    float moveSpeed;
+    [SerializeField] float moveSpeed;
 
-    float baseMoveSpeed;
+    [SerializeField] ParticleSystem sparks;
 
-    [SerializeField]
-    ParticleSystem sparks;
+    [SerializeField] ParticleSystem flash;
 
-    [SerializeField]
-    ParticleSystem flash;
-
-    [SerializeField]
-    AudioSource explosion;
+    [SerializeField] AudioSource explosion;
     public Vector3 Position => forwardPoint.transform.position;
     public ISpawner Spawner { get; set; }
 
@@ -33,10 +22,9 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
 
     public bool IsFriendly => false;
 
-    public bool IsKilled => (HitPoints <= 0.0f) || dying == true;
+    public bool IsKilled => (HitPoints <= 0.0f) || dying;
 
-    [SerializeField]
-    float hp;
+    [SerializeField] float hp;
 
     float max_hp;
 
@@ -44,238 +32,180 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
 
     public string Name => "Scout";
 
-    bool dying = false;
+    bool dying;
 
     ITask _currentTask;
 
     int level = 1;
 
-    bool isStopped = false;
+    bool isStopped;
 
-    public ITask CurrentTask
-    {
-        get
-        {
-            return _currentTask;
-        }
+    public ITask CurrentTask {
+        get { return _currentTask; }
 
-        set
-        {
-            if (value != null)
-            {
+        set {
+            if (value != null) {
                 _currentTask?.OnTaskExit();
                 _currentTask = value;
                 _currentTask.OnTaskEnter();
-            }
-            else
-            {
+            } else {
                 _currentTask?.OnTaskExit();
                 _currentTask = null;
             }
         }
     }
 
-    public void SetLevel(int lv)
-    {
+    public void SetLevel(int lv) {
         level = lv;
     }
 
     public bool Busy => throw new System.NotImplementedException();
 
     // Update is called once per frame
-    void Update()
-    {
-        if (isStopped || dying)
-        {
+    void Update() {
+        if (isStopped || dying) {
             return;
         }
 
-        if(hp < 1.0f && !dying)
-        {
+        if (hp < 1.0f && !dying) {
             //We only want the player to get the scrap if they kill it
-            int scrap = (int)((float)level * 0.7f * 30.0f);
+            int scrap = (int)(level * 0.7f * 30.0f);
             MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<int>(MessageConstants.AddScrap, scrap));
-            KillMe();
+            Destroy();
+        } else {
+            CurrentTask?.OnTaskUpdate(Time.deltaTime);
         }
-        else
-        {
-            if(CurrentTask != null)
-            {
-                CurrentTask.OnTaskUpdate(Time.deltaTime);
-            }
-        }
-        
     }
 
-    public void CancelTask()
-    {
-
+    public void CancelTask() {
     }
 
-    void OnDestroy()
-    {
+    private void OnDestroy() {
         Spawner.DecreaseEnemyCount();
     }
 
-    public void Damage(float value)
-    {
+    public void Damage(float value) {
         hp -= value;
     }
 
-    void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Bullet"))
-        {
-            float dmg = collision.gameObject.GetComponentInParent<IBullet>().Damage;
-            Destroy(collision.gameObject);
-            Damage(dmg);
-        }
+    void OnCollisionEnter(Collision collision) {
+        if (collision.gameObject.layer != LayerMask.NameToLayer("Bullet")) return;
 
+        float dmg = collision.gameObject.GetComponentInParent<IBullet>().Damage;
+        Destroy(collision.gameObject);
+        Damage(dmg);
     }
 
-    public void KillMe()
-    {
+    public void Destroy() {
         dying = true;
         scoutBody.SetActive(false);
         sparks.Play();
         flash.Play();
-        GameObject.Destroy(this.gameObject, 2.0f);
+        GameObject.Destroy(gameObject, 2.0f);
         explosion.Play();
-
     }
 
-    public void FollowPath(List<Vector3> path_points, System.Action onComplete)
-    {
+    public void FollowPath(List<Vector3> path_points, System.Action onComplete) {
         CurrentTask = new ScoutPathFollowTask(this, path_points, pathfindingDistanceThreshold, moveSpeed, onComplete);
     }
 
-    public void Attack(Building building)
-    {
+    public void Attack(Building building) {
         throw new System.NotImplementedException();
     }
 
-    public Dictionary<string, string> GetHoverData()
-    {
-        return new Dictionary<string, string>()
-        {
-            {"type", "enemy"},
-            {"name", Name },
-            {"hp", ((int)hp).ToString() },
-            {"max_hp", ((int)max_hp).ToString() }
+    public Dictionary<string, string> GetHoverData() {
+        return new Dictionary<string, string>() {
+            { "type", "enemy" },
+            { "name", Name },
+            { "hp", ((int)hp).ToString() },
+            { "max_hp", ((int)max_hp).ToString() }
         };
     }
 
-    public void OnHoverOver(HoverInfo info)
-    {
+    public void OnHoverOver(HoverInfo info) {
     }
 
-    public void OnHoverOff()
-    {
+    public void OnHoverOff() {
     }
 
-    class ScoutPathFollowTask : ITask
-    {
-        List<Vector3> path;
-        Scout owner;
+    private class ScoutPathFollowTask : ITask {
+        private readonly List<Vector3> _path;
+        private readonly Scout _owner;
 
-        Vector3 target_position;
-        bool isMoving;
+        private Vector3 _targetPosition;
+        private bool _isMoving;
 
-        System.Action completionCallback;
-        int path_index = 0;
+        private readonly System.Action _completionCallback;
+        private int _pathIndex;
 
-        float distance_threshold;
-        float move_speed;
-        public ScoutPathFollowTask(Scout recipient, List<Vector3> follow_path, float threshold, float moveSpeed, System.Action onComplete)
-        {
-            path = follow_path;
-            owner = recipient;
-            completionCallback = onComplete;
-            distance_threshold = threshold;
-            move_speed = moveSpeed;
+        private readonly float _distanceThreshold;
+        private readonly float _moveSpeed;
+
+        public ScoutPathFollowTask(Scout recipient, List<Vector3> followPath, float threshold, float moveSpeed,
+            System.Action onComplete) {
+            _path = followPath;
+            _owner = recipient;
+            _completionCallback = onComplete;
+            _distanceThreshold = threshold;
+            _moveSpeed = moveSpeed;
         }
 
         public float Progress => 0.0f;
 
-        public void OnTaskEnter()
-        {
+        public void OnTaskEnter() {
             //Ideally we could do some cleanup here to see if maybe we can join the path somewhere else apart from the start etc
-            isMoving = true;
-            MoveTo(path[0]);
+            _isMoving = true;
+            MoveTo(_path[0]);
         }
 
-        public void OnTaskExit()
-        {
+        public void OnTaskExit() {
         }
 
-        public void Cancel()
-        {
-
+        public void Cancel() {
         }
 
-        public void OnTaskCancel()
-        {
-
+        public void OnTaskCancel() {
         }
 
-        public void OnTaskUpdate(float dt)
-        {
-            if (owner.IsKilled)
-            {
-                return;
-            }
+        public void OnTaskUpdate(float dt) {
+            if (_owner.IsKilled) return;
+            if (!_isMoving) return;
 
-            if (isMoving)
-            {
-                Vector3 moveDir = (target_position - owner.transform.position).normalized;
-                owner.transform.position = owner.transform.position + (moveDir * move_speed * Time.deltaTime);
+            Vector3 moveDir = (_targetPosition - _owner.transform.position).normalized;
+            _owner.transform.position += (moveDir * (_moveSpeed * Time.deltaTime));
 
-                if (Vector3.Distance(owner.transform.position, target_position) <= distance_threshold)
-                {
-                    path_index += 1;
-                    if (path_index == path.Count)
-                    {
-                        //We're done moving
-                        isMoving = false;
-                        completionCallback();
-                    }
-                    else
-                    {
-                        MoveTo(path[path_index]);
-                    }
-                }
-
-
+            if (Vector3.Distance(_owner.transform.position, _targetPosition) > _distanceThreshold) return;
+            _pathIndex += 1;
+            if (_pathIndex == _path.Count) {
+                //We're done moving
+                _isMoving = false;
+                _completionCallback();
+            } else {
+                MoveTo(_path[_pathIndex]);
             }
         }
 
-        private void MoveTo(Vector3 pos)
-        {
-            target_position = pos;
-            target_position.y = 0.0f;
+        private void MoveTo(Vector3 pos) {
+            _targetPosition = pos;
+            _targetPosition.y = 0.0f;
         }
-
     }
 
-    void Start()
-    {
+    private void Start() {
         max_hp = hp;
-        baseMoveSpeed = moveSpeed;
 
-        moveSpeed *= 1.0f + ((float)(level - 1)) * 0.1f;
+        moveSpeed *= 1.0f + (level - 1) * 0.1f;
 
-        max_hp *= 1.0f + ((float)(level - 1)) * 0.14f;
+        max_hp *= 1.0f + (level - 1) * 0.14f;
 
         hp = max_hp;
     }
 
-    public void ClearTask()
-    {
+    public void ClearTask() {
         CurrentTask = null;
     }
 
-    public void Stop()
-    {
+    public void Stop() {
         isStopped = true;
     }
 }

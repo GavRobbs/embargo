@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /* By making these MonoBehaviours, we can take advantage of the component pattern here. 
  * If I make this a child of the support turret, it is destroyed when the turret is destroyed, and all turrets that were 

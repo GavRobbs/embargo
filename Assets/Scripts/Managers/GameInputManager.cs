@@ -1,449 +1,405 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem.Processors;
-using System;
-using UnityEngine.XR.WSA.Input;
+using UnityEngine.Serialization;
 
-public class GameInputManager : MonoBehaviour, IMessageHandler
-{
-    float cam_rot_dir = 0.0f;
-    bool isCameraRotating = false;
-    bool isCameraZooming = false;
-    bool isCameraPanning = false;
+public class GameInputManager : MonoBehaviour, IMessageHandler {
+    private float _camRotDir;
+    private bool _isCameraRotating;
+    private bool _isCameraZooming;
+    private bool _isCameraPanning;
 
-    float cam_zoom_direction = 0.0f;
-    Vector2 cam_pan_direction;
+    private float _camZoomDirection;
+    private Vector2 _camPanDirection;
 
-    [SerializeField]
-    float camera_rotation_speed;
+    [FormerlySerializedAs("camera_rotation_speed")] [SerializeField]
+    private float cameraRotationSpeed;
 
-    [SerializeField]
-    float camera_zoom_speed;
+    [FormerlySerializedAs("camera_zoom_speed")] [SerializeField]
+    private float cameraZoomSpeed;
 
-    [SerializeField]
-    float camera_pan_speed;
+    [FormerlySerializedAs("camera_pan_speed")] [SerializeField]
+    private float cameraPanSpeed;
 
-    [SerializeField]
-    AudioSource gameMusic;
+    [SerializeField] private AudioSource gameMusic;
 
-    [SerializeField]
-    AudioSource gameOverMusic;
+    [SerializeField] private AudioSource gameOverMusic;
 
-    [SerializeField]
-    AudioSource victoryMusic;
+    [SerializeField] private AudioSource victoryMusic;
 
-    [SerializeField]
-    AudioSource bossBattleMusic;
+    [SerializeField] private AudioSource bossBattleMusic;
 
-    float rotation_angle = 0.0f;
+    private float _rotationAngle;
 
-    bool started = false;
-    bool suspend = false;   
+    private bool _started;
+    private bool _suspend;
 
-    bool doRaycast = false;
+    private bool _doRaycast;
 
-    ISelectable current_selectable;
+    private ISelectable _currentSelectable;
 
-    IHoverable current_hoverable = null;
-    float to_hover_time = 0.7f;
+    private IHoverable _currentHoverable;
+    private float _toHoverTime = 0.7f;
 
-    public enum HOVER_MODE : int { INFO, BUILD, HIGHLIGHT, UPGRADE, SCRAP };
-    HOVER_MODE current_hover_mode = HOVER_MODE.INFO;
+    public enum HoverMode {
+        INFO,
+        BUILD,
+        HIGHLIGHT,
+        UPGRADE,
+        SCRAP
+    };
+
+    private HoverMode _currentHoverMode = HoverMode.INFO;
 
     //The click mode can either be to place a building or to do nothing
-    public enum CLICK_MODE : int {  NONE, PLACE, SELECT };
-    CLICK_MODE current_click_mode = CLICK_MODE.NONE;
+    private enum ClickMode {
+        NONE,
+        PLACE,
+        SELECT
+    };
 
-    GameMap map_manager;
+    private ClickMode _currentClickMode = ClickMode.NONE;
 
-    GameObject current_turret_pfb;
 
-    void Start()
-    {
-        map_manager = FindObjectOfType<GameMap>();
+    private GameObject _currentTurretPfb;
+
+    private Camera _mainCamera;
+
+    private void Start() {
         MessageDispatcher.GetInstance().AddHandler(this);
+        _mainCamera = Camera.main;
     }
 
-    void OnDestroy()
-    {
+    private void OnDestroy() {
         MessageDispatcher.GetInstance().RemoveHandler(this);
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        if (suspend)
-        {
+    private void Update() {
+        if (_suspend) {
             return;
         }
 
-        if (isCameraRotating)
-        {
-            float new_angle = Time.deltaTime * camera_rotation_speed * cam_rot_dir;
-            rotation_angle += new_angle;
-            Camera.main.transform.RotateAround(Vector3.zero, Vector3.up, new_angle);
+        if (_isCameraRotating) {
+            float new_angle = Time.deltaTime * cameraRotationSpeed * _camRotDir;
+            _rotationAngle += new_angle;
+            _mainCamera.transform.RotateAround(Vector3.zero, Vector3.up, new_angle);
         }
 
-        if (isCameraZooming)
-        {
-            Camera.main.fieldOfView = Mathf.Clamp(Camera.main.fieldOfView + camera_zoom_speed * Time.deltaTime * cam_zoom_direction, 30.0f, 90.0f);
+        if (_isCameraZooming) {
+            _mainCamera.fieldOfView =
+                Mathf.Clamp(_mainCamera.fieldOfView + cameraZoomSpeed * Time.deltaTime * _camZoomDirection, 30.0f,
+                    90.0f);
         }
 
-        if (isCameraPanning)
-        {
-            Vector3 new_forward = Quaternion.Euler(0.0f, rotation_angle, 0.0f) * Vector3.forward;
-            Vector3 new_pos = Camera.main.transform.position + Camera.main.transform.right * camera_pan_speed * Time.deltaTime * cam_pan_direction.x + new_forward * camera_pan_speed * Time.deltaTime * cam_pan_direction.y;
+        if (_isCameraPanning) {
+            Vector3 new_forward = Quaternion.Euler(0.0f, _rotationAngle, 0.0f) * Vector3.forward;
+            Vector3 new_pos = _mainCamera.transform.position +
+                              _mainCamera.transform.right * (cameraPanSpeed * Time.deltaTime * _camPanDirection.x) +
+                              new_forward * (cameraPanSpeed * Time.deltaTime * _camPanDirection.y);
             new_pos.x = Mathf.Clamp(new_pos.x, -20.0f, 20.0f);
             new_pos.z = Mathf.Clamp(new_pos.z, -20.0f, 20.0f);
-            Camera.main.transform.position = new_pos;
-
+            _mainCamera.transform.position = new_pos;
         }
 
-        if (started)
-        {
+        if (_started) {
             CheckMouseHovering();
             CheckClick();
         }
-
     }
 
-    private void CheckClick()
-    {
+    private void CheckClick() {
         //Stubs at the moment
-        if (doRaycast)
-        {
-            doRaycast = false;
-            //This is a bit misleading, this actually checks to make sure we're not clicking on a UI element
-            if (EventSystem.current.IsPointerOverGameObject())
-            {
-                //don't handle this if the pointer is not over a game object
-                return;
-            }
+        if (!_doRaycast) return;
 
-            if (current_click_mode == CLICK_MODE.NONE)
-            {
+        _doRaycast = false;
+        //This is a bit misleading, this actually checks to make sure we're not clicking on a UI element
+        if (EventSystem.current.IsPointerOverGameObject()) {
+            //don't handle this if the pointer is not over a game object
+            return;
+        }
+
+        switch (_currentClickMode) {
+            case ClickMode.NONE:
                 return;
-            }
-            else if(current_click_mode == CLICK_MODE.PLACE)
-            {
+            case ClickMode.PLACE: {
                 Vector2 mouse_pos = Mouse.current.position.ReadValue();
-                Ray ray = Camera.main.ScreenPointToRay(mouse_pos);
+                Ray ray = _mainCamera.ScreenPointToRay(mouse_pos);
                 RaycastHit hit;
 
-                if (Physics.Raycast(ray, out hit, 1000.0f, LayerMask.GetMask("Building")))
-                {
+                if (Physics.Raycast(ray, out hit, 1000.0f, LayerMask.GetMask("Building"))) {
                     Building b = hit.collider.GetComponentInParent<Building>();
-                    if(b == null)
-                    {
+                    if (b == null) {
                         //Throw an error about not being a valid building
-                        MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "Not a valid building!"));
+                        MessageDispatcher.GetInstance()
+                            .Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage,
+                                "Not a valid building!"));
                         MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageBuildMode));
                         return;
                     }
 
-                    if (b.hasTurret || b.building_turret)
-                    {
+                    if (b.hasTurret || b.building_turret) {
                         //Throw an error about the building already having a turret
-                        MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "Building already has a turret!"));
+                        MessageDispatcher.GetInstance()
+                            .Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage,
+                                "Building already has a turret!"));
                         MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageBuildMode));
                         return;
                     }
 
                     MessageDispatcher.GetInstance().Dispatch(new DroneBuildMessage(b));
                     MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageBuildMode));
-
                 }
-            } 
-            else if(current_click_mode == CLICK_MODE.SELECT)
-            {
+
+                break;
+            }
+            case ClickMode.SELECT: {
                 Vector2 mouse_pos = Mouse.current.position.ReadValue();
-                Ray ray = Camera.main.ScreenPointToRay(mouse_pos);
+                Ray ray = _mainCamera.ScreenPointToRay(mouse_pos);
                 RaycastHit hit;
 
-                if (Physics.Raycast(ray, out hit, 1000.0f, LayerMask.GetMask("Building", "Turret")))
-                {
-                    Building b = hit.collider.GetComponentInParent<Building>();
-                    if (b != null)
-                    {
-                        if (b.hasTurret)
-                        {
-                            if (current_hover_mode == HOVER_MODE.UPGRADE && (!b.upgrading_turret || !b.scrapping_turret) )
-                            {
-                                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<Building>(MessageConstants.UpgradeTurret, b));
-                                MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageUpgradeMode));
-                            } else if (current_hover_mode == HOVER_MODE.SCRAP && (!b.upgrading_turret || !b.scrapping_turret))
-                            {
-                                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<Building>(MessageConstants.ScrapTurret, b));
-                                MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageScrapMode));
+                if (Physics.Raycast(ray, out hit, 1000.0f, LayerMask.GetMask("Building", "Turret"))) {
+                    Building building = hit.collider.GetComponentInParent<Building>();
+                    if (building) {
+                        if (building.hasTurret) {
+                            if (_currentHoverMode == HoverMode.UPGRADE &&
+                                (!building.upgrading_turret || !building.scrapping_turret)) {
+                                MessageDispatcher.GetInstance()
+                                    .Dispatch(
+                                        new SingleValueMessage<Building>(MessageConstants.UpgradeTurret, building));
+                                MessageDispatcher.GetInstance()
+                                    .Dispatch(new GameMessage(MessageConstants.DisengageUpgradeMode));
+                            } else if (_currentHoverMode == HoverMode.SCRAP &&
+                                       (!building.upgrading_turret || !building.scrapping_turret)) {
+                                MessageDispatcher.GetInstance()
+                                    .Dispatch(new SingleValueMessage<Building>(MessageConstants.ScrapTurret, building));
+                                MessageDispatcher.GetInstance()
+                                    .Dispatch(new GameMessage(MessageConstants.DisengageScrapMode));
                             }
-
+                        } else {
+                            if (_currentHoverMode == HoverMode.UPGRADE) {
+                                MessageDispatcher.GetInstance()
+                                    .Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage,
+                                        "No valid target to upgrade!"));
+                                MessageDispatcher.GetInstance()
+                                    .Dispatch(new GameMessage(MessageConstants.DisengageUpgradeMode));
+                            } else if (_currentHoverMode == HoverMode.SCRAP) {
+                                MessageDispatcher.GetInstance()
+                                    .Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage,
+                                        "No valid target to scrap!"));
+                                MessageDispatcher.GetInstance()
+                                    .Dispatch(new GameMessage(MessageConstants.DisengageScrapMode));
+                            }
                         }
-                        else
-                        {
-                            if (current_hover_mode == HOVER_MODE.UPGRADE)
-                            {
-                                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "No valid target to upgrade!"));
-                                MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageUpgradeMode));
-                            }
-                            else if (current_hover_mode == HOVER_MODE.SCRAP)
-                            {
-                                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "No valid target to scrap!"));
-                                MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageScrapMode));
-                            }
-                        }
-                        return;
-                    }
-                    else
-                    {
+                    } else {
                         ITurret t = hit.collider.GetComponentInParent<ITurret>();
 
-                        if (current_hover_mode == HOVER_MODE.UPGRADE)
-                        {
-                            if(t != null && (!t.AttachedBuilding.upgrading_turret || !t.AttachedBuilding.scrapping_turret))
-                            {
-                                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<Building>(MessageConstants.UpgradeTurret, t.AttachedBuilding));
+                        switch (_currentHoverMode) {
+                            case HoverMode.UPGRADE: {
+                                if (t != null && (!t.AttachedBuilding.upgrading_turret ||
+                                                  !t.AttachedBuilding.scrapping_turret)) {
+                                    MessageDispatcher.GetInstance()
+                                        .Dispatch(new SingleValueMessage<Building>(MessageConstants.UpgradeTurret,
+                                            t.AttachedBuilding));
+                                } else {
+                                    MessageDispatcher.GetInstance()
+                                        .Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage,
+                                            "No valid target to upgrade!"));
+                                }
 
+                                MessageDispatcher.GetInstance()
+                                    .Dispatch(new GameMessage(MessageConstants.DisengageUpgradeMode));
+                                break;
                             }
-                            else
-                            {
-                                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "No valid target to upgrade!"));
-                            }
-                            MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageUpgradeMode));
-                        }
-                        else if(current_hover_mode == HOVER_MODE.SCRAP)
-                        {
-                            if(t != null && (!t.AttachedBuilding.upgrading_turret || !t.AttachedBuilding.scrapping_turret))
-                            {
-                                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<Building>(MessageConstants.ScrapTurret, t.AttachedBuilding));
-                            }
-                            else
-                            {
-                                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "No valid target to scrap!"));
-                            }
-                            MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageScrapMode));
+                            case HoverMode.SCRAP: {
+                                if (t != null && (!t.AttachedBuilding.upgrading_turret ||
+                                                  !t.AttachedBuilding.scrapping_turret)) {
+                                    MessageDispatcher.GetInstance()
+                                        .Dispatch(new SingleValueMessage<Building>(MessageConstants.ScrapTurret,
+                                            t.AttachedBuilding));
+                                } else {
+                                    MessageDispatcher.GetInstance()
+                                        .Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage,
+                                            "No valid target to scrap!"));
+                                }
 
+                                MessageDispatcher.GetInstance()
+                                    .Dispatch(new GameMessage(MessageConstants.DisengageScrapMode));
+                                break;
+                            }
                         }
-                        
                     }
-
-
                 }
 
+                break;
             }
-
+            default:
+                throw new ArgumentOutOfRangeException();
         }
-
     }
 
-    private void CheckMouseHovering()
-    {
+    private void CheckMouseHovering() {
         //Stubs at the moment
         Vector2 mouse_pos = Mouse.current.position.ReadValue();
-        Ray ray = Camera.main.ScreenPointToRay(mouse_pos);
+        Ray ray = _mainCamera.ScreenPointToRay(mouse_pos);
         RaycastHit hit;
 
-        if(Physics.Raycast(ray, out hit, 1000.0f, LayerMask.GetMask("Building", "Turret", "Enemy", "Drone")))
-        {
+        if (Physics.Raycast(ray, out hit, 1000.0f, LayerMask.GetMask("Building", "Turret", "Enemy", "Drone"))) {
             IHoverable hoverable = hit.collider.GetComponentInParent<IHoverable>();
 
-            if(current_hover_mode == HOVER_MODE.INFO)
-            {
-                if (current_hoverable == null)
-                {
-                    current_hoverable = hoverable;
-                    to_hover_time = 0.7f;
-                }
-                else if (current_hoverable == hoverable)
-                {
-                    if (to_hover_time > 0.0f)
-                    {
-                        to_hover_time -= Time.deltaTime;
-                        if (to_hover_time <= 0.0f)
-                        {
+            switch (_currentHoverMode) {
+                case HoverMode.INFO when _currentHoverable == null:
+                    _currentHoverable = hoverable;
+                    _toHoverTime = 0.7f;
+                    break;
+                case HoverMode.INFO when _currentHoverable == hoverable: {
+                    if (_toHoverTime > 0.0f) {
+                        _toHoverTime -= Time.deltaTime;
+                        if (_toHoverTime <= 0.0f) {
                             //This function should open the hover window
-                            MessageDispatcher.GetInstance().Dispatch(new HoverInfoDisplayMessage(hoverable.GetHoverData(), Mouse.current.position.ReadValue()));
-                            current_hoverable.OnHoverOver(null);
+                            MessageDispatcher.GetInstance()
+                                .Dispatch(new HoverInfoDisplayMessage(hoverable.GetHoverData(),
+                                    Mouse.current.position.ReadValue()));
+                            _currentHoverable.OnHoverOver(null);
                         }
-                    }
-                    else
-                    {
-                        MessageDispatcher.GetInstance().Dispatch(new HoverInfoDisplayMessage(hoverable.GetHoverData(), Mouse.current.position.ReadValue()));
+                    } else {
+                        MessageDispatcher.GetInstance().Dispatch(new HoverInfoDisplayMessage(hoverable.GetHoverData(),
+                            Mouse.current.position.ReadValue()));
                     }
 
+                    break;
                 }
-                else
-                {
-                    current_hoverable.OnHoverOff();
+                case HoverMode.INFO:
+                    _currentHoverable.OnHoverOff();
                     //This function should close the hover window
                     MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.HideHoverPopupMessage));
-                    current_hoverable = hoverable;
-                    to_hover_time = 0.7f;
-                }
-
-            }
-            else if(current_hover_mode == HOVER_MODE.BUILD)
-            {
-                if(hoverable == null || hit.collider.gameObject.layer != LayerMask.NameToLayer("Building"))
-                {
+                    _currentHoverable = hoverable;
+                    _toHoverTime = 0.7f;
+                    break;
+                case HoverMode.BUILD when hoverable == null ||
+                                          hit.collider.gameObject.layer != LayerMask.NameToLayer("Building"):
                     return;
+                case HoverMode.BUILD: {
+                    if (hoverable != _currentHoverable) {
+                        _currentHoverable?.OnHoverOff();
+                        _currentHoverable = hoverable;
+                        _currentHoverable.OnHoverOver(new BuildHoverInfo(_currentTurretPfb));
+                    }
+
+                    break;
                 }
-                
-                if(hoverable != current_hoverable)
-                {
-                    current_hoverable?.OnHoverOff();
-                    current_hoverable = hoverable;
-                    current_hoverable.OnHoverOver(new BuildHoverInfo(current_turret_pfb));
-                }
-            }
-            else if(current_hover_mode == HOVER_MODE.UPGRADE)
-            {
-                if (hoverable == null || (hit.collider.gameObject.layer != LayerMask.NameToLayer("Building") &&  hit.collider.gameObject.layer != LayerMask.NameToLayer("Turret")))
-                {
+                case HoverMode.UPGRADE when hoverable == null ||
+                                            (hit.collider.gameObject.layer != LayerMask.NameToLayer("Building") &&
+                                             hit.collider.gameObject.layer != LayerMask.NameToLayer("Turret")):
                     return;
-                }
-
-                current_hoverable?.OnHoverOff();
-                current_hoverable = hoverable;
-                current_hoverable.OnHoverOver(new HoverInfo(HOVER_MODE.UPGRADE, 0));
-
-            }
-            else if (current_hover_mode == HOVER_MODE.SCRAP)
-            {
-                if (hoverable == null || (hit.collider.gameObject.layer != LayerMask.NameToLayer("Building") && hit.collider.gameObject.layer != LayerMask.NameToLayer("Turret")))
-                {
+                case HoverMode.UPGRADE:
+                    _currentHoverable?.OnHoverOff();
+                    _currentHoverable = hoverable;
+                    _currentHoverable.OnHoverOver(new HoverInfo(HoverMode.UPGRADE, 0));
+                    break;
+                case HoverMode.SCRAP when hoverable == null ||
+                                          (hit.collider.gameObject.layer != LayerMask.NameToLayer("Building") &&
+                                           hit.collider.gameObject.layer != LayerMask.NameToLayer("Turret")):
                     return;
-                }
-
-                current_hoverable?.OnHoverOff();
-                current_hoverable = hoverable;
-                current_hoverable.OnHoverOver(new HoverInfo(HOVER_MODE.SCRAP, 0));
-
+                case HoverMode.SCRAP:
+                    _currentHoverable?.OnHoverOff();
+                    _currentHoverable = hoverable;
+                    _currentHoverable.OnHoverOver(new HoverInfo(HoverMode.SCRAP, 0));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-
-        }
-        else
-        {
-            if(current_hoverable != null)
-            {
-                current_hoverable.OnHoverOff();
-                current_hoverable = null;
+        } else {
+            if (_currentHoverable != null) {
+                _currentHoverable.OnHoverOff();
+                _currentHoverable = null;
                 MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.HideHoverPopupMessage));
             }
 
 
-            to_hover_time = 0.7f;
-        }
-
-    }
-
-    public void OnClick(InputAction.CallbackContext callbackContext)
-    {
-        if (callbackContext.started)
-        {
-            doRaycast = true;
-        }
-        else if (callbackContext.canceled)
-        {
-            doRaycast = false;
+            _toHoverTime = 0.7f;
         }
     }
 
-    public void OnRightClick(InputAction.CallbackContext callbackContext)
-    {
+    public void OnClick(InputAction.CallbackContext callbackContext) {
+        if (callbackContext.started) {
+            _doRaycast = true;
+        } else if (callbackContext.canceled) {
+            _doRaycast = false;
+        }
+    }
+
+    public void OnRightClick(InputAction.CallbackContext callbackContext) {
         //Right click cancels a selected action
-        if (callbackContext.started)
-        {
-            if(current_hoverable != null)
-            {
-                current_hoverable.OnHoverOff();
-                current_hoverable = null;
-            }
-
-            current_hover_mode = HOVER_MODE.INFO;
-            current_click_mode = CLICK_MODE.NONE;
-            to_hover_time = 0.7f;
-            current_turret_pfb = null;
-
-            MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageEverything));
+        if (!callbackContext.started) return;
+        if (_currentHoverable != null) {
+            _currentHoverable.OnHoverOff();
+            _currentHoverable = null;
         }
+
+        _currentHoverMode = HoverMode.INFO;
+        _currentClickMode = ClickMode.NONE;
+        _toHoverTime = 0.7f;
+        _currentTurretPfb = null;
+
+        MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.DisengageEverything));
     }
 
-    public void OnRotate(InputAction.CallbackContext callbackContext)
-    {
-        if (callbackContext.started || callbackContext.performed)
-        {
-            cam_rot_dir = callbackContext.ReadValue<float>();
-            isCameraRotating = true;
+    public void OnRotate(InputAction.CallbackContext callbackContext) {
+        if (callbackContext.started || callbackContext.performed) {
+            _camRotDir = callbackContext.ReadValue<float>();
+            _isCameraRotating = true;
         }
 
-        if (callbackContext.canceled)
-        {
-            cam_rot_dir = 0.0f;
-            isCameraRotating = false;
-        }
+        if (!callbackContext.canceled) return;
+
+        _camRotDir = 0.0f;
+        _isCameraRotating = false;
     }
 
-    public void OnZoom(InputAction.CallbackContext callbackContext)
-    {
-        if (callbackContext.started || callbackContext.performed)
-        {
-            cam_zoom_direction = callbackContext.ReadValue<float>();
-            isCameraZooming = true;
+    public void OnZoom(InputAction.CallbackContext callbackContext) {
+        if (callbackContext.started || callbackContext.performed) {
+            _camZoomDirection = callbackContext.ReadValue<float>();
+            _isCameraZooming = true;
         }
 
-        if (callbackContext.canceled)
-        {
-            cam_zoom_direction = 0.0f;
-            isCameraZooming = false;
-        }
+        if (!callbackContext.canceled) return;
+        _camZoomDirection = 0.0f;
+        _isCameraZooming = false;
     }
 
-    public void OnPan(InputAction.CallbackContext callbackContext)
-    {
-        if (callbackContext.started || callbackContext.performed)
-        {
-            cam_pan_direction = callbackContext.ReadValue<Vector2>();
-            isCameraPanning = true;
+    public void OnPan(InputAction.CallbackContext callbackContext) {
+        if (callbackContext.started || callbackContext.performed) {
+            _camPanDirection = callbackContext.ReadValue<Vector2>();
+            _isCameraPanning = true;
         }
 
-        if (callbackContext.canceled)
-        {
-            cam_pan_direction = Vector2.zero;
-            isCameraPanning = false;
-        }
+        if (!callbackContext.canceled) return;
+        _camPanDirection = Vector2.zero;
+        _isCameraPanning = false;
     }
 
-    public void OnResetZoom(InputAction.CallbackContext callbackContext)
-    {
-        if (callbackContext.started || callbackContext.performed)
-        {
-            isCameraZooming = false;
-            Camera.main.fieldOfView = 60.0f;
-        }
+    public void OnResetZoom(InputAction.CallbackContext callbackContext) {
+        if (!callbackContext.started && !callbackContext.performed) return;
+        _isCameraZooming = false;
+        _mainCamera.fieldOfView = 60.0f;
     }
 
-    public void OnResetRotation(InputAction.CallbackContext callbackContext)
-    {
-        if (callbackContext.started || callbackContext.performed)
-        {
-            isCameraRotating = false;
-            Camera.main.transform.RotateAround(Vector3.zero, Vector3.up, -rotation_angle);
-            rotation_angle = 0.0f;
-        }
-
+    public void OnResetRotation(InputAction.CallbackContext callbackContext) {
+        if (!callbackContext.started && !callbackContext.performed) return;
+        _isCameraRotating = false;
+        _mainCamera.transform.RotateAround(Vector3.zero, Vector3.up, -_rotationAngle);
+        _rotationAngle = 0.0f;
     }
 
-    public void OnPause(InputAction.CallbackContext callbackContext)
-    {
+    public void OnPause(InputAction.CallbackContext callbackContext) {
         SceneManager.LoadScene(0);
     }
 
-    IEnumerator GameOver()
-    {
+    private IEnumerator GameOver() {
         yield return new WaitForSeconds(1.0f);
         gameMusic.Stop();
         gameOverMusic.Play();
@@ -451,16 +407,14 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
         SceneManager.LoadSceneAsync(2, LoadSceneMode.Single);
     }
 
-    IEnumerator BoostMusic()
-    {
-        gameMusic.pitch = 1f;  // Pitch rises straight away
+    private IEnumerator BoostMusic() {
+        gameMusic.pitch = 1f; // Pitch rises straight away
 
         // Volume rises in steps
-        var steps = 10;
+        const int steps = 10;
         var volumeDiff = (1f - gameMusic.volume) / steps;
 
-        for (int i = 0; i < steps; i++)
-        {
+        for (var i = 0; i < steps; i++) {
             gameMusic.volume += volumeDiff;
             yield return new WaitForSeconds(0.1f);
         }
@@ -469,90 +423,76 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
         gameMusic.volume = 1f;
     }
 
-    IEnumerator LoadVictoryScreen()
-    {
+    private static IEnumerator LoadVictoryScreen() {
         yield return new WaitForSeconds(10.0f);
         SceneManager.LoadScene(3);
-
     }
 
-    public void HandleMessage(GameMessage message)
-    {
-        if (suspend)
-        {
+    public void HandleMessage(GameMessage message) {
+        if (_suspend) {
             return;
         }
 
-        switch (message.MessageType)
-        {
+        switch (message.MessageType) {
             case MessageConstants.StartGameMessage:
                 StartCoroutine("BoostMusic");
-                started = true;
+                _started = true;
                 break;
-            case MessageConstants.EngageBuildMode:
-                {
-                    current_hover_mode = HOVER_MODE.BUILD;
-                    current_click_mode = CLICK_MODE.PLACE;
-                    current_turret_pfb = (message as EngageBuildModeMessage).turret_prefab;
-                    break;
-                }
-            case MessageConstants.DisengageBuildMode:
-                {
-                    current_hover_mode = HOVER_MODE.INFO;
-                    current_click_mode = CLICK_MODE.NONE;
-                    current_turret_pfb = null;
-                    break;
-                }
-            case MessageConstants.GameOverMessage:
-                {
-                    StartCoroutine(GameOver());
-                    break;
-                }
-            case MessageConstants.EngageUpgradeMode:
-                {
-                    current_hover_mode = HOVER_MODE.UPGRADE;
-                    current_click_mode = CLICK_MODE.SELECT;
-                    current_turret_pfb = null;
-                    break;
-                }
-            case MessageConstants.DisengageUpgradeMode:
-                {
-                    current_hover_mode = HOVER_MODE.INFO;
-                    current_click_mode = CLICK_MODE.NONE;
-                    current_turret_pfb = null;
-                    break;
-                }
-            case MessageConstants.EngageScrapMode:
-                {
-                    current_hover_mode = HOVER_MODE.SCRAP;
-                    current_click_mode = CLICK_MODE.SELECT;
-                    current_turret_pfb = null;
-                    break;
-                }
-            case MessageConstants.DisengageScrapMode:
-                {
-                    current_hover_mode = HOVER_MODE.INFO;
-                    current_click_mode = CLICK_MODE.NONE;
-                    current_turret_pfb = null;
-                    break;
-                }
-            case MessageConstants.WonGameMessage:
-                {
-                    suspend = true;
-                    current_hoverable = null;
-                    current_click_mode = CLICK_MODE.NONE;
-                    current_hover_mode = HOVER_MODE.INFO;
-                    bossBattleMusic.Stop();
-                    victoryMusic.Play();
-                    StartCoroutine(LoadVictoryScreen());
-                    break;
-                }
-            case MessageConstants.NotifyBossBattleMessage:
-                {
-                    gameMusic.Stop();
-                    bossBattleMusic.Play();
-                    break;
-                }
+            case MessageConstants.EngageBuildMode: {
+                _currentHoverMode = HoverMode.BUILD;
+                _currentClickMode = ClickMode.PLACE;
+                _currentTurretPfb = (message as EngageBuildModeMessage)?.turret_prefab;
+                break;
+            }
+            case MessageConstants.DisengageBuildMode: {
+                _currentHoverMode = HoverMode.INFO;
+                _currentClickMode = ClickMode.NONE;
+                _currentTurretPfb = null;
+                break;
+            }
+            case MessageConstants.GameOverMessage: {
+                StartCoroutine(GameOver());
+                break;
+            }
+            case MessageConstants.EngageUpgradeMode: {
+                _currentHoverMode = HoverMode.UPGRADE;
+                _currentClickMode = ClickMode.SELECT;
+                _currentTurretPfb = null;
+                break;
+            }
+            case MessageConstants.DisengageUpgradeMode: {
+                _currentHoverMode = HoverMode.INFO;
+                _currentClickMode = ClickMode.NONE;
+                _currentTurretPfb = null;
+                break;
+            }
+            case MessageConstants.EngageScrapMode: {
+                _currentHoverMode = HoverMode.SCRAP;
+                _currentClickMode = ClickMode.SELECT;
+                _currentTurretPfb = null;
+                break;
+            }
+            case MessageConstants.DisengageScrapMode: {
+                _currentHoverMode = HoverMode.INFO;
+                _currentClickMode = ClickMode.NONE;
+                _currentTurretPfb = null;
+                break;
+            }
+            case MessageConstants.WonGameMessage: {
+                _suspend = true;
+                _currentHoverable = null;
+                _currentClickMode = ClickMode.NONE;
+                _currentHoverMode = HoverMode.INFO;
+                bossBattleMusic.Stop();
+                victoryMusic.Play();
+                StartCoroutine(LoadVictoryScreen());
+                break;
+            }
+            case MessageConstants.NotifyBossBattleMessage: {
+                gameMusic.Stop();
+                bossBattleMusic.Play();
+                break;
+            }
         }
     }
 }

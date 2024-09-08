@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlasmaCannon : OffensiveTurret
 {
@@ -139,7 +137,7 @@ public class PlasmaCannon : OffensiveTurret
 
     void SpawnBullet()
     {
-        GameObject b1 = GameObject.Instantiate(bulletPrefab, cannon_ps.transform.position, cannon_ps.transform.rotation);
+        GameObject b1 = Instantiate(bulletPrefab, cannon_ps.transform.position, cannon_ps.transform.rotation);
         b1.GetComponent<PlasmaBolt>().Damage = DamagePerShot;
     }
 
@@ -161,14 +159,14 @@ public class PlasmaCannon : OffensiveTurret
             return;
         }
 
-        if (info.mode == GameInputManager.HOVER_MODE.UPGRADE && Online)
+        if (info.mode == GameInputManager.HoverMode.UPGRADE && Online)
         {
             AttachedBuilding?.ActivateArrow();
             return;
 
         }
 
-        if (info.mode == GameInputManager.HOVER_MODE.SCRAP && Online)
+        if (info.mode == GameInputManager.HoverMode.SCRAP && Online)
         {
             AttachedBuilding?.ActivateScrapIcon();
         }

@@ -1,22 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Task_BuildStructure : ITask
-{
+public class Task_BuildStructure : ITask {
     private Drone drone;
-    public float Progress
-    {
-        get
-        {
-            if (status == TaskState.DONE)
-            {
+
+    public float Progress {
+        get {
+            if (status == TaskState.DONE) {
                 return 1.01f;
             }
-            else
-            {
-                return 1.0f - (duration / initial_duration);
-            }
+
+            return 1.0f - (duration / initial_duration);
         }
     }
 
@@ -26,25 +20,29 @@ public class Task_BuildStructure : ITask
     float initial_duration;
     Building building;
 
-    bool building_done = false;
+    bool building_done;
 
     List<Vector3> path_to_target;
 
-    enum TaskState { GO_TO_TARGET, BUILD_TURRET, DONE };
+    private enum TaskState {
+        GO_TO_TARGET,
+        BUILD_TURRET,
+        DONE
+    };
+
     TaskState status = TaskState.GO_TO_TARGET;
 
-    bool at_target = false;
+    bool _atTarget;
 
     GameObject turret_prefab;
     int cost;
 
-    bool cancelled = false;
+    bool cancelled;
 
-    public Task_BuildStructure(Building target_building, Drone instruction_drone, GameObject tpfb, float ttb)
-    {
+    public Task_BuildStructure(Building targetBuilding, Drone instructionDrone, GameObject tpfb, float ttb) {
         status = TaskState.GO_TO_TARGET;
-        building = target_building;
-        drone = instruction_drone;
+        building = targetBuilding;
+        drone = instructionDrone;
 
         var r_adj_pp = building.RandomAdjacent;
         path_to_target = drone.FindPathToTarget(r_adj_pp.Position);
@@ -57,21 +55,17 @@ public class Task_BuildStructure : ITask
         turret_prefab = tpfb;
     }
 
-    public void OnTaskEnter()
-    {
+    public void OnTaskEnter() {
         //Create a callback here to follow the path to the target
-        drone.FollowPath(path_to_target, () => { at_target = true; });
+        drone.FollowPath(path_to_target, () => { _atTarget = true; });
     }
 
-    public void Cancel()
-    {
+    public void Cancel() {
         OnTaskCancel();
     }
 
-    public void OnTaskCancel()
-    {
-        if(status == TaskState.DONE)
-        {
+    public void OnTaskCancel() {
+        if (status == TaskState.DONE) {
             return;
         }
 
@@ -79,59 +73,44 @@ public class Task_BuildStructure : ITask
         building.CancelCurrentTask();
         drone.StopMoving();
         drone.ClearTask();
-
     }
 
-    public void OnTaskUpdate(float dt)
-    {
-        if (cancelled)
-        {
+    public void OnTaskUpdate(float dt) {
+        if (cancelled) {
             return;
         }
 
-        if (status == TaskState.GO_TO_TARGET)
-        {
-            if (!Object.FindObjectOfType<CommandConsoleUI>().CheckMoney(cost))
-            {
+        if (status == TaskState.GO_TO_TARGET) {
+            if (!Object.FindObjectOfType<CommandConsoleUI>().CheckMoney(cost)) {
                 //Remind you that you're broke
-                MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "You require more scrap!"));
+                MessageDispatcher.GetInstance()
+                    .Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage,
+                        "You require more scrap!"));
                 status = TaskState.DONE;
-            }
-            else
-            {
-                if (at_target)
-                {
+            } else {
+                if (_atTarget) {
                     status = TaskState.BUILD_TURRET;
-                    MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<int>(MessageConstants.RemoveScrap, cost));
+                    MessageDispatcher.GetInstance()
+                        .Dispatch(new SingleValueMessage<int>(MessageConstants.RemoveScrap, cost));
                     building.SetTask(
-                            new Building.BuildTurretTask(building, turret_prefab, duration,
+                        new Building.BuildTurretTask(building, turret_prefab, duration,
                             (float delta) => { },
                             () => { building_done = true; },
                             () => { }
-                            )
-                        );
+                        )
+                    );
                 }
-
             }
-            
-        }
-        else if (status == TaskState.BUILD_TURRET)
-        {
+        } else if (status == TaskState.BUILD_TURRET) {
             duration -= Time.deltaTime;
-            if(building_done == true)
-            {
+            if (building_done) {
                 status = TaskState.DONE;
             }
-        }
-        else
-        {
+        } else {
             drone.ClearTask();
         }
     }
 
-    public void OnTaskExit()
-    {
-
+    public void OnTaskExit() {
     }
-
 }

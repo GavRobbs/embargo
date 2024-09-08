@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 /* This is the static class that handles message dispatch. Note that it isn't a GameObject, but it is a singleton. 
  * Messages are dispatched to all registered handlers, leaving it up to the handler if they can/want to handle it or not. 
@@ -18,11 +16,11 @@ public class MessageDispatcher
 
     public static MessageDispatcher GetInstance()
     {
-        if (MessageDispatcher.instance == null)
+        if (instance == null)
         {
-            MessageDispatcher.instance = new MessageDispatcher();
+            instance = new MessageDispatcher();
         }
-        return MessageDispatcher.instance;
+        return instance;
     }
 
     public void Dispatch(GameMessage message)

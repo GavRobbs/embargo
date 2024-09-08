@@ -1,250 +1,202 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
+using UnityEngine.Serialization;
 
-public class CommandConsoleUI : MonoBehaviour, IMessageHandler
-{
-    [SerializeField]
-    PopupManager popupManager;
+public class CommandConsoleUI : MonoBehaviour, IMessageHandler {
+    [SerializeField] private PopupManager popupManager;
 
-    [SerializeField]
-    GameObject dangerWarning;
+    [SerializeField] private GameObject dangerWarning;
 
-    [SerializeField]
-    GameObject clearMessage;
+    [SerializeField] private GameObject clearMessage;
 
-    [SerializeField]
-    TextMeshProUGUI timer_text;
+    [FormerlySerializedAs("timer_text")] [SerializeField]
+    private TextMeshProUGUI timerText;
 
-    [SerializeField]
-    TextMeshProUGUI scrap_counter;
+    [FormerlySerializedAs("scrap_counter")] [SerializeField]
+    private TextMeshProUGUI scrapCounter;
 
-    [SerializeField]
-    GameObject fader;
+    [SerializeField] private GameObject fader;
 
-    [SerializeField]
-    AlertMessage alertMessage;
+    [SerializeField] private AlertMessage alertMessage;
 
-    [SerializeField]
-    TextMeshProUGUI waveCounter;
+    [SerializeField] private TextMeshProUGUI waveCounter;
 
-    bool updateScrapCounter = true;
+    private bool _updateScrapCounter = true;
 
-    int scrap = 2000;
+    private int _scrap = 2000;
 
-    System.Action onTimerComplete;
-    float timer_time;
-    string timer_caption;
-    bool timerActive = false;
-    bool showTime = false;
+    private System.Action _onTimerComplete;
+    private float _timerTime;
+    private string _timerCaption;
+    private bool _timerActive;
+    private bool _showTime;
 
-    bool boss_killed = false;
+    private bool _bossKilled;
 
-    public void HandleMessage(GameMessage message)
-    {
-        switch (message.MessageType)
-        {
-            case MessageConstants.HideHoverPopupMessage:
-                {
-                    popupManager.HideAllPopups();
-                    break;
-                }
-            case MessageConstants.HoverInfoDisplayMessage:
-                {
-                    //Case and dispatch to the appropriate popup type
-                    var him = (HoverInfoDisplayMessage)message;
-                    if(him.info == null)
-                    {
-                        return;
-                    }
+    // Cache the singleton instance
+    private static readonly MessageDispatcher MessageDispatcher = MessageDispatcher.GetInstance();
 
-                    if (him.info["type"] == "building")
-                    {
-                        popupManager.ShowBuildingPopup(int.Parse(him.info["hp"]), him.display_position);
-                    }
-                    else if(him.info["type"] == "enemy")
-                    {
-                        popupManager.ShowEnemyInfoPopup(him.info["name"], int.Parse(him.info["hp"]), int.Parse(him.info["max_hp"]), him.display_position);
-                    }
-                    else if(him.info["type"] == "offensive_turret")
-                    {
-                        popupManager.ShowOffensiveTurretBuildingPopup(him.info["name"], int.Parse(him.info["level"]), int.Parse(him.info["bhp"]), float.Parse(him.info["atk_bonus"]),
-                            float.Parse(him.info["cd_bonus"]), float.Parse(him.info["range_bonus"]), him.display_position);
-                    }
-                    else if(him.info["type"] == "support_turret")
-                    {
-                        popupManager.ShowDefensiveTurretBuildingPopup(him.info["name"], int.Parse(him.info["level"]), int.Parse(him.info["bhp"]), him.display_position);
-                    }
-                    else if(him.info["type"] == "drone")
-                    {
-                        popupManager.ShowDronePopup(him.display_position);
-                    }
-                    break;
-                }
-            case MessageConstants.WaveAlertMessage:
-                {
-                    dangerWarning.SetActive(true);
-                    dangerWarning.GetComponentInChildren<AudioSource>().Play();
 
-                    SetTimer("Under Attack ", 6.0f, false, () =>
-                    {
-                        dangerWarning.GetComponentInChildren<AudioSource>().Stop();
-                        dangerWarning.SetActive(false);
-                        MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.BeginWaveMessage));
-                        SetTimer("Under Attack ", 60.0f, true, () =>
-                        {
-
-                        });
-                    });
-                    break;
-                }
-            case MessageConstants.BossKilledMessage:
-                {
-                    boss_killed = true;
-                    break;
-                }
-            case MessageConstants.EndWaveMessage:
-                {
-                    clearMessage.SetActive(true);
-                    clearMessage.GetComponentInChildren<AudioSource>().Play();
-
-                    SetTimer("Area Secure ", 4.0f, false, () =>
-                    {
-                        clearMessage.GetComponentInChildren<AudioSource>().Stop();
-                        clearMessage.SetActive(false);
-
-                        if (!boss_killed)
-                        {
-                            SetTimer("Enemy Incoming ", 30.0f, true, () =>
-                            {
-                                MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.WaveAlertMessage));
-                            });
-                        }
-                        else
-                        {
-                            Capitol c = FindObjectOfType<Capitol>();
-                            if (c.Health > 0)
-                            {
-                                MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.WonGameMessage));
-                            }
-                        }
-                        
-                    });
-                    break;
-                }
-            case MessageConstants.TriggerFirstWaveMessage:
-                {
-                    Debug.Log("Triggering first wave");
-                    SetTimer("Enemy Incoming ", 30.0f, true, () =>
-                    {
-                        MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.WaveAlertMessage));
-                    });
-                    break;
-                }
-            case MessageConstants.AddScrap:
-                {
-                    scrap += (message as SingleValueMessage<int>).value;
-                    updateScrapCounter = true;
-                    break;
-                }
-            case MessageConstants.RemoveScrap:
-                {
-                    scrap -= (message as SingleValueMessage<int>).value;
-                    updateScrapCounter = true;
-                    break;
-                }
-            case MessageConstants.GameOverMessage:
-                {
-                    fader.SetActive(true);
-                    break;
-                }
-            case MessageConstants.DisplayAlertMessage:
-                {
-                    string message_text = (message as SingleValueMessage<string>).value;
-                    alertMessage.gameObject.SetActive(true);
-                    alertMessage.Display(message_text);
-                    break;
-                }
-            case MessageConstants.UpdateWaveCounterMessage:
-                {
-                    int current_wave = (message as SingleValueMessage<int>).value;
-                    waveCounter.text = $"Wave {current_wave}/6";
-                    break;
-                }
-            default:
+    public void HandleMessage(GameMessage message) {
+        switch (message.MessageType) {
+            case MessageConstants.HideHoverPopupMessage: {
+                popupManager.HideAllPopups();
                 break;
+            }
+            case MessageConstants.HoverInfoDisplayMessage: {
+                //Case and dispatch to the appropriate popup type
+                var him = (HoverInfoDisplayMessage)message;
+                if (him.info == null) {
+                    return;
+                }
+
+                switch (him.info["type"]) {
+                    case "building":
+                        popupManager.ShowBuildingPopup(int.Parse(him.info["hp"]), him.display_position);
+                        break;
+                    case "enemy":
+                        popupManager.ShowEnemyInfoPopup(him.info["name"], int.Parse(him.info["hp"]),
+                            int.Parse(him.info["max_hp"]), him.display_position);
+                        break;
+                    case "offensive_turret":
+                        popupManager.ShowOffensiveTurretBuildingPopup(him.info["name"], int.Parse(him.info["level"]),
+                            int.Parse(him.info["bhp"]), float.Parse(him.info["atk_bonus"]),
+                            float.Parse(him.info["cd_bonus"]), float.Parse(him.info["range_bonus"]),
+                            him.display_position);
+                        break;
+                    case "support_turret":
+                        popupManager.ShowDefensiveTurretBuildingPopup(him.info["name"], int.Parse(him.info["level"]),
+                            int.Parse(him.info["bhp"]), him.display_position);
+                        break;
+                    case "drone":
+                        popupManager.ShowDronePopup(him.display_position);
+                        break;
+                }
+
+                break;
+            }
+            case MessageConstants.WaveAlertMessage: {
+                dangerWarning.SetActive(true);
+                dangerWarning.GetComponentInChildren<AudioSource>().Play();
+
+                SetTimer("Under Attack ", 6.0f, false, () => {
+                    dangerWarning.GetComponentInChildren<AudioSource>().Stop();
+                    dangerWarning.SetActive(false);
+                    MessageDispatcher.Dispatch(new GameMessage(MessageConstants.BeginWaveMessage));
+                    SetTimer("Under Attack ", 60.0f, true, () => { });
+                });
+                break;
+            }
+            case MessageConstants.BossKilledMessage: {
+                _bossKilled = true;
+                break;
+            }
+            case MessageConstants.EndWaveMessage: {
+                clearMessage.SetActive(true);
+                clearMessage.GetComponentInChildren<AudioSource>().Play();
+
+                SetTimer("Area Secure ", 4.0f, false, () => {
+                    clearMessage.GetComponentInChildren<AudioSource>().Stop();
+                    clearMessage.SetActive(false);
+
+                    if (!_bossKilled) {
+                        SetTimer("Enemy Incoming ", 30.0f, true,
+                            () => { MessageDispatcher.Dispatch(new GameMessage(MessageConstants.WaveAlertMessage)); });
+                    } else {
+                        var capitol = FindObjectOfType<Capitol>();
+                        if (capitol.Health > 0) {
+                            MessageDispatcher.Dispatch(new GameMessage(MessageConstants.WonGameMessage));
+                        }
+                    }
+                });
+                break;
+            }
+            case MessageConstants.TriggerFirstWaveMessage: {
+                Debug.Log("Triggering first wave");
+                SetTimer("Enemy Incoming ", 30.0f, true,
+                    () => { MessageDispatcher.Dispatch(new GameMessage(MessageConstants.WaveAlertMessage)); });
+                break;
+            }
+            case MessageConstants.AddScrap: {
+                _scrap += ((SingleValueMessage<int>)message).value;
+                _updateScrapCounter = true;
+                break;
+            }
+            case MessageConstants.RemoveScrap: {
+                _scrap -= ((SingleValueMessage<int>)message).value;
+                _updateScrapCounter = true;
+                break;
+            }
+            case MessageConstants.GameOverMessage: {
+                fader.SetActive(true);
+                break;
+            }
+            case MessageConstants.DisplayAlertMessage: {
+                string message_text = ((SingleValueMessage<string>)message).value;
+                alertMessage.gameObject.SetActive(true);
+                alertMessage.Display(message_text);
+                break;
+            }
+            case MessageConstants.UpdateWaveCounterMessage: {
+                int current_wave = ((SingleValueMessage<int>)message).value;
+                waveCounter.text = $"Wave {current_wave}/6";
+                break;
+            }
         }
-        
     }
 
-    void SetTimer(string text, float t, bool displayTime, System.Action onCompleteEvent)
-    {
-        timerActive = true;
-        timer_caption = text;
-        timer_time = t;
-        showTime = displayTime;
-        onTimerComplete = onCompleteEvent;
+    private void SetTimer(string text, float t, bool displayTime, System.Action onCompleteEvent) {
+        _timerActive = true;
+        _timerCaption = text;
+        _timerTime = t;
+        _showTime = displayTime;
+        _onTimerComplete = onCompleteEvent;
     }
 
     // Start is called before the first frame update
-    void Start()
-    {
-        MessageDispatcher.GetInstance().AddHandler(this);
+    private void Start() {
+        MessageDispatcher.AddHandler(this);
     }
 
-    void OnDestroy()
-    {
-        MessageDispatcher.GetInstance().RemoveHandler(this);
+    private void OnDestroy() {
+        MessageDispatcher.RemoveHandler(this);
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        if (updateScrapCounter)
-        {
-            scrap_counter.text = "Scrap: " + scrap.ToString();
-            updateScrapCounter = false;
+    private void Update() {
+        if (_updateScrapCounter) {
+            scrapCounter.text = "Scrap: " + _scrap;
+            _updateScrapCounter = false;
         }
 
-        if (timerActive)
-        {
-            timer_time -= Time.deltaTime;
-            if(timer_time <= 0.0f)
-            {
-                timerActive = false;
-                timer_time = 0.0f;
-                onTimerComplete();
-            }
+        if (!_timerActive) return;
 
-            if (showTime)
-            {
-                timer_text.text = timer_caption + System.Math.Round(timer_time, 2).ToString();
-            }
-            else
-            {
-                timer_text.text = timer_caption;
-            }
+        _timerTime -= Time.deltaTime;
+        if (_timerTime <= 0.0f) {
+            _timerActive = false;
+            _timerTime = 0.0f;
+            _onTimerComplete();
         }
-        
+
+        if (_showTime) {
+            timerText.text = _timerCaption + Mathf.FloorToInt(_timerTime);
+        } else {
+            timerText.text = _timerCaption;
+        }
     }
 
-    public bool CheckMoney(int cost)
-    {
-        return cost <= scrap;
+    public bool CheckMoney(int cost) {
+        return cost <= _scrap;
     }
 
-    public void RequestTurretBuild(GameObject prefab)
-    {
-        if(prefab.GetComponent<ITurret>().Cost <= scrap)
-        {
-            MessageDispatcher.GetInstance().Dispatch(new EngageBuildModeMessage(prefab));
-        }
-        else
-        {
+    public void RequestTurretBuild(GameObject prefab) {
+        if (prefab.GetComponent<ITurret>().Cost > _scrap) {
             //TELL THE PLAYER THEY'RE BROKE
-            MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "You require more scrap!"));
+            MessageDispatcher.Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage,
+                "You require more scrap!"));
+            return;
         }
 
+        MessageDispatcher.Dispatch(new EngageBuildModeMessage(prefab));
     }
 }

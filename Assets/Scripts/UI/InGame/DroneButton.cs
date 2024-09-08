@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class DroneButton : MonoBehaviour
@@ -33,7 +31,7 @@ public class DroneButton : MonoBehaviour
     GameObject dronePrefab;
     int Cost { get => _cost; }
     public Drone AttachedDrone { get => attached_drone; set => attached_drone = value; }
-    void Start()
+    private void Start()
     {
         if (attached_drone)
         {
@@ -70,13 +68,13 @@ public class DroneButton : MonoBehaviour
         if (attached_drone == null)
         {
             //Check if the player can afford it, if not, drop an alert
-            if (!Object.FindObjectOfType<CommandConsoleUI>().CheckMoney(Cost))
+            if (!FindObjectOfType<CommandConsoleUI>().CheckMoney(Cost))
             {
                 MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<string>(MessageConstants.DisplayAlertMessage, "You require more scrap!"));
             }
             else
             {
-                var drone_go = GameObject.Instantiate(dronePrefab, spawnPosition, false);
+                var drone_go = Instantiate(dronePrefab, spawnPosition, false);
                 attached_drone = drone_go.GetComponent<Drone>();
                 buttonImage.sprite = fullSlotSprite;
                 progressOverlayImage.gameObject.SetActive(true);

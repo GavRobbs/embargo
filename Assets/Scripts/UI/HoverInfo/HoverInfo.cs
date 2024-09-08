@@ -1,12 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-public class HoverInfo
+﻿public class HoverInfo
 {
-    public GameInputManager.HOVER_MODE mode;
+    public GameInputManager.HoverMode mode;
     public int other_info;
 
-    public HoverInfo(GameInputManager.HOVER_MODE h, int info)
+    public HoverInfo(GameInputManager.HoverMode h, int info)
     {
         mode = h;
         other_info = info;

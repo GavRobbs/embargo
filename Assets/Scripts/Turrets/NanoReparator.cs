@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class NanoReparator : SupportTurret
@@ -7,10 +6,10 @@ public class NanoReparator : SupportTurret
     override public string TurretClass => "Nano Reparator";
 
     public override float BuildTime => 8.0f;
-    public override float Influence => 1.5f + (float)Level * 0.4f;
+    public override float Influence => 1.5f + Level * 0.4f;
     public float HealInterval => 50.0f * (1.0f - ((float)Level - 1) * 0.1f);
 
-    float healCounter = 0.0f;
+    float healCounter;
 
     List<Building> covered_buildings = new List<Building>();
     public override void OnTurretSpawn()

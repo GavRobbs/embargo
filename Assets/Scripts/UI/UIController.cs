@@ -23,14 +23,14 @@ public class UIController : MonoBehaviour
 
     private Animator canvasAnimator;
 
-    private bool selectingButton = false;
+    private bool selectingButton;
 
     private void Start()
     {
         audioSrc = GetComponent<AudioSource>();
 
         panels = new List<GameObject>();
-        var canvasObj = GameObject.FindObjectOfType<Canvas>();
+        var canvasObj = FindObjectOfType<Canvas>();
         canvasAnimator = canvasObj.GetComponent<Animator>();
 
         foreach (Transform child in canvasObj.transform)

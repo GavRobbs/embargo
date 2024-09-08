@@ -1,22 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Drone : MonoBehaviour, IHoverable, ITaskable, IStoppable
-{
-    [SerializeField]
-    float moveSpeed;
+public class Drone : MonoBehaviour, IHoverable, ITaskable, IStoppable {
+    [SerializeField] float moveSpeed;
 
-    [SerializeField]
-    float distance_threshold;
+    [SerializeField] float distance_threshold;
 
     GameMap mapManager;
 
-    bool isMoving = false;
+    bool isMoving;
 
     Vector3 target_position;
     List<Vector3> current_path;
-    int path_index = 0;
+    int path_index;
 
     //ParticleSystem ps;
 
@@ -24,109 +20,77 @@ public class Drone : MonoBehaviour, IHoverable, ITaskable, IStoppable
 
     ITask _currentTask;
 
-    bool isStopped = false;
+    bool isStopped;
 
-    public ITask CurrentTask
-    {
-        get
-        {
-            return _currentTask;
-        }
+    public ITask CurrentTask {
+        get { return _currentTask; }
 
-        set
-        {
-            if (value != null)
-            {
-                if(_currentTask != null)
-                {
-                    _currentTask.OnTaskExit();
-                }
+        set {
+            if (value != null) {
+                _currentTask?.OnTaskExit();
+
                 _currentTask = value;
                 _currentTask.OnTaskEnter();
-            }
-            else
-            {
+            } else {
                 _currentTask = null;
             }
         }
     }
 
-    public bool Busy
-    {
-        get
-        {
-            if (CurrentTask == null)
-            {
+    public bool Busy {
+        get {
+            if (CurrentTask == null) {
                 return false;
-            }
-            else
-            {
+            } else {
                 return CurrentTask.Progress < 1.0f;
             }
         }
     }
 
-    public Dictionary<string, string> GetHoverData()
-    {
-        return new Dictionary<string, string>()
-        {
-            {"type", "drone"}
+    public Dictionary<string, string> GetHoverData() {
+        return new Dictionary<string, string>() {
+            { "type", "drone" }
         };
     }
 
-    void Start()
-    {
+    private void Start() {
         //ps = GetComponentInChildren<ParticleSystem>();
         mapManager = FindObjectOfType<GameMap>();
     }
 
-    public void FollowPath(List<Vector3> path, System.Action complete)
-    {
-        if (path != null)
-        {
+    public void FollowPath(List<Vector3> path, System.Action complete) {
+        if (path != null) {
             isMoving = true;
             current_path = path;
             path_index = 0;
             //ps.Play();
             onPathComplete = complete;
-        }
-        else
-        {
+        } else {
             isMoving = false;
             current_path = null;
             path_index = 0;
             //ps.Stop();
         }
-
     }
 
-    private void MoveTo(Vector3 tpos)
-    {
+    private void MoveTo(Vector3 tpos) {
         target_position = tpos;
         target_position.y = 0.0f;
-
     }
 
-    public void CancelTask()
-    {
+    public void CancelTask() {
         CurrentTask?.Cancel();
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        if (isStopped)
-        {
+    void Update() {
+        if (isStopped) {
             return;
         }
 
-        if (CurrentTask != null)
-        {
-            CurrentTask.OnTaskUpdate(Time.deltaTime);
-        }
+        CurrentTask?.OnTaskUpdate(Time.deltaTime);
 
-        if (isMoving)
-        {
+        if (isMoving) {
             Vector3 cpos = transform.position;
             cpos.y = 0.0f;
             Vector3 moveDir = (target_position - cpos).normalized;
@@ -136,27 +100,21 @@ public class Drone : MonoBehaviour, IHoverable, ITaskable, IStoppable
             Vector3 checkVector = transform.position;
             checkVector.y = 0.0f;
 
-            if (Vector3.Distance(checkVector, target_position) <= distance_threshold)
-            {
+            if (Vector3.Distance(checkVector, target_position) <= distance_threshold) {
                 path_index += 1;
-                if (path_index == current_path.Count)
-                {
+                if (path_index == current_path.Count) {
                     //We're done moving
                     isMoving = false;
                     onPathComplete();
                     //ps.Stop();
-                }
-                else
-                {
+                } else {
                     target_position = current_path[path_index];
                 }
             }
-
         }
     }
 
-    void TurnToDirection(Vector3 dir)
-    {
+    void TurnToDirection(Vector3 dir) {
         //Debug.Log(dir);
 
         GameObject mesh = GetComponentInChildren<MeshRenderer>().gameObject;
@@ -166,9 +124,8 @@ public class Drone : MonoBehaviour, IHoverable, ITaskable, IStoppable
         mesh.transform.localRotation = Quaternion.Euler(-89.98f, 0.0f, angle + 90);
     }
 
-    public List<Vector3> FindPathToTarget(Vector3 target)
-    {
-        Vector3 drone_pos = transform.position;
+    public List<Vector3> FindPathToTarget(Vector3 target) {
+        var drone_pos = transform.position;
         drone_pos.y = 0.0f;
         target.y = 0.0f;
 
@@ -176,27 +133,21 @@ public class Drone : MonoBehaviour, IHoverable, ITaskable, IStoppable
         return path;
     }
 
-    public void StopMoving()
-    {
+    public void StopMoving() {
         isMoving = false;
-    }    
+    }
 
-    public void ClearTask()
-    {
+    public void ClearTask() {
         CurrentTask = null;
     }
 
-    public void OnHoverOver(HoverInfo info)
-    {
+    public void OnHoverOver(HoverInfo info) {
     }
 
-    public void OnHoverOff()
-    {
+    public void OnHoverOff() {
     }
 
-    public void Stop()
-    {
+    public void Stop() {
         isStopped = true;
     }
-
 }

@@ -1,5 +1,4 @@
-﻿public interface ITurret : IHoverable, IStoppable
-{
+﻿public interface ITurret : IHoverable, IStoppable {
     string TurretClass { get; }
     int Level { get; set; }
 
@@ -9,7 +8,7 @@
 
     float BuildTime { get; }
 
-    Building AttachedBuilding { get; set;}
+    Building AttachedBuilding { get; set; }
 
     //For offensive turrets, this is basically the attack range
     //For support turrets, this is the range they affect

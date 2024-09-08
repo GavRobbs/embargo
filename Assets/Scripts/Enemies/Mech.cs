@@ -1,299 +1,229 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Mech : MonoBehaviour, IEnemy, ITaskable
-{
-    [SerializeField]
-    GameObject forwardPoint;
+public class Mech : MonoBehaviour, IEnemy, ITaskable {
+    [SerializeField] private GameObject forwardPoint;
 
-    [SerializeField]
-    GameObject mechBody;
+    [SerializeField] private GameObject mechBody;
 
-    [SerializeField]
-    float pathfindingDistanceThreshold;
+    [SerializeField] private float pathfindingDistanceThreshold;
 
-    [SerializeField]
-    float moveSpeed;
+    [SerializeField] private float moveSpeed;
 
-    float baseMoveSpeed;
+    [SerializeField] private ParticleSystem sparks;
 
-    [SerializeField]
-    ParticleSystem sparks;
+    [SerializeField] private ParticleSystem flash;
 
-    [SerializeField]
-    ParticleSystem flash;
-
-    [SerializeField]
-    AudioSource explosion;
+    [SerializeField] private AudioSource explosion;
     public Vector3 Position => forwardPoint.transform.position;
     public ISpawner Spawner { get; set; }
 
+    // Cache the singleton instance
+    private static readonly MessageDispatcher MessageDispatcher = MessageDispatcher.GetInstance();
+
     public bool IsFriendly => false;
 
-    public bool IsKilled => (HitPoints <= 0.0f) || dying == true;
+    public bool IsKilled => (HitPoints <= 0.0f) || _dying;
 
     public int CapitolDamage => 3;
 
-    [SerializeField]
-    float hp;
+    [SerializeField] private float hp;
 
-    float max_hp;
+    private float _maxHp;
 
     public float HitPoints => hp;
 
     public string Name => "Bossmech";
 
-    bool dying = false;
+    private bool _dying;
 
-    ITask _currentTask;
+    private ITask _currentTask;
 
-    int level = 1;
+    private int _level = 1;
 
-    bool isStopped = false;
+    private bool _isStopped;
 
-    public ITask CurrentTask
-    {
-        get
-        {
-            return _currentTask;
-        }
+    [SerializeField] private float speedModifier = 0.08f;
+    [SerializeField] private float hpModifier = 0.45f;
 
-        set
-        {
-            if (value != null)
-            {
-                _currentTask?.OnTaskExit();
+    public ITask CurrentTask {
+        get => _currentTask;
+
+        set {
+            _currentTask?.OnTaskExit();
+            if (value != null) {
                 _currentTask = value;
                 _currentTask.OnTaskEnter();
-            }
-            else
-            {
-                _currentTask?.OnTaskExit();
+            } else {
                 _currentTask = null;
             }
         }
     }
 
-    public void SetLevel(int lv)
-    {
-        level = lv;
+    public void SetLevel(int lv) {
+        _level = lv;
     }
 
     public bool Busy => throw new System.NotImplementedException();
 
     // Update is called once per frame
-    void Update()
-    {
-        if (isStopped || dying)
-        {
+    private void Update() {
+        if (_isStopped || _dying) {
             return;
         }
 
-        if (hp < 1.0f && !dying)
-        {
+        if (hp < 1.0f && !_dying) {
             //We only want the player to get the scrap if they kill it
-            int scrap = (int)((float)level * 0.7f * 500.0f);
-            MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<int>(MessageConstants.AddScrap, scrap));
-            KillMe();
+            int scrap = (int)(_level * 0.7f * 500.0f);
+            MessageDispatcher.Dispatch(new SingleValueMessage<int>(MessageConstants.AddScrap, scrap));
+            Destroy();
+        } else {
+            CurrentTask?.OnTaskUpdate(Time.deltaTime);
         }
-        else
-        {
-            if (CurrentTask != null)
-            {
-                CurrentTask.OnTaskUpdate(Time.deltaTime);
-            }
-        }
-
     }
 
-    void OnDestroy()
-    {
+    private void OnDestroy() {
         Spawner.DecreaseEnemyCount();
     }
 
-    public void Damage(float value)
-    {
+    public void Damage(float value) {
         hp -= value;
     }
 
-    public void CancelTask()
-    {
-
+    public void CancelTask() {
     }
 
-    void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Bullet"))
-        {
-            IBullet b = collision.gameObject.GetComponentInParent<IBullet>();
-            float dmg = b.Damage;
-            float mul = b.ArmourBonus ? 2.0f : 1.0f;
-            Destroy(collision.gameObject);
-            Damage(dmg * mul);
-        }
-
+    private void OnCollisionEnter(Collision collision) {
+        if (collision.gameObject.layer != LayerMask.NameToLayer("Bullet")) return;
+        var bullet = collision.gameObject.GetComponentInParent<IBullet>();
+        Destroy(collision.gameObject);
+        Damage(bullet.Damage * (bullet.ArmourBonus ? 2.0f : 1.0f));
     }
 
-    public void KillMe()
-    {
-        dying = true;
+    public void Destroy() {
+        _dying = true;
         mechBody.SetActive(false);
         sparks.Play();
         flash.Play();
-        GameObject.Destroy(this.gameObject, 2.0f);
+        GameObject.Destroy(gameObject, 2.0f);
         explosion.Play();
-
     }
 
-    public void FollowPath(List<Vector3> path_points, System.Action onComplete)
-    {
-        CurrentTask = new MechPathFollowTask(this, path_points, pathfindingDistanceThreshold, moveSpeed, onComplete);
+    public void FollowPath(List<Vector3> pathPoints, System.Action onComplete) {
+        CurrentTask = new MechPathFollowTask(this, pathPoints, pathfindingDistanceThreshold, moveSpeed, onComplete);
     }
 
-    public void Attack(Building building)
-    {
+    public void Attack(Building building) {
         throw new System.NotImplementedException();
     }
 
-    public Dictionary<string, string> GetHoverData()
-    {
-        return new Dictionary<string, string>()
-        {
-            {"type", "enemy"},
-            {"name", Name },
-            {"hp", ((int)hp).ToString() },
-            {"max_hp", ((int)max_hp).ToString() }
+    public Dictionary<string, string> GetHoverData() {
+        return new Dictionary<string, string>() {
+            { "type", "enemy" },
+            { "name", Name },
+            { "hp", ((int)hp).ToString() },
+            { "max_hp", ((int)_maxHp).ToString() }
         };
     }
 
-    public void OnHoverOver(HoverInfo info)
-    {
+    public void OnHoverOver(HoverInfo info) {
     }
 
-    public void OnHoverOff()
-    {
+    public void OnHoverOff() {
     }
 
-    class MechPathFollowTask : ITask
-    {
-        List<Vector3> path;
-        Mech owner;
+    private class MechPathFollowTask : ITask {
+        private readonly List<Vector3> _path;
+        private readonly Mech _owner;
 
-        Vector3 target_position;
-        bool isMoving;
+        private Vector3 _targetPosition;
+        private bool _isMoving;
 
-        System.Action completionCallback;
-        int path_index = 0;
+        private readonly System.Action _completionCallback;
+        private int _pathIndex;
 
-        float distance_threshold;
-        float move_speed;
-        public MechPathFollowTask(Mech recipient, List<Vector3> follow_path, float threshold, float moveSpeed, System.Action onComplete)
-        {
-            path = follow_path;
-            owner = recipient;
-            completionCallback = onComplete;
-            distance_threshold = threshold;
-            move_speed = moveSpeed;
+        private readonly float _distanceThreshold;
+        private readonly float _moveSpeed;
+
+        public MechPathFollowTask(Mech recipient, List<Vector3> followPath, float threshold, float moveSpeed,
+            System.Action onComplete) {
+            _path = followPath;
+            _owner = recipient;
+            _completionCallback = onComplete;
+            _distanceThreshold = threshold;
+            _moveSpeed = moveSpeed;
         }
 
         public float Progress => 0.0f;
 
-        public void OnTaskEnter()
-        {
+        public void OnTaskEnter() {
             //Ideally we could do some cleanup here to see if maybe we can join the path somewhere else apart from the start etc
-            isMoving = true;
-            MoveTo(path[0]);
+            _isMoving = true;
+            MoveTo(_path[0]);
         }
 
-        public void OnTaskExit()
-        {
+        public void OnTaskExit() {
         }
 
-        public void Cancel()
-        {
-
+        public void Cancel() {
         }
 
-        public void OnTaskCancel()
-        {
-
+        public void OnTaskCancel() {
         }
 
-        public void OnTaskUpdate(float dt)
-        {
-            if (owner.IsKilled)
-            {
+        public void OnTaskUpdate(float dt) {
+            if (_owner.IsKilled) {
                 return;
             }
 
-            if (isMoving)
-            {
-                Vector3 moveDir = (target_position - owner.transform.position).normalized;
+            if (!_isMoving) return;
+            Vector3 moveDir = (_targetPosition - _owner.transform.position).normalized;
 
-                //Use this to orient our mech
-                if(moveDir.x < -0.5f)
-                {
-                    owner.mechBody.transform.rotation = Quaternion.AngleAxis(-90.0f, Vector3.up);
+            //Use this to orient our mech
+            if (moveDir.x < -0.5f) {
+                _owner.mechBody.transform.rotation = Quaternion.AngleAxis(-90.0f, Vector3.up);
+            } else if (moveDir.x > 0.5f) {
+                _owner.mechBody.transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.up);
+            } else if (moveDir.z > 0.5f) {
+                _owner.mechBody.transform.rotation = Quaternion.AngleAxis(0.0f, Vector3.up);
+            } else if (moveDir.z < -0.5f) {
+                _owner.mechBody.transform.rotation = Quaternion.AngleAxis(180.0f, Vector3.up);
+            }
 
-                } else if(moveDir.x > 0.5f)
-                {
-                    owner.mechBody.transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.up);
-                } else if(moveDir.z > 0.5f)
-                {
-                    owner.mechBody.transform.rotation = Quaternion.AngleAxis(0.0f, Vector3.up);
-                } else if(moveDir.z < -0.5f)
-                {
-                    owner.mechBody.transform.rotation = Quaternion.AngleAxis(180.0f, Vector3.up);
-                }
-                owner.transform.position = owner.transform.position + (moveDir * move_speed * Time.deltaTime);
+            _owner.transform.position += (moveDir * (_moveSpeed * Time.deltaTime));
 
-                if (Vector3.Distance(owner.transform.position, target_position) <= distance_threshold)
-                {
-                    path_index += 1;
-                    if (path_index == path.Count)
-                    {
-                        //We're done moving
-                        isMoving = false;
-                        completionCallback();
-                    }
-                    else
-                    {
-                        MoveTo(path[path_index]);
-                    }
-                }
-
-
+            if (Vector3.Distance(_owner.transform.position, _targetPosition) > _distanceThreshold) return;
+            _pathIndex += 1;
+            if (_pathIndex == _path.Count) {
+                //We're done moving
+                _isMoving = false;
+                _completionCallback();
+            } else {
+                MoveTo(_path[_pathIndex]);
             }
         }
 
-        private void MoveTo(Vector3 pos)
-        {
-            target_position = pos;
-            target_position.y = 0.0f;
+        private void MoveTo(Vector3 pos) {
+            _targetPosition = pos;
+            _targetPosition.y = 0.0f;
         }
-
     }
 
-    void Start()
-    {
-        max_hp = hp;
-        baseMoveSpeed = moveSpeed;
+    private void Start() {
+        _maxHp = hp;
 
-        moveSpeed *= 1.0f + ((float)(level - 1)) * 0.08f;
+        moveSpeed *= 1.0f + (_level - 1) * speedModifier;
 
-        max_hp *= 1.0f + ((float)(level - 1)) * 0.45f;
+        _maxHp *= 1.0f + (_level - 1) * hpModifier;
 
-        hp = max_hp;
+        hp = _maxHp;
     }
 
-    public void ClearTask()
-    {
+    public void ClearTask() {
         CurrentTask = null;
     }
 
-    public void Stop()
-    {
-        isStopped = true;
+    public void Stop() {
+        _isStopped = true;
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BTLaser : MonoBehaviour
 {
@@ -15,11 +13,11 @@ public class BTLaser : MonoBehaviour
 
     [SerializeField]
     float speed;
-    void Start()
+    private void Start()
     {
         forward_vector = transform.forward;
         mRigidbody.AddForce(forward_vector * speed, ForceMode.Impulse);
-        GameObject.Destroy(this.gameObject, 3);
+        Destroy(gameObject, 3);
     }
 
     void OnCollisionEnter(Collision collision)
@@ -35,9 +33,9 @@ public class BTLaser : MonoBehaviour
             t.AttachedBuilding.Damage(Damage);
 
         }
-        if (this.gameObject)
+        if (gameObject)
         {
-            GameObject.Destroy(this.gameObject);
+            Destroy(gameObject);
         }
     }
 

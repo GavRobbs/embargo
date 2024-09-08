@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Task_ScrapStructure : ITask
@@ -26,18 +25,18 @@ public class Task_ScrapStructure : ITask
     float initial_duration;
     Building building;
 
-    bool building_done = false;
+    bool building_done;
 
     List<Vector3> path_to_target;
 
     enum TaskState { GO_TO_TARGET, SCRAP_TURRET, DONE };
     TaskState status = TaskState.GO_TO_TARGET;
 
-    bool at_target = false;
+    bool at_target;
 
     GameObject turret_prefab;
 
-    bool cancelled = false;
+    bool cancelled;
 
     public Task_ScrapStructure(Building target_building, Drone instruction_drone, float tts)
     {
@@ -103,7 +102,7 @@ public class Task_ScrapStructure : ITask
         else if (status == TaskState.SCRAP_TURRET)
         {
             duration -= Time.deltaTime;
-            if (building_done == true)
+            if (building_done)
             {
                 status = TaskState.DONE;
             }

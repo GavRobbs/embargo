@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class AttackBoosterTurret : SupportTurret
 {
     override public string TurretClass => "Attack Booster";
 
     public override float BuildTime => 8.0f;
-    public override float Influence => 1.2f + (float)Level * 0.3f;
+    public override float Influence => 1.2f + Level * 0.3f;
     public override void OnTurretSpawn()
     {
 
@@ -17,7 +15,7 @@ public class AttackBoosterTurret : SupportTurret
         foreach(var collider in colliders)
         {
             var offensive_turret = collider.GetComponentInParent<OffensiveTurret>();
-            if(offensive_turret == null)
+            if(!offensive_turret)
             {
                 continue;
             }
@@ -46,7 +44,7 @@ public class AttackBoosterTurret : SupportTurret
         foreach (var collider in colliders)
         {
             var offensive_turret = collider.GetComponentInParent<OffensiveTurret>();
-            if (offensive_turret == null)
+            if (!offensive_turret)
             {
                 continue;
             }
@@ -56,7 +54,7 @@ public class AttackBoosterTurret : SupportTurret
 
             foreach(var bonus in bonuses)
             {
-                if(bonus.Producer == this)
+                if((AttackBoosterTurret)bonus.Producer == this)
                 {
                     needsBonus = false;
                     offensive_turret.ForceRecalculation();
@@ -64,32 +62,23 @@ public class AttackBoosterTurret : SupportTurret
                 }
             }
 
-            if (needsBonus)
-            {
-                AttackBoostBonus ab = offensive_turret.gameObject.AddComponent<AttackBoostBonus>();
-                ab.Producer = this;
-                ab.Beneficiary = offensive_turret;
-
-                offensive_turret.ForceRecalculation();
-            }
-
-        }
-    }
-
-    public override void BestowBonus(ITurret turret)
-    {
-        if(turret is OffensiveTurret ot)
-        {
-            AttackBoostBonus ab = gameObject.AddComponent<AttackBoostBonus>();
+            if (!needsBonus) continue;
+            
+            AttackBoostBonus ab = offensive_turret.gameObject.AddComponent<AttackBoostBonus>();
             ab.Producer = this;
-            ab.Beneficiary = ot;
-            ot.ForceRecalculation();
-        }
+            ab.Beneficiary = offensive_turret;
 
+            offensive_turret.ForceRecalculation();
+        }
     }
 
-    public override void Start()
-    {
-        base.Start();
+    public override void BestowBonus(ITurret turret) {
+        if (!(turret is OffensiveTurret ot)) return;
+        
+        AttackBoostBonus ab = gameObject.AddComponent<AttackBoostBonus>();
+        ab.Producer = this;
+        ab.Beneficiary = ot;
+        ot.ForceRecalculation();
+
     }
 }

@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyDetector : MonoBehaviour
 {
     List<ITargetable> enemies;
 
-    void Start()
+    private void Start()
     {
         enemies = new List<ITargetable>();
     }

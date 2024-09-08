@@ -1,4 +1,3 @@
-﻿public interface IStoppable
-{
+﻿public interface IStoppable {
     void Stop();
 }

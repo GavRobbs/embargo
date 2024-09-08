@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class OffensiveTurret : MonoBehaviour, ITurret
@@ -39,11 +38,11 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
    
     protected List<AttackBoostBonus> attack_bonuses = new List<AttackBoostBonus>();
 
-    protected ITargetable current_target = null;
+    protected ITargetable current_target;
     protected bool atTarget = true;
 
     [SerializeField]
-    bool _online = false;
+    bool _online;
 
     [SerializeField]
     int _cost;
@@ -52,7 +51,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
 
     public int Cost => _cost;
 
-    bool isStopped = false;
+    bool isStopped;
 
 
     public enum TurretState { SEEKING, FIRING, RESTING, CHILLING };
@@ -72,7 +71,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
     {
         get
         {
-            float level_bar_bonus = 2.0f * (float)Level / 100.0f;
+            float level_bar_bonus = 2.0f * Level / 100.0f;
             float boost_bar_bonus = RangeBonus;
             float total = Mathf.Clamp(level_bar_bonus + boost_bar_bonus, 0.0f, 0.5f);
             return base_attack_range * (1.0f + total);
@@ -92,7 +91,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
     {
         get
         {
-            float level_atk_bonus = (float)Level / 100.0f;
+            float level_atk_bonus = Level / 100.0f;
             float boost_atk_bonus = AttackBonus;
             float total = Mathf.Clamp(level_atk_bonus + boost_atk_bonus, 0.0f, 1.0f);
             return base_attack_damage * (1.0f + total);
@@ -104,7 +103,7 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
     {
         get
         {
-            float level_cd_bonus = 1.5f * (float)Level / 100.0f;
+            float level_cd_bonus = 1.5f * Level / 100.0f;
             float boost_cd_bonus = CooldownBonus;
             float total = Mathf.Clamp(level_cd_bonus + boost_cd_bonus, 0.0f, 0.35f);
             return base_delay_time * (1.0f - total);
@@ -112,15 +111,15 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
     }
     public bool CanFire { get => _canFire; }
 
-    protected float current_delay_time = 0.0f;
+    protected float current_delay_time;
     protected bool _canFire = true;
 
     //Rather than recalculating the bonus every update, we cache the value
     //and only recalculate it when an attack bonus is added or removed from the list
     //this helps with performance
     bool _mustRecalculateBonus = true;
-    float current_attack_bonus = 0.0f;
-    float current_range_bonus = 0.0f;
+    float current_attack_bonus;
+    float current_range_bonus;
     float current_cooldown_bonus = 1.0f;
 
     // Start is called before the first frame update

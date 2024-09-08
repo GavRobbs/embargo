@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-
-public interface ISpawner 
-{
+﻿public interface ISpawner {
     int EnemyCount { get; }
     bool BossSpawnerForThisWave { get; set; }
     bool IsSpecialSpawner { get; }
@@ -11,8 +8,4 @@ public interface ISpawner
     void StopSpawning();
 
     void DecreaseEnemyCount();
-
-    void IncreaseLevel();
-
-
 }
