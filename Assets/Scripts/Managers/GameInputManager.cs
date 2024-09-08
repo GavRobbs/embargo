@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem.Processors;
 using System;
+using UnityEngine.XR.WSA.Input;
 
 public class GameInputManager : MonoBehaviour, IMessageHandler
 {
@@ -40,6 +41,7 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
 
     float rotation_angle = 0.0f;
 
+    bool started = false;
     bool suspend = false;   
 
     bool doRaycast = false;
@@ -101,8 +103,11 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
 
         }
 
-        CheckMouseHovering();
-        CheckClick();
+        if (started)
+        {
+            CheckMouseHovering();
+            CheckClick();
+        }
 
     }
 
@@ -482,6 +487,7 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
         {
             case MessageConstants.StartGameMessage:
                 StartCoroutine("BoostMusic");
+                started = true;
                 break;
             case MessageConstants.EngageBuildMode:
                 {
