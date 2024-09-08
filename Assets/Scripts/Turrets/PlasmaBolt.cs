@@ -11,7 +11,7 @@ public class PlasmaBolt : MonoBehaviour, IBullet
 
     public float Damage { get => _damage; set => _damage = value; }
 
-    public bool ArmourBonus { get => true; }
+    public bool ArmourBonus => true;
 
     [SerializeField]
     Rigidbody mRigidbody;

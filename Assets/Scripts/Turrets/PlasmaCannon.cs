@@ -139,7 +139,6 @@ public class PlasmaCannon : OffensiveTurret
 
     void SpawnBullet()
     {
-        //Half damage because it fires two bullets at a time
         GameObject b1 = GameObject.Instantiate(bulletPrefab, cannon_ps.transform.position, cannon_ps.transform.rotation);
         b1.GetComponent<PlasmaBolt>().Damage = DamagePerShot;
     }

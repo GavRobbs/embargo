@@ -10,7 +10,7 @@ public class MGBullet : MonoBehaviour, IBullet
     float _damage;
 
     public float Damage { get => _damage; set => _damage = value; }
-    public bool ArmourBonus { get => false; }
+    public bool ArmourBonus => false;
 
     [SerializeField]
     Rigidbody mRigidbody;

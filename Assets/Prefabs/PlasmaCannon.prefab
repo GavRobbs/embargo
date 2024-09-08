@@ -5208,7 +5208,7 @@ MonoBehaviour:
   animator: {fileID: 3703729872266147502}
   base_delay_time: 3.5
   base_attack_range: 3
-  base_attack_damage: 8
+  base_attack_damage: 10
   turretMesh: {fileID: 2468138325447315384}
   enemyDetector: {fileID: 4855714198426285589}
   _online: 0

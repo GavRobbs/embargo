@@ -9710,7 +9710,7 @@ MonoBehaviour:
   sparks: {fileID: 8340445790770119699}
   flash: {fileID: 7332517802862408203}
   explosion: {fileID: 1324762271152496884}
-  hp: 400
+  hp: 350
 --- !u!54 &3576749899218545426
 Rigidbody:
   m_ObjectHideFlags: 0

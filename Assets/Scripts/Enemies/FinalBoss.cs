@@ -130,7 +130,7 @@ public class FinalBoss : MonoBehaviour, IEnemy, ITaskable
         {
             IBullet b = collision.gameObject.GetComponentInParent<IBullet>();
             float dmg = b.Damage;
-            float mul = b.ArmourBonus ? 1.0f : 2.5f;
+            float mul = b.ArmourBonus ? 1.8f : 1.0f;
             Destroy(collision.gameObject);
             Damage(dmg * mul);
         }
