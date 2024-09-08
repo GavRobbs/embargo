@@ -66,10 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Game Development Team:\n\n    Gavin Robinson\n    Arthur Gordon-Wright\n   
-    Mason Waldapfel\n    Valentin Uchkunev\n    Mario Falletti\n\nSpecial Thanks:\n\n   
-    Explosion effects provided by limofeus. Available at: limofeus.itch.io/pixel-simulations\n   
-    Sound resources courtesy of freesound.org"
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
