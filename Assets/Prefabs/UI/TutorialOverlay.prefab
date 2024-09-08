@@ -35,7 +35,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -20, y: 40}
-  m_SizeDelta: {x: 280, y: 130}
+  m_SizeDelta: {x: 260, y: 80}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &4051375561127147816
 CanvasRenderer:
@@ -91,8 +91,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26
-  m_fontSizeBase: 26
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -431,8 +431,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -10}
-  m_SizeDelta: {x: -220, y: -200}
+  m_AnchoredPosition: {x: 0, y: -30}
+  m_SizeDelta: {x: -220, y: -60}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &8694092964801063721
 CanvasRenderer:
@@ -465,12 +465,15 @@ MonoBehaviour:
 
 
     Use your HyperMouse to tell your drones what to build.
-    Select a turret type and a tower to place it on. Or tell them to upgrade or scrap
-    an existing turret.
+    Select a turret type and click a tower to place it on. Or use the upgrade or
+    scrap controls and click an existing turret to modify it.
 
 
-    Use WASD and the arrow keys on your UltraBoard to help
-    you see the whole city.'
+    To help you defend
+    the whole city, use the A and D keys on your UltraBoard to rotate your view,
+    and the arrow keys to move your ViewDrone. Use the - and = keys to zoom closer
+    to the action, or get a strategic overview. Use R to reset your view rotation,
+    and Z to reset the zoom.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -497,7 +500,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32.1
+  m_fontSize: 26.95
   m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -581,14 +584,14 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 3272459162310503259}
-  m_RootOrder: 3
+  m_Father: {fileID: 7177521718947933573}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 440, y: 50}
-  m_Pivot: {x: 0.5, y: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 60, y: 20}
+  m_SizeDelta: {x: 200, y: 40}
+  m_Pivot: {x: 0, y: 0}
 --- !u!222 &3052476981341045746
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -643,8 +646,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26
-  m_fontSizeBase: 26
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -720,7 +723,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 260}
+  m_SizeDelta: {x: 200, y: 180}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &9030350427332332889
 CanvasRenderer:
@@ -780,8 +783,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26
-  m_fontSizeBase: 26
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -857,7 +860,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 200, y: 0}
-  m_SizeDelta: {x: 410, y: 70}
+  m_SizeDelta: {x: 640, y: 40}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &3341430962884502990
 CanvasRenderer:
@@ -913,8 +916,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26
-  m_fontSizeBase: 26
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1284,7 +1287,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36.75
+  m_fontSize: 35.05
   m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1750,6 +1753,7 @@ RectTransform:
   m_Children:
   - {fileID: 2073073626262677365}
   - {fileID: 2550209282251411693}
+  - {fileID: 8134421178822262536}
   - {fileID: 3272459162310503259}
   m_Father: {fileID: 7558331278361583823}
   m_RootOrder: 2
@@ -1841,9 +1845,8 @@ RectTransform:
   - {fileID: 9190735418665799757}
   - {fileID: 4709326024875626354}
   - {fileID: 5252733412038405775}
-  - {fileID: 8134421178822262536}
   m_Father: {fileID: 7177521718947933573}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
