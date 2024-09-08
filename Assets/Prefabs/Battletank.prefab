@@ -111,7 +111,7 @@ MonoBehaviour:
   shotPrefab: {fileID: 7271852646974739307, guid: 997bd278e2d67e746aab49efbc9a19f1,
     type: 3}
   bulletSpawnPoint: {fileID: 1080503561115517178}
-  hp: 80
+  hp: 75
   attack_interval_min: 1.5
   attack_interval_max: 3
 --- !u!1 &1080503561115517178
