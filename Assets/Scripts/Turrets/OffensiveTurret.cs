@@ -359,6 +359,13 @@ public abstract class OffensiveTurret : MonoBehaviour, ITurret
 
     }
 
+    public void ForceRecalculation()
+    {
+        Debug.Log("Forcing recalc");
+        _mustRecalculateBonus = true;
+        RecalculateBonuses();
+    }
+
     void RecalculateBonuses()
     {
         if (_mustRecalculateBonus)

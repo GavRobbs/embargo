@@ -42,7 +42,7 @@ public class BattleTank : MonoBehaviour, IEnemy, ITaskable
     [SerializeField]
     GameObject bulletSpawnPoint;
     public Vector3 Position => forwardPoint.transform.position;
-    public Spawner Spawner { get; set; }
+    public ISpawner Spawner { get; set; }
 
     public int CapitolDamage => 1;
 

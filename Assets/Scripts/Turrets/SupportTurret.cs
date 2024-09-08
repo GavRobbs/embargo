@@ -103,7 +103,7 @@ public abstract class SupportTurret : MonoBehaviour, ITurret
 
     }
 
-    protected virtual void Start()
+    public virtual void Start()
     {
         Level = 1;
     }

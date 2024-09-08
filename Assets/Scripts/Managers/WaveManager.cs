@@ -11,8 +11,15 @@ public class WaveManager : MonoBehaviour, IMessageHandler
 
     bool gameStopped = false;
 
+    bool last_wave = false;
+
     //Current wave time in seconds
     float current_wave_time = 60.0f;
+
+    int wave = 1;
+
+    [SerializeField]
+    BossSpawner bossSpawner;
 
     // Start is called before the first frame update
     void Start()
@@ -65,6 +72,15 @@ public class WaveManager : MonoBehaviour, IMessageHandler
          * This prolongs the wave, it won't end until all the enemies are destroyed. The logic here handles this case. */
         if (waveStarted)
         {
+            if (last_wave)
+            {
+                if(bossSpawned && bossSpawner.EnemyCount == 0)
+                {
+                    MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.EndWaveMessage));
+                }
+                return;
+            }
+
             current_wave_time -= Time.deltaTime;
 
             if (current_wave_time <= 0.0f)
@@ -101,9 +117,20 @@ public class WaveManager : MonoBehaviour, IMessageHandler
                 break;
             case MessageConstants.BeginWaveMessage:
                 {
+                    if(wave == 6)
+                    {
+                        bossSpawner.StartSpawning();
+                        bossSpawned = true;
+                        waveStarted = true;
+                        last_wave = true;
+                        current_wave_time = 60.0f;
+                        MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.NotifyBossBattleMessage));
+                        return;
+                    }
+
                     current_wave_time = 60.0f;
                     waveStarted = true;
-                    int special_spawner_index = Random.Range(0, spawners.Count);
+                    int special_spawner_index = Random.Range(0, spawners.Count - 1);
                     foreach(var spawner in spawners)
                     {
                         spawner.BossSpawnerForThisWave = false;
@@ -115,6 +142,13 @@ public class WaveManager : MonoBehaviour, IMessageHandler
                 }
             case MessageConstants.EndWaveMessage:
                 {
+                    if(wave == 6)
+                    {
+                        bossSpawned = false;
+                        waveStarted = false;
+                        return;
+                    }
+
                     bossSpawned = false;
                     waveStarted = false;
                     foreach (var spawner in spawners)
@@ -122,6 +156,7 @@ public class WaveManager : MonoBehaviour, IMessageHandler
                         spawner.IncreaseLevel();
                         spawner.BossSpawnerForThisWave = false;
                     }
+                    wave += 1;
                     break;
                 }
             case MessageConstants.GameOverMessage:

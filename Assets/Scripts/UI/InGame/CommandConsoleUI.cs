@@ -36,6 +36,8 @@ public class CommandConsoleUI : MonoBehaviour, IMessageHandler
     bool timerActive = false;
     bool showTime = false;
 
+    bool boss_killed = false;
+
     public void HandleMessage(GameMessage message)
     {
         switch (message.MessageType)
@@ -94,6 +96,11 @@ public class CommandConsoleUI : MonoBehaviour, IMessageHandler
                     });
                     break;
                 }
+            case MessageConstants.BossKilledMessage:
+                {
+                    boss_killed = true;
+                    break;
+                }
             case MessageConstants.EndWaveMessage:
                 {
                     clearMessage.SetActive(true);
@@ -103,10 +110,23 @@ public class CommandConsoleUI : MonoBehaviour, IMessageHandler
                     {
                         clearMessage.GetComponentInChildren<AudioSource>().Stop();
                         clearMessage.SetActive(false);
-                        SetTimer("Enemy Incoming ", 30.0f, true, () =>
+
+                        if (!boss_killed)
                         {
-                            MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.WaveAlertMessage));
-                        });
+                            SetTimer("Enemy Incoming ", 30.0f, true, () =>
+                            {
+                                MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.WaveAlertMessage));
+                            });
+                        }
+                        else
+                        {
+                            Capitol c = FindObjectOfType<Capitol>();
+                            if (c.Health > 0)
+                            {
+                                MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.WonGameMessage));
+                            }
+                        }
+                        
                     });
                     break;
                 }

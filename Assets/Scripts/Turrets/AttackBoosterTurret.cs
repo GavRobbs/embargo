@@ -22,12 +22,15 @@ public class AttackBoosterTurret : SupportTurret
                 continue;
             }
 
+            Level = 1;
+
             //If we add this as a child component, it automatically gets deleted when the GameObject for the turret gets deleted,
             //and this in turn propagates the necessary changes through the AttackBoostBonus OnDestroy method
 
             AttackBoostBonus ab = offensive_turret.gameObject.AddComponent<AttackBoostBonus>();
             ab.Producer = this;
             ab.Beneficiary = offensive_turret;
+            offensive_turret.ForceRecalculation();
         }
     }
 
@@ -48,7 +51,7 @@ public class AttackBoosterTurret : SupportTurret
                 continue;
             }
 
-            AttackBoostBonus[] bonuses = offensive_turret.gameObject.GetComponentsInChildren<AttackBoostBonus>();
+            AttackBoostBonus[] bonuses = offensive_turret.gameObject.GetComponents<AttackBoostBonus>();
             bool needsBonus = true;
 
             foreach(var bonus in bonuses)
@@ -56,6 +59,7 @@ public class AttackBoosterTurret : SupportTurret
                 if(bonus.Producer == this)
                 {
                     needsBonus = false;
+                    offensive_turret.ForceRecalculation();
                     break;
                 }
             }
@@ -65,8 +69,10 @@ public class AttackBoosterTurret : SupportTurret
                 AttackBoostBonus ab = offensive_turret.gameObject.AddComponent<AttackBoostBonus>();
                 ab.Producer = this;
                 ab.Beneficiary = offensive_turret;
+
+                offensive_turret.ForceRecalculation();
             }
-            
+
         }
     }
 
@@ -77,7 +83,13 @@ public class AttackBoosterTurret : SupportTurret
             AttackBoostBonus ab = gameObject.AddComponent<AttackBoostBonus>();
             ab.Producer = this;
             ab.Beneficiary = ot;
+            ot.ForceRecalculation();
         }
 
+    }
+
+    public override void Start()
+    {
+        base.Start();
     }
 }

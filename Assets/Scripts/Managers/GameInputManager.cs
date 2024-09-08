@@ -32,9 +32,15 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
     [SerializeField]
     AudioSource gameOverMusic;
 
+    [SerializeField]
+    AudioSource victoryMusic;
+
+    [SerializeField]
+    AudioSource bossBattleMusic;
+
     float rotation_angle = 0.0f;
 
-   
+    bool suspend = false;   
 
     bool doRaycast = false;
 
@@ -68,6 +74,11 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
     // Update is called once per frame
     void Update()
     {
+        if (suspend)
+        {
+            return;
+        }
+
         if (isCameraRotating)
         {
             float new_angle = Time.deltaTime * camera_rotation_speed * cam_rot_dir;
@@ -453,8 +464,20 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
         gameMusic.volume = 1f;
     }
 
+    IEnumerator LoadVictoryScreen()
+    {
+        yield return new WaitForSeconds(10.0f);
+        SceneManager.LoadScene(3);
+
+    }
+
     public void HandleMessage(GameMessage message)
     {
+        if (suspend)
+        {
+            return;
+        }
+
         switch (message.MessageType)
         {
             case MessageConstants.StartGameMessage:
@@ -505,6 +528,23 @@ public class GameInputManager : MonoBehaviour, IMessageHandler
                     current_hover_mode = HOVER_MODE.INFO;
                     current_click_mode = CLICK_MODE.NONE;
                     current_turret_pfb = null;
+                    break;
+                }
+            case MessageConstants.WonGameMessage:
+                {
+                    suspend = true;
+                    current_hoverable = null;
+                    current_click_mode = CLICK_MODE.NONE;
+                    current_hover_mode = HOVER_MODE.INFO;
+                    bossBattleMusic.Stop();
+                    victoryMusic.Play();
+                    StartCoroutine(LoadVictoryScreen());
+                    break;
+                }
+            case MessageConstants.NotifyBossBattleMessage:
+                {
+                    gameMusic.Stop();
+                    bossBattleMusic.Play();
                     break;
                 }
         }

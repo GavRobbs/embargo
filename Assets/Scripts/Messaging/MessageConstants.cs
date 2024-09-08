@@ -28,5 +28,8 @@ public enum MessageConstants : int
     DisengageScrapMode,
     StartGameMessage,
     ScrapTurret,
-    DisengageEverything
+    DisengageEverything,
+    BossKilledMessage,
+    NotifyBossBattleMessage,
+    WonGameMessage
 }

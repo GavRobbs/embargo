@@ -158,6 +158,11 @@ public class Building : MonoBehaviour, IHoverable, ISelectable
 
         public void StartTask()
         {
+            if(target_building == null)
+            {
+                _cancelled = true;
+                cancelCallback();
+            }
             target_building.buildingTeleportSound.Play();
             target_building.building_turret = true;
             target_building.teleportEffect = GameObject.Instantiate(target_building.teleportEffectPrefab, target_building.turretLocationHolder.transform);

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Spawner : MonoBehaviour
+public class Spawner : MonoBehaviour, ISpawner
 {
     [SerializeField]
     float minimumSpawnInterval;
@@ -31,6 +31,9 @@ public class Spawner : MonoBehaviour
 
     bool currently_active = false;
     public bool BossSpawnerForThisWave { get; set; }
+
+    public bool IsSpecialSpawner => false;
+
     int level = 1;
 
     void Start()

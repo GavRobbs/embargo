@@ -27,7 +27,7 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
     [SerializeField]
     AudioSource explosion;
     public Vector3 Position => forwardPoint.transform.position;
-    public Spawner Spawner { get; set; }
+    public ISpawner Spawner { get; set; }
 
     public int CapitolDamage => 1;
 
@@ -85,7 +85,7 @@ public class Scout : MonoBehaviour, IEnemy, ITaskable
     // Update is called once per frame
     void Update()
     {
-        if (isStopped)
+        if (isStopped || dying)
         {
             return;
         }

@@ -27,8 +27,11 @@ public class FinalBoss : MonoBehaviour, IEnemy, ITaskable
 
     [SerializeField]
     AudioSource explosion;
+
+    [SerializeField]
+    AudioSource teleportSound;
     public Vector3 Position => forwardPoint.transform.position;
-    public Spawner Spawner { get; set; }
+    public ISpawner Spawner { get; set; }
 
     public bool IsFriendly => false;
 
@@ -43,7 +46,7 @@ public class FinalBoss : MonoBehaviour, IEnemy, ITaskable
 
     public float HitPoints => hp;
 
-    public string Name => "Bossmech";
+    public string Name => "Zorg Overlord";
 
     bool dying = false;
 
@@ -81,22 +84,20 @@ public class FinalBoss : MonoBehaviour, IEnemy, ITaskable
         level = lv;
     }
 
-    public bool Busy => throw new System.NotImplementedException();
+    public bool Busy => true;
 
     // Update is called once per frame
     void Update()
     {
-        if (isStopped)
+        if (isStopped || dying)
         {
             return;
         }
 
         if (hp < 1.0f && !dying)
         {
-            //We only want the player to get the scrap if they kill it
-            int scrap = (int)((float)level * 0.7f * 500.0f);
-            MessageDispatcher.GetInstance().Dispatch(new SingleValueMessage<int>(MessageConstants.AddScrap, scrap));
             KillMe();
+            MessageDispatcher.GetInstance().Dispatch(new GameMessage(MessageConstants.BossKilledMessage));
         }
         else
         {
@@ -138,6 +139,7 @@ public class FinalBoss : MonoBehaviour, IEnemy, ITaskable
 
     public void KillMe()
     {
+        //TODO: Special Handling for when the boss is destroyed
         dying = true;
         mechBody.SetActive(false);
         sparks.Play();
@@ -147,17 +149,13 @@ public class FinalBoss : MonoBehaviour, IEnemy, ITaskable
 
     }
 
-    public void Wander()
+    public void Wander(List<Vector3> path1, List<Vector3> path2, List<Vector3> path3, List<Vector3> path4)
     {
         //The boss basically walks to the target - every 500 hp damage or so he teleports to a different path
-        List<Vector3> path1 = new List<Vector3>();
-        List<Vector3> path2 = new List<Vector3>();
-        List<Vector3> path3 = new List<Vector3>();
-        List<Vector3> path4 = new List<Vector3>();
 
-        Vector3 teleport1 = new Vector3(0.0f, 0.0f, 0.0f);
-        Vector3 teleport2 = new Vector3(0.0f, 0.0f, 0.0f);
-        Vector3 teleport3 = new Vector3(0.0f, 0.0f, 0.0f);
+        Vector3 teleport1 = path2[0];
+        Vector3 teleport2 = path3[0];
+        Vector3 teleport3 = path4[0];
 
         CurrentTask = new BossPathFollowTask(this, 1500, path1, pathfindingDistanceThreshold, moveSpeed, () =>
         {
@@ -168,7 +166,7 @@ public class FinalBoss : MonoBehaviour, IEnemy, ITaskable
                         CurrentTask = new BossPathFollowTask(this, 500, path3, pathfindingDistanceThreshold, moveSpeed, () =>
                         {
                             CurrentTask = new BossTeleportTask(this, teleport3, () => {
-                                CurrentTask = new BossPathFollowTask(this, -1000.0f, path4, pathfindingDistanceThreshold, moveSpeed, () =>
+                                CurrentTask = new BossPathFollowTask(this, 0.0f, path4, pathfindingDistanceThreshold, moveSpeed, () =>
                                 {
                                     //You're going to die so it doesn't really matter what happens here
                                 });
@@ -262,6 +260,13 @@ public class FinalBoss : MonoBehaviour, IEnemy, ITaskable
                 return;
             }
 
+            if(owner.hp <= hp_threshold_to_teleport)
+            {
+                isMoving = false;
+                completionCallback();
+                return;
+            }
+
             if (isMoving)
             {
                 Vector3 moveDir = (target_position - owner.transform.position).normalized;
@@ -315,36 +320,41 @@ public class FinalBoss : MonoBehaviour, IEnemy, ITaskable
 
     class BossTeleportTask : ITask
     {
-        public float Progress => throw new System.NotImplementedException();
+        public float Progress => 1.0f;
+        FinalBoss boss;
+        Vector3 new_pos;
+        System.Action completeCallback;
 
         public BossTeleportTask(FinalBoss me, Vector3 teleportPosition, System.Action onComplete)
         {
+            completeCallback = onComplete;
+            boss = me;
+            new_pos = teleportPosition;
 
         }
 
         public void Cancel()
         {
-            throw new System.NotImplementedException();
         }
 
         public void OnTaskCancel()
         {
-            throw new System.NotImplementedException();
         }
 
         public void OnTaskEnter()
         {
-            throw new System.NotImplementedException();
+            boss.GetComponent<Rigidbody>().transform.position = new_pos;
+            boss.teleportSound.Play();
+            completeCallback();
+            
         }
 
         public void OnTaskExit()
         {
-            throw new System.NotImplementedException();
         }
 
         public void OnTaskUpdate(float dt)
         {
-            throw new System.NotImplementedException();
         }
     }
     void Start()
