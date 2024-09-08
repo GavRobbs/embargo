@@ -157,13 +157,13 @@ public class FinalBoss : MonoBehaviour, IEnemy, ITaskable
         Vector3 teleport2 = path3[0];
         Vector3 teleport3 = path4[0];
 
-        CurrentTask = new BossPathFollowTask(this, 1500, path1, pathfindingDistanceThreshold, moveSpeed, () =>
+        CurrentTask = new BossPathFollowTask(this, 1200, path1, pathfindingDistanceThreshold, moveSpeed, () =>
         {
             CurrentTask = new BossTeleportTask(this, teleport1, () => {
-                CurrentTask = new BossPathFollowTask(this, 1000, path2, pathfindingDistanceThreshold, moveSpeed, () =>
+                CurrentTask = new BossPathFollowTask(this, 800, path2, pathfindingDistanceThreshold, moveSpeed, () =>
                 {
                     CurrentTask = new BossTeleportTask(this, teleport2, () => {
-                        CurrentTask = new BossPathFollowTask(this, 500, path3, pathfindingDistanceThreshold, moveSpeed, () =>
+                        CurrentTask = new BossPathFollowTask(this, 400, path3, pathfindingDistanceThreshold, moveSpeed, () =>
                         {
                             CurrentTask = new BossTeleportTask(this, teleport3, () => {
                                 CurrentTask = new BossPathFollowTask(this, 0.0f, path4, pathfindingDistanceThreshold, moveSpeed, () =>

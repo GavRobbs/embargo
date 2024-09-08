@@ -57,8 +57,8 @@ public class Spawner : MonoBehaviour, ISpawner
     public void IncreaseLevel()
     {
         level += 1;
-        modifiedMinSpawnInterval = (1.0f - ((float)level * 0.06f)) * minimumSpawnInterval;
-        modifiedMaxSpawnInterval = (1.0f - ((float)level * 0.06f)) * maximumSpawnInterval;
+        modifiedMinSpawnInterval = (1.0f - ((float)level * 0.09f)) * minimumSpawnInterval;
+        modifiedMaxSpawnInterval = (1.0f - ((float)level * 0.09f)) * maximumSpawnInterval;
     }
 
     void Update()
