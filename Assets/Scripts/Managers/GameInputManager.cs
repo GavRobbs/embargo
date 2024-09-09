@@ -4,9 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem.Processors;
 using System;
-using UnityEngine.XR.WSA.Input;
 
 public class GameInputManager : MonoBehaviour, IMessageHandler
 {
