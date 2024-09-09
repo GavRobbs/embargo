@@ -4,6 +4,8 @@ Team | Arthur Gordon-Wright
 Team | Mason Waldapfel
 Team | Valentin Uchkunev
 Team | Mario Falletti
+3D Models | Gavin Robinson
+UI Elements | Gavin Robinson
 Capitol Explosion Animation | Explosion effects provided by limofeus, available at: https://limofeus.itch.io/pixel-simulations
 Building Collapse Sound | "Building Collapse" by onteca, CC BY 3.0, available at https://freesound.org/people/onteca/sounds/197770
 Safe Sound | "Badass Victory" by Pearce Wilson King, CC BY 3.0, available at https://freesound.org/people/Pearce Wilson King/sounds/249524
