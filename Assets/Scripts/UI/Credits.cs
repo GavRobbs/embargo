@@ -28,7 +28,7 @@ public class Credits : MonoBehaviour
     {
         List<string> data = new List<string>(creditsData.text.Replace('\r', ' ').Split('\n'));
         credits = data.Select(
-            credit => (CreditData)Activator.CreateInstance(typeof(CreditData), credit.Split(':').Select(cred => cred.Trim()).ToArray())
+            credit => (CreditData)Activator.CreateInstance(typeof(CreditData), credit.Split('|').Select(cred => cred.Trim()).ToArray())
         ).ToList();
         creditObjects = new List<GameObject>();
         nextIndex = 0;
