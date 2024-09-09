@@ -22,13 +22,13 @@ public class Credits : MonoBehaviour
     private List<CreditData> credits;
     private List<GameObject> creditObjects;
 
-    private int nextIndex;
+    private int nextIndex = 0;
 
     void Awake()
     {
         List<string> data = new List<string>(creditsData.text.Replace('\r', ' ').Split('\n'));
         credits = data.Select(
-            credit => (CreditData)Activator.CreateInstance(typeof(CreditData), credit.Split(':').Select(cred => cred.Trim()).ToArray())
+            credit => (CreditData)Activator.CreateInstance(typeof(CreditData), credit.Split('|').Select(cred => cred.Trim()).ToArray())
         ).ToList();
         creditObjects = new List<GameObject>();
         nextIndex = 0;

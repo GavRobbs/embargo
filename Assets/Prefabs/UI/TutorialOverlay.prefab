@@ -1250,17 +1250,21 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'COMMANDER!
-
-
-    We''ve received word of incoming Zorg forces! They must
-    have learned how close our research is to completion. This is our ONLY HOPE!
-    You must defend the city. If the Capitol falls, humanity falls.
-
-
-    Sensors
-    indicate the enemy will arrive in waves. Hold off all the waves to give our scientists
-    time to complete their work. GOOD LUCK!'
+  m_text: "Transmission from Command:               \n\nCOMMANDER, we've just received
+    critical intel\u2014Zorg forces are closing in fast! They know how close we are
+    to completing the research that could save us all. This is our only chance. If
+    they breach the Capitol, it's over\u2014not just for the city, but for all of
+    humanity.\n    \nYour orders are clear: defend the city at all costs. Set up
+    our Machine Gun Turrets to handle the light infantry\u2014those things fire fast
+    and will tear through the smaller Zorg units. But be ready, their heavier forces
+    are coming. You'll need Plasma Cannons to cut through their armor, but watch
+    out for those with electromagnetic shields\u2014the plasma won't be as effective
+    there.\n     \nAs you set up defenses, remember to position Attack Boosters carefully;
+    they'll make your turrets hit harder and faster. The Zorg will target your infrastructure,
+    but we've got the Nano Reparators online to keep our defenses patched up. Use
+    them wisely.\n     \nThis is it, Commander. The Zorg are relentless, and each
+    wave will test our limits. The Capitol cannot fall. The fate of humanity is in
+    your hands now. GOOD LUCK!"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
