@@ -783,7 +783,7 @@ MonoBehaviour:
   creditsData: {fileID: 4900000, guid: ac466e3ca39ddf24fb110db3918cf39b, type: 3}
   creditPrefab: {fileID: 3474856243949697686, guid: abb254c57fa60b0468b73302a03c6848,
     type: 3}
-  creditInterval: 1
+  creditInterval: 2
   restartInterval: 5
 --- !u!1 &687249776
 GameObject:

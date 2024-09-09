@@ -22,7 +22,7 @@ public class Credits : MonoBehaviour
     private List<CreditData> credits;
     private List<GameObject> creditObjects;
 
-    private int nextIndex;
+    private int nextIndex = 0;
 
     void Awake()
     {
