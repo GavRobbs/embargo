@@ -1,24 +1,26 @@
+Lead Designer | Gavin Robinson
 Team | Gavin Robinson
 Team | Arthur Gordon-Wright
 Team | Mason Waldapfel
 Team | Valentin Uchkunev
 Team | Mario Falletti
-Effect| Explosion effects provided by limofeus. Available at: limofeus.itch.io/pixel-simulations
-Sound | "Building Collapse" by onteca, CC BY 3.0, available at freesound.org/people/onteca/sounds/197770
-Sound | "Machine Start-Up/Power Down" by Taylor Pro Sounds, CC BY 3.0, available at [freesound.org/people/Taylor Pro Sounds/sounds/210333](https://freesound.org/people/Taylor Pro Sounds/sounds/210333)
-Sound | "Badass Victory" by Pearce Wilson King, CC BY 3.0, available at [freesound.org/people/Pearce Wilson King/sounds/249524](https://freesound.org/people/Pearce Wilson King/sounds/249524)
-Sound | "Sci-Fi Portal" by Bzourk, CC BY 3.0, available at freesound.org/people/Bzourk/sounds/322059
-Sound | "Machine Gun" by AceOfSpadesProduc100, CC BY 3.0, available at freesound.org/people/AceOfSpadesProduc100/sounds/334279
-Sound | "Aluminum Sign Warp Slow" by Ev-Dawg, CC BY 3.0, available at freesound.org/people/Ev-Dawg/sounds/335995
-Sound | "Explosion 5" by Jobro, CC BY 3.0, available at freesound.org/people/Jobro/sounds/35462
-Sound | "Jumper Teleport" by Yoyomummy, CC BY 3.0, available at freesound.org/people/Yoyomummy/sounds/369062
-Sound | "Minimalist Sci-Fi UI Error" by Plasterbrain, CC BY 3.0, available at freesound.org/people/Plasterbrain/sounds/423166
-Sound | "Explosion" by Idkmrgarcia, CC BY 3.0, available at freesound.org/people/Idkmrgarcia/sounds/446625
-Sound | "Subway Metro Escalator Railing Rubber Mechanical Hum Nearby" by Kyles, CC BY 3.0, available at freesound.org/people/Kyles/sounds/454212
-Sound | "Gun Hammer Click" by Magnuswaker, CC BY 3.0, available at freesound.org/people/Magnuswaker/sounds/523087
-Sound | "Rorschakk 130BPM Dark Ambient Sci-Fi Suspenseful Beat Loop" by Rorschakk, CC BY 3.0, available at freesound.org/people/Rorschakk/sounds/636989
-Sound | "Power04" by Mad Monkey, CC BY 3.0, available at [freesound.org/people/Mad Monkey/sounds/66690](https://freesound.org/people/Mad Monkey/sounds/66690)
-Sound | "Dark Beat Loop" by Benderhover, CC BY 3.0, available at freesound.org/people/Benderhover/sounds/686772
-Sound | "Deadly Laser Distorted" by Magnuswaker, CC BY 3.0, available at freesound.org/people/Magnuswaker/sounds/697739
-Victory Sound | "Victory Sting 2" by Victor Natas, CC BY 3.0, available at [freesound.org/people/Victor Natas/sounds/741973](https://freesound.org/people/Victor Natas/sounds/741973)
-Sound | "213 BPM Industrial Drum Loop 4786" by Looplicator, CC BY 3.0, available at freesound.org/people/Looplicator/sounds/753604
+Capitol Explosion Animation | Explosion effects provided by limofeus. Available at: https://limofeus.itch.io/pixel-simulations
+Building Collapse Sound | "Building Collapse" by onteca, CC BY 3.0, available at https://freesound.org/people/onteca/sounds/197770
+Safe Sound | "Badass Victory" by Pearce Wilson King, CC BY 3.0, available at https://freesound.org/people/Pearce Wilson King/sounds/249524
+Turret Construction Sound | "Sci-Fi Portal" by Bzourk, CC BY 3.0, available at https://freesound.org/people/Bzourk/sounds/322059
+MG Firing Sound | "Machine Gun" by AceOfSpadesProduc100, CC BY 3.0, available at https://freesound.org/people/AceOfSpadesProduc100/sounds/334279
+Turret Scrap Sound | "Aluminum Sign Warp Slow" by Ev-Dawg, CC BY 3.0, available at https://freesound.org/people/Ev-Dawg/sounds/335995
+Turret Explosion Sound | "Explosion 5" by Jobro, CC BY 3.0, available at https://freesound.org/people/Jobro/sounds/35462
+Error Alert Sound | "Minimalist Sci-Fi UI Error" by Plasterbrain, CC BY 3.0, available at https://freesound.org/people/Plasterbrain/sounds/423166
+Enemy Explosion Sound | "Explosion" by Idkmrgarcia, CC BY 3.0, available at https://freesound.org/people/Idkmrgarcia/sounds/446625
+Turret Turn Sound | "Subway Metro Escalator Railing Rubber Mechanical Hum Nearby" by Kyles, CC BY 3.0, available at https://freesound.org/people/Kyles/sounds/454212
+Turret Reload Sound | "Gun Hammer Click" by Magnuswaker, CC BY 3.0, available at https://freesound.org/people/Magnuswaker/sounds/523087
+Game Over Music | "Power04" by Mad Monkey, CC BY 3.0, available at https://freesound.org/people/Mad Monkey/sounds/66690
+Main Music | "Dark Beat Loop" by Benderhover, CC BY 3.0, available at https://freesound.org/people/Benderhover/sounds/686772
+Plasma Firing Sound | "Deadly Laser Distorted" by Magnuswaker, CC BY 3.0, available at https://freesound.org/people/Magnuswaker/sounds/697739
+Victory Sound | "Victory Sting 2" by Victor Natas, CC BY 3.0, available at https://freesound.org/people/Victor Natas/sounds/741973
+Boss Battle Music | "213 BPM Industrial Drum Loop 4786" by Looplicator, CC BY 3.0, available at https://freesound.org/people/Looplicator/sounds/753604
+Alarm Sound | "klaxon_trimmed"
+Menu Click Sound | "UIBeep_Lock On_05" by Shapeforms, Standard Unity Asset Store EULA, available at https://assetstore.unity.com/packages/audio/sound-fx/shapeforms-audio-free-sound-effects-183649
+Menu Select Sound | "Bank Card Placed Down 03" by Shapeforms, Standard Unity Asset Store EULA, available at https://assetstore.unity.com/packages/audio/sound-fx/shapeforms-audio-free-sound-effects-183649
+Menu Start Game Sound | "SCIEnrg_Shield Activate Deactivate_02" by Shapeforms, Standard Unity Asset Store EULA, available at https://assetstore.unity.com/packages/audio/sound-fx/shapeforms-audio-free-sound-effects-183649
