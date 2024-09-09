@@ -20,6 +20,7 @@ Main Music | "Dark Beat Loop" by Benderhover, CC BY 3.0, available at https://fr
 Plasma Firing Sound | "Deadly Laser Distorted" by Magnuswaker, CC BY 3.0, available at https://freesound.org/people/Magnuswaker/sounds/697739
 Victory Sound | "Victory Sting 2" by Victor Natas, CC BY 3.0, available at https://freesound.org/people/Victor Natas/sounds/741973
 Boss Battle Music | "213 BPM Industrial Drum Loop 4786" by Looplicator, CC BY 3.0, available at https://freesound.org/people/Looplicator/sounds/753604
+Boss Teleport Sound | "Jumper Teleport" by Yoyomummy, CC BY 3.0, available at freesound.org/people/Yoyomummy/sounds/369062
 Alarm Sound | "klaxon_trimmed"
 Menu Click Sound | "UIBeep_Lock On_05" by Shapeforms, Standard Unity Asset Store EULA, available at https://assetstore.unity.com/packages/audio/sound-fx/shapeforms-audio-free-sound-effects-183649
 Menu Select Sound | "Bank Card Placed Down 03" by Shapeforms, Standard Unity Asset Store EULA, available at https://assetstore.unity.com/packages/audio/sound-fx/shapeforms-audio-free-sound-effects-183649
